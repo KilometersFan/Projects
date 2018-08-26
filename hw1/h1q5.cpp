@@ -11,6 +11,10 @@ int main(int argc, char* argv[]){
 		cout << "Please input a file name to read" << endl;
 		return 1;
 	}
+	if(argc > 2){
+		cout <<"Please input one file at a time" << endl;
+		return 1;
+	}
 	ifstream ifile (argv[1]);
 	if (ifile.fail()){
 		cout << "Couldn't open file" << endl;

@@ -6,4 +6,4 @@
 2. a) 2
    b) i) git add hw1q2b.cpp
       ii) git log
-   c) Update the files in the repository
+   c) Prompts user for comments if -m isn't added, then makes the files a part of the repository history. 

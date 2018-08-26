@@ -1,0 +1,9 @@
+1. a) 1, 4
+   b) 2, 3, 4, 5
+   c) 2
+   d) 2
+
+2. a) 2
+   b) i) git add hw1q2b.cpp
+      ii) git log
+   c) Update the files in the repository

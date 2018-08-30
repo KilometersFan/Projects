@@ -1,0 +1,1 @@
+print_buff() prints a static amount of elements of buffer. Currently this number is at 35. To edit this amount, you have to edit print_buff.

@@ -21,13 +21,16 @@ bool helper (stringstream &input, int len)
 	 * and return true.
 	 */
 	input >> prev;
+	
 	if (len == 1) return true;
 
-	bool val = helper(input, len-1);
+	bool val = helper(input, len-2);
 
 	//make your changes only below this line.
-	
-	if (val && (input.str()[len-1] == prev)) return true;
+	char temp;
+	input >> temp;
+	if(val && prev == temp)
+		return true;
 	return false;
 }
 

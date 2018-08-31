@@ -127,7 +127,6 @@ void flexCharManager::free_chars(char* p){
 	}
 }         
 void flexCharManager::print_buff() {
-	cout << "BUFFER CONTENT" << "free mem: " << free_mem <<endl;
 	for (int i = 0; i < 35; i++){
 		cout << buffer[i] << endl;
 	}

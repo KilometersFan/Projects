@@ -2,3 +2,9 @@ palindrome
 *.o
 h1q5
 *.o
+first_memtest
+*.o
+second_memtest
+*.o
+flex
+*.o

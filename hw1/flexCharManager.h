@@ -22,9 +22,7 @@ class flexCharManager: public simpleCharManager
             
             char* alloc_chars(int n);
             void free_chars(char* p);
-            void sort();
             void print_buff();
-            void print_used_mem();
 
 	protected:
 /*Dynamically maintain an array of pointers to Mem_Blocks sorted by physical address which they manage in order to keep
@@ -36,6 +34,9 @@ track of active requests */
             int active_requests;
 /* memory blocks available in array of memory blocks*/
             int used_mem_size;
+
+//sorts used_mem
+            void sort();
 
 };
 

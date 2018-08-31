@@ -3,7 +3,7 @@
    c) 2
    d) 2
 
-2. a) 2
+2. a) 3
    b) i) git add hw1q2b.cpp
       ii) git log
    c) Prompts user for comments if -m isn't added, then makes the files a part of the repository history. 

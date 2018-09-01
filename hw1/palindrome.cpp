@@ -43,7 +43,7 @@ int main (int argc, char* argv[])
   }
   stringstream ss;
   ss << argv[1];
-  if(helper(ss, strlen(argv[1])))
+  if(helper(ss, (int)strlen(argv[1])))
 	  cout << "Palindrome" << endl;
   else cout << "Not a Palindrome" << endl;
   return 0;

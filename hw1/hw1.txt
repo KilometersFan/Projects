@@ -6,6 +6,11 @@
 2. a) 3
    b) i) git add hw1q2b.cpp
       ii) git log
-   c) Prompts user for comments if -m isn't added, then makes the files a part of the repository history. 
+   c) Prompts user for comments if -m isn't added, 
+   then makes the files a part of the repository history. 
 
-#6 Because the alloc_chars returns a pointer to buffer, one may access buffer through the returned pointer. Even if someone only allocated memory for 3 spaces in buffer, they can access any and all subsequent indeces of buffer and change their values.
+#6 Because the alloc_chars returns a pointer to buffer, 
+one may access buffer through the returned pointer. 
+Even if someone only allocated memory for 3 spaces in 
+buffer, they can access any and all subsequent indeces 
+of buffer and change their values.

@@ -41,7 +41,8 @@ char* flexCharManager::alloc_chars(int n){
 		}
 		delete [] temp;
 	}
-	//upon initialization of flexcharmanager set mem_pos to buffer[0] address
+	//upon initialization of flexcharmanager set 
+	//mem_pos to buffer[0] address
 	if (active_requests == 0){
 		mem_pos = buffer;
 	}
@@ -55,7 +56,8 @@ char* flexCharManager::alloc_chars(int n){
 				}
 				if(active_requests == 1){
 					len = used_memory[i]->size;
-					diff = &buffer[9999] - (used_memory[i]->physical_location + len);
+					diff = &buffer[9999] - 
+					(used_memory[i]->physical_location + len);
 					if(diff >= n){
 						mem_pos = used_memory[i]->physical_location + len;
 						break;
@@ -65,15 +67,18 @@ char* flexCharManager::alloc_chars(int n){
 			}
 			else if (i < active_requests-1){
 				len = used_memory[i-1]->size;
-				diff = (used_memory[i]->physical_location)-(used_memory[i-1]->physical_location+len);
+				diff = (used_memory[i]->physical_location)-
+				(used_memory[i-1]->physical_location+len);
 				if(diff >= n){
-					mem_pos = used_memory[i-1]->physical_location + len;
+					mem_pos = used_memory[i-1]->physical_location 
+					+ len;
 					break;
 				}
 			}
 			else if (i == active_requests-1){
 				len = used_memory[i]->size;
-				diff = &buffer[9999] - (used_memory[i]->physical_location + len);
+				diff = &buffer[9999] - 
+				(used_memory[i]->physical_location + len);
 				if(diff >= n){
 					mem_pos = used_memory[i]->physical_location + len;
 					break;
@@ -135,7 +140,8 @@ void flexCharManager::sort() {
 	for (int j = 0; j < active_requests; j++){
 		for (int k = j + 1; k < active_requests; k++){
 			Mem_Block* temp = used_memory[j];
-			if(used_memory[j]->physical_location - used_memory[k]->physical_location > 0){
+			if(used_memory[j]->physical_location - 
+				used_memory[k]->physical_location > 0){
 				used_memory[j] = used_memory[k];
 				used_memory[k] = temp;
 			}

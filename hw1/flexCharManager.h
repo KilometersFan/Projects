@@ -25,7 +25,8 @@ class flexCharManager: public simpleCharManager
             void print_buff();
 
 	protected:
-/*Dynamically maintain an array of pointers to Mem_Blocks sorted by physical address which they manage in order to keep
+/*Dynamically maintain an array of pointers to Mem_Blocks 
+sorted by physical address which they manage in order to keep
 track of active requests */
             Mem_Block** used_memory;
 /* memory available in the buffer */

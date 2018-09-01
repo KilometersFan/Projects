@@ -1,7 +1,5 @@
 #include "flexCharManager.h"
-#include <iostream>
 #include <stdlib.h>
-using namespace std;
 flexCharManager::flexCharManager(){
  	used_memory = new Mem_Block*[2];
  	used_memory[0] = NULL;
@@ -49,15 +47,15 @@ char* flexCharManager::alloc_chars(int n){
 	else {
 		for (int i = 0; i < active_requests; i++){
 			if(i == 0){
-				diff = used_memory[i]->physical_location - buffer;
+				diff = (int)(used_memory[i]->physical_location - buffer);
 				if(diff >= n){
 					mem_pos = buffer;
 					break;
 				}
 				if(active_requests == 1){
 					len = used_memory[i]->size;
-					diff = &buffer[9999] - 
-					(used_memory[i]->physical_location + len);
+					diff = (int)(&buffer[9999] - 
+					(used_memory[i]->physical_location + len));
 					if(diff >= n){
 						mem_pos = used_memory[i]->physical_location + len;
 						break;
@@ -67,8 +65,8 @@ char* flexCharManager::alloc_chars(int n){
 			}
 			else if (i < active_requests-1){
 				len = used_memory[i-1]->size;
-				diff = (used_memory[i]->physical_location)-
-				(used_memory[i-1]->physical_location+len);
+				diff = (int)((used_memory[i]->physical_location)-
+				(used_memory[i-1]->physical_location+len));
 				if(diff >= n){
 					mem_pos = used_memory[i-1]->physical_location 
 					+ len;
@@ -77,7 +75,7 @@ char* flexCharManager::alloc_chars(int n){
 			}
 			else if (i == active_requests-1){
 				len = used_memory[i]->size;
-				diff = &buffer[9999]-(used_memory[i]->physical_location + len);
+				diff = (int)(&buffer[9999]-(used_memory[i]->physical_location + len));
 				if(diff >= n){
 					mem_pos = used_memory[i]->physical_location + len;
 					break;

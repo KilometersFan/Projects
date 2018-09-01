@@ -77,8 +77,7 @@ char* flexCharManager::alloc_chars(int n){
 			}
 			else if (i == active_requests-1){
 				len = used_memory[i]->size;
-				diff = &buffer[9999] - 
-				(used_memory[i]->physical_location + len);
+				diff = &buffer[9999]-(used_memory[i]->physical_location + len);
 				if(diff >= n){
 					mem_pos = used_memory[i]->physical_location + len;
 					break;

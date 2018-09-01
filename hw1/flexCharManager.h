@@ -3,6 +3,7 @@
 
 
 #include <cstddef>
+#include "simpleCharManager.h"
 #include "simpleCharManager.cpp"
 #include <iostream>
 #include <stdlib.h>

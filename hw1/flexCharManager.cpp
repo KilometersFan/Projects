@@ -130,11 +130,6 @@ void flexCharManager::free_chars(char* p){
 		}
 	}
 }         
-void flexCharManager::print_buff() {
-	for (int i = 0; i < 35; i++){
-		cout << buffer[i] << endl;
-	}
-}
 void flexCharManager::sort() {
 	for (int j = 0; j < active_requests; j++){
 		for (int k = j + 1; k < active_requests; k++){

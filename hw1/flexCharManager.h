@@ -22,7 +22,6 @@ class flexCharManager: public simpleCharManager
             
             char* alloc_chars(int n);
             void free_chars(char* p);
-            void print_buff();
 
 	protected:
 /*Dynamically maintain an array of pointers to Mem_Blocks 

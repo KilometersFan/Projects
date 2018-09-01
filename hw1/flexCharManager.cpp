@@ -15,7 +15,7 @@ flexCharManager::~flexCharManager(){
 	delete [] used_memory;
 }
              
-char* flexCharManager::alloc_chars(int n){
+char* flexCharManager::flex_alloc_chars(int n){
 	//if buffer is full, return NUll
 	if(free_mem <= 0)
 		return NULL;
@@ -94,7 +94,7 @@ char* flexCharManager::alloc_chars(int n){
 	return mem_pos;
 }
 
-void flexCharManager::free_chars(char* p){
+void flexCharManager::flex_free_chars(char* p){
 	int len = 0;
 	sort();
 	if(active_requests <= used_mem_size/2){

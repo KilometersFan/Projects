@@ -17,12 +17,12 @@ typedef struct Mem_Block {
 class flexCharManager: public simpleCharManager
 {
 	public:
-            flexCharManager();
-            ~flexCharManager();
+              flexCharManager();
+              ~flexCharManager();
             
-            char* flex_alloc_chars(int n);
-            void flex_free_chars(char* p);
-            void print_buff();
+              char* flex_alloc_chars(int n);
+              void flex_free_chars(char* p);
+              void print_buff();
 	protected:
 /*Dynamically maintain an array of pointers to Mem_Blocks 
 sorted by physical address which they manage in order to keep

@@ -87,7 +87,7 @@ char* flexCharManager::flex_alloc_chars(int n){
 	used_memory[active_requests] = new_block;
 	//Sort used_memory array;
 	free_mem -= n;
-	active_requests++;simplest_mem_manager.
+	active_requests++;
 	sort();
 	return mem_pos;
 }

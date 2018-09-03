@@ -4,6 +4,7 @@
 
 #include <cstddef>
 #include "simpleCharManager.h"
+#include "simpleCharManager.cpp"
 
 typedef struct Mem_Block {
       int size;

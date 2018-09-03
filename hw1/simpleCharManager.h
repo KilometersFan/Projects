@@ -15,7 +15,7 @@ class simpleCharManager
 	     
 	        char* alloc_chars(int n);
 	        void free_chars(char* p);          
-
+	        void printbuff();
 	protected:
 			static const int BUF_SIZE = 10000;
 			char buffer[BUF_SIZE];

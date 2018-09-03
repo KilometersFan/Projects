@@ -2,7 +2,12 @@
 #include <stdlib.h>
 #include "simpleCharManager.cpp"
 using namespace std;
-
+void simpleCharManager::printbuff(){
+  cerr << "Buffer contents:" << endl;
+  for (int i = 0; i < 20; i++){
+    cerr << buffer[i] << endl;
+  }
+}
 int main(int argc, char *argv[])
 {
   simpleCharManager simplest_mem_manager;
@@ -34,10 +39,9 @@ int main(int argc, char *argv[])
   c11[0] = 'd';
   c12[0] = '!';
   c13[0] = '\n';
-  std::cout << c1[0]<< c2[0] << c3[0]<< c4[0] << c5[0]<< c6[0] 
-  << c7[0]<< c8[0] << c9[0]<< c10[0] << c11[0] << c12[0] << c13[0];
-
+  simplest_mem_manager.printbuff();
   simplest_mem_manager.free_chars(c7);
+  simplest_mem_manager.printbuff();
   char *c14 = simplest_mem_manager.alloc_chars(11);
   c14[0] = 'm';
   c14[1] = 'o';
@@ -50,10 +54,7 @@ int main(int argc, char *argv[])
   c14[8] = 'e';
   c14[9] = '.';
   c14[10] = '\n';
-  std::cout << c1[0]<< c2[0] << c3[0]<< c4[0] << c5[0]<< c6[0];
-  for (int i = 0; i < 11; i++){
-  	std::cout << c14[i];
-  }
+  simplest_mem_manager.printbuff();
   return 0;
 }
 

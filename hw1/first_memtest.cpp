@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "simpleCharManager.cpp"
+#include "simpleCharManager.h"
 using namespace std;
 void simpleCharManager::printbuff(){
   cerr << "Buffer contents:" << endl;

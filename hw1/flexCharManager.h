@@ -3,7 +3,6 @@
 
 
 #include <cstddef>
-#include "simpleCharManager.h"
 #include "simpleCharManager.cpp"
 #include <stdlib.h>
 typedef struct Mem_Block {

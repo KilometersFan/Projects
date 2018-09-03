@@ -1,7 +1,5 @@
 #include "flexCharManager.h"
-#include <stdlib.h>
-#include <iostream>
-using namespace std;
+
 flexCharManager::flexCharManager(){
  	used_memory = new Mem_Block*[2];
  	used_memory[0] = NULL;
@@ -89,7 +87,7 @@ char* flexCharManager::flex_alloc_chars(int n){
 	used_memory[active_requests] = new_block;
 	//Sort used_memory array;
 	free_mem -= n;
-	active_requests++;
+	active_requests++;simplest_mem_manager.
 	sort();
 	return mem_pos;
 }

@@ -3,8 +3,8 @@
 
 
 #include <cstddef>
-#include "simpleCharManager.cpp"
-#include <stdlib.h>
+#include "simpleCharManager.h"
+
 typedef struct Mem_Block {
       int size;
       char* physical_location;

@@ -1,6 +1,6 @@
 #include <iostream>
 #include <stdlib.h>
-#include "flexCharManager.cpp"
+#include "flexCharManager.h"
 using namespace std;
 void flexCharManager::print_buff(){
   cerr << "Buffer contents:" << endl;

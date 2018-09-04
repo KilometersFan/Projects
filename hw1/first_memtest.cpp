@@ -2,12 +2,7 @@
 #include <stdlib.h>
 #include "simpleCharManager.h"
 using namespace std;
-void simpleCharManager::printbuff(){
-  cerr << "Buffer contents:" << endl;
-  for (int i = 0; i < 20; i++){
-    cerr << buffer[i] << endl;
-  }
-}
+
 int main(int argc, char *argv[])
 {
   simpleCharManager simplest_mem_manager;

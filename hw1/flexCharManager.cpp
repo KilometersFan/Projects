@@ -1,5 +1,7 @@
+#include <iostream>
+#include <stdlib.h>
 #include "flexCharManager.h"
-
+using namespace std;
 flexCharManager::flexCharManager(){
  	used_memory = new Mem_Block*[2];
  	used_memory[0] = NULL;
@@ -136,4 +138,10 @@ void flexCharManager::sort() {
 			}
 		}
 	}
+}
+void flexCharManager::print_buff(){
+  cerr << "Buffer contents:" << endl;
+  for (int i = 0; i < 25; i++){
+    cerr << buffer[i] << endl;
+  }
 }

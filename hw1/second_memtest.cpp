@@ -2,12 +2,6 @@
 #include <stdlib.h>
 #include "flexCharManager.h"
 using namespace std;
-void flexCharManager::print_buff(){
-  cerr << "Buffer contents:" << endl;
-  for (int i = 0; i < 25; i++){
-    cerr << buffer[i] << endl;
-  }
-}
 int main(int argc, char *argv[])
 {
   flexCharManager flex_mem_manager;

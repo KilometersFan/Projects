@@ -1,6 +1,14 @@
 #include <cstddef>
+#include <iostream>
+#include <stdlib.h>
 #include "simpleCharManager.h"
-
+using namespace std;
+void simpleCharManager::printbuff(){
+  cerr << "Buffer contents:" << endl;
+  for (int i = 0; i < 20; i++){
+    cerr << buffer[i] << endl;
+  }
+}
 simpleCharManager::simpleCharManager(){
 	for (int i = 0; i < BUF_SIZE; i++){
 		buffer[i] = '\0';

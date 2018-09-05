@@ -27,6 +27,8 @@ bool helper (stringstream &input, int len)
 	bool val = helper(input, len-2);
 
 	//make your changes only below this line.
+	//once out of recursize loop, input ss to temp to see 
+	//next character then compare it with prev
 	char temp;
 	input >> temp;
 	if(val && prev == temp)

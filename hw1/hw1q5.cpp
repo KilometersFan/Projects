@@ -6,7 +6,7 @@
 using namespace std;
 
 int main(int argc, char* argv[]){
-
+	//Checking for invalid inputs
 	if(argc < 2){
 		cout << "Please input a file name to read" << endl;
 		return 1;
@@ -24,6 +24,7 @@ int main(int argc, char* argv[]){
 	ifile >> size;
 	string* words = new string[size];
 	string buff = "";
+	//add strings in reverse order into words array
 	for (int i = 0; i < size; i++){
 		ifile >> buff;
 		words[size - i - 1] = buff;

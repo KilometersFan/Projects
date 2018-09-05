@@ -7,7 +7,7 @@ int main(int argc, char *argv[])
 {
   simpleCharManager simplest_mem_manager;
   
-  /*write driver code as described in the assignment to replace this */
+  //Add Hello world!/n character by character
   char* c1 = simplest_mem_manager.alloc_chars(1);
   char* c2 = simplest_mem_manager.alloc_chars(1);
   char* c3 = simplest_mem_manager.alloc_chars(1);
@@ -35,8 +35,10 @@ int main(int argc, char *argv[])
   c12[0] = '!';
   c13[0] = '\n';
   simplest_mem_manager.printbuff();
+  //free 'w' and beyond
   simplest_mem_manager.free_chars(c7);
   simplest_mem_manager.printbuff();
+  //add moon! Bye./n
   char *c14 = simplest_mem_manager.alloc_chars(11);
   c14[0] = 'm';
   c14[1] = 'o';

@@ -1,0 +1,110 @@
+Stack memory where "|" denotes different levels in the stack:
+BUF_SIZE = 10000 | buffer[10000] = [\0, \0, \0, \0, \0 ...] | free_place = buffer | simplest_mem_manager
+
+BUF_SIZE = 10000 | buffer[10000] = [H, \0, \0, \0, \0 ...] | free_place = &buffer[1] | simplest_mem_manager 
+| c1 = H = 'H'| prev_place = free_place 
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, \0, \0, \0 ...] | free_place = &buffer[2]| simplest_mem_manager 
+| c1 = H | c2 = e | prev_place = free_place 
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, \0, \0 ...] | free_place = &buffer[3]| simplest_mem_manager 
+| c1 = H | c2 = e  | c3 = l | prev_place = free_place 
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, \0 ...] | free_place = &buffer[4]| simplest_mem_manager 
+| c1 = H | c2 = e  | c3 = l  | c4 = l | prev_place = free_place 
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o ...] | free_place = &buffer[5]| simplest_mem_manager 
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , ...] | free_place = &buffer[6]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, ,w ...] | free_place = &buffer[7]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , w, o , ...] | free_place = &buffer[8]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | c8 = o | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , w, o , r ...] | free_place = &buffer[9]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | c8 = o | c9 = r | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , w, o , r, l...] | free_place = &buffer[10]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | c8 = o | c9 = r | c10 = l | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , w, o , r, l, d ...] | free_place = &buffer[11]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | c8 = o | c9 = r | c10 = l | c11 = d
+| prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , w, o , r, l, d, ! ...] | free_place = &buffer[12]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | c8 = o | c9 = r | c10 = l | c11 = d| c12 = ! 
+| prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , w, o , r, l, d, !, /n ...] | free_place = &buffer[13]
+| simplest_mem_manager| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c7 = w | c8 = o | c9 = r | c10 = l 
+| c11 = d| c12 = ! | c13 = /n | prev_place = free_place
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , \0, \0, \0, \0, \0...] | free_place = &buffer[7]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' '
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, \0, \0, \0, \0 ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m] prev_place = free_place 
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, \0, \0, \0 ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o] 
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, \0, \0 ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o ]
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, \0 ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o , o, n]
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !]
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, , ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !, ' ']
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, , B ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !, , B]
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, , B, y ...] | free_place = &buffer[17]| simplest_mem_manager
+| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !, , B, y]
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, , B, y, e...] | free_place = &buffer[17]
+| simplest_mem_manager| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !, , B, y, e]
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, , B, y, e, '.', ...] | free_place = &buffer[17]
+| simplest_mem_manager| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !, , B, y, e, '.']
+
+BUF_SIZE = 10000 | buffer[10000] = [H, e, l, l, o, , m, o, o, n, !, , B, y, e, '.', /n] | free_place = &buffer[17]| 
+simplest_mem_manager| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | c14[11] = [m, o, o, n, !, , B, y, e, '.', /n| 
+free_place = &buffer[17]| simplest_mem_manager| c1 = H | c2 = e  | c3 = l  | c4 = l  | c5 = o | c6 = ' ' | 
+c14[11] = [m, o, o, n, !, , B, y, e, '.', /n]
+
+
+Buffer diagram:
+H
+He
+Hel
+Hell
+Hello
+Hello 
+Hello w
+Hello wo
+Hello wor
+Hello worl
+Hello world
+Hello world!
+Hello world!/n
+Hello
+Hello m
+Hello mo
+Hello moo
+Hello moon
+Hello moon!
+Hello moon! 
+Hello moon! B
+Hello moon! By
+Hello moon! Bye
+Hello moon! Bye.
+Hello moon! Bye./n

@@ -1,4 +1,7 @@
 #include "circular_list_int.h"
+// #include <iostream>
+// #include <stdlib.h>
+// using namespace std;
 // standard no-argument constructor
 
 CircularListInt::CircularListInt(){
@@ -51,7 +54,7 @@ void CircularListInt::push_back(int value){
 	else{
 		Item* newItem = new Item(value);
 		Item* temp = head;
-		while(temp->next != nullptr){
+		while(temp->next != head){
 			temp = temp->next;
 		}
 		newItem->prev = temp;
@@ -94,34 +97,34 @@ void CircularListInt::remove(size_t index){
 		}
 		temp->prev->next = temp->next;
 		temp->next->prev = temp->prev;
+		if(temp == head){
+			head = head->next;
+		}
+		temp = nullptr;
 		delete temp;
-		return;
 	}
+	count--;
 }
-int main(){
-	Item* item1 = new Item(5);
-	Item* item2 = new Item(2);
-	Item* item3 = new Item(7);
-	Item* item4 = new Item(0);
-	cout << "item1: " << item1 << endl << "item2: " << item2 << endl << "item3: " << item3 << endl<< "item4: " << item4 << endl;
-	item1->next = item2;
-	item1->prev = nullptr;
-	item2->next = item3;
-	item2->prev = item1;
-	item3->next = item4;
-	item3->prev = item2;
-	item4->next = nullptr;
-	item4->prev = item3;
-	Item* temp = LLSelectionSort(item1);
-	int c = 0;
-	while (temp != nullptr){
-		cerr << c << " " << temp << endl;
-		temp = temp->next;
-		c++;
-	}
-	delete item1;
-	delete item2;
-	delete item3;
-	delete item4;
-	return 0; 
-}
+// int main(){
+// // 	CircularListInt* list = new CircularListInt();
+// // 	list->push_back(10);
+// // 	list->push_back(11);
+// // 	list->push_back(12);
+// // 	list->push_back(13);
+// // 	for (size_t i = 0; i < list->size(); i++){
+// // 		cout << list->get(i) << endl;
+// // 	}
+// // 	cout<< endl;
+// // 	list->remove(7);
+// // 	for (size_t i = 0; i < list->size(); i++){
+// // 		cout << list->get(i) << endl;
+// // 	}
+// // 	list->push_back(15);
+// // 	list->set(7, 90);
+// // 	// list->remove(1);
+// // 	// list->remove(12);
+// // 	for (size_t i = 0; i < list->size(); i++){
+// // 		cout << list->get(i) << endl;
+// // 	}
+// 	return 0; 
+// }

@@ -1,0 +1,57 @@
+1) 
+  a) tracked and unmodified
+  b) README.md : tracked and modified; fun_problem.txt : untracked
+  c) README.md : tracked and staged; fun_problem.txt : tracked and staged
+  d) README.md : tracked and modified; fun_problem.txt : tracked and modified
+  e) README.md : tracked and staged; fun_problem.txt : tracked and unmodified
+  f) README.md : tracked, staged, and unstaged because git remembers the version of README prior to your edit as the one to be staged for commit but also knows that you editted README after running git add so the most recent version of README is unstaged while the previous version is staged.
+
+3)
+  1. A map of key value pairs where the keys are ints, representing the zip codes, and the values are structs which contain the statistics of various types. Maps are optimal for this data type because they act like functions producing an output for a specific input. Each zip code will have its own set of statistics.
+  2. A set of strings where the values in the set are the names of the students who solved the problem. Sets are optimal here because the data type in question doesn't need to be accessed often or ordered in a specific way. It just needs to be updated as more students solve the chocolate problem.
+  3. List of strings because lists where the position represents the pokemon's index and the value is the pokemon's name. Lists care about order, so if a pokemon's index is unknown, it can be slotted in the right location at any time.
+  4. Map of key value pairs where the keys are strings, representing the movie and release year, and the values are lists of strings, representing the reviews. Maps are optimal for this data type because they act like functions returning a specific output per input. Lists are good for the value data type because one can access the list to see the reviews and add to it long after the movie was released.
+
+4)
+The list returned after calling funcA with the input linked list (1, 2, 3, 4, 5) will be (5, 4, 3, 2, 1).
+The list can be represented as follows:
+0x01
+val = 1;
+next = 0x02
+
+0x02
+val = 2;
+next = 0x03
+
+0x03
+val = 3;
+next = 0x03
+
+0x04
+val = 4;
+next = 0x05
+
+0x05
+val = 5;
+next = NULL
+
+
+Going line by line:
+
+1: in is 0x01, the first item in the list. in is not NULL so we don't return NULL
+2: out = NULL;
+3: in->next == 0x02 which is not NULL
+5: out = funcA(0x02) so we enter a recursive call
+This recursive call cycles through the above lines until funcA(0x05) is called because in that case, in->next = NULL. Then we return in (0x05).
+
+So now we go back to the call of func(0x04) and its out now equals 0x05. Then we call funcB(in, out) where in = 0x04 and out = 0x05.
+In funcB because 0x05->next = NULL, 0x05->next is set to 0x04.
+Once funcB has terminated, in or 0x04 ->next = NULL,->next = NULL. Then we return out (0x05)
+
+So now the recusive call goes back to funcA(0x03). out in this case is 0x05 and then we call funcB(0x03, 0x05). 
+In funcB, we enter a recursive call of funcB because 0x05->next = 0x04. We call funcB(0x03, 0x04)
+In this call in2->next = NULL, so we set in2 or 0x04 ->next to 0x03.
+We exit funcB and return to funcA(0x03) and set 0x03->next to NULL.
+
+As you can see a pattern is showing up where funcB and funcA will swap the ne
+

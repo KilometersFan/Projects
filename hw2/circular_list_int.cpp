@@ -1,7 +1,7 @@
 #include "circular_list_int.h"
-// #include <iostream>
-// #include <stdlib.h>
-// using namespace std;
+#include <iostream>
+#include <stdlib.h>
+using namespace std;
 // standard no-argument constructor
 
 CircularListInt::CircularListInt(){
@@ -10,7 +10,9 @@ CircularListInt::CircularListInt(){
 // Destructor. Should delete all data allocated by the list. 
 CircularListInt::~CircularListInt(){
 	for (size_t i = 0; i < count; i++){
-		remove(i);
+		Item* curr = head;
+		head = head->next;
+		delete curr;
 	}
 }
 
@@ -60,7 +62,7 @@ void CircularListInt::push_back(int value){
 		newItem->prev = temp;
 		newItem->next = head;
 		temp->next = newItem;
-		head->prev= newItem;
+		head->prev = newItem;
 	}
 	count++;
 }
@@ -71,15 +73,13 @@ void CircularListInt::set(size_t index, int value){
 	if(!count){
 		return;
 	}
-	else {
-		size_t true_count = (index % count);
-		Item* temp = head;
-		for (size_t i = 0; i < true_count; i++){
-			temp = temp->next;
-		}
-		temp->value = value;
-		return;
+	size_t true_count = (index % count);
+	Item* temp = head;
+	for (size_t i = 0; i < true_count; i++){
+		temp = temp->next;
 	}
+	temp->value = value;
+	return;
 }
 
 // Removes the item at the given index from the list.
@@ -100,31 +100,31 @@ void CircularListInt::remove(size_t index){
 		if(temp == head){
 			head = head->next;
 		}
-		temp = nullptr;
 		delete temp;
 	}
 	count--;
 }
 // int main(){
-// // 	CircularListInt* list = new CircularListInt();
-// // 	list->push_back(10);
-// // 	list->push_back(11);
-// // 	list->push_back(12);
-// // 	list->push_back(13);
-// // 	for (size_t i = 0; i < list->size(); i++){
-// // 		cout << list->get(i) << endl;
-// // 	}
-// // 	cout<< endl;
-// // 	list->remove(7);
-// // 	for (size_t i = 0; i < list->size(); i++){
-// // 		cout << list->get(i) << endl;
-// // 	}
-// // 	list->push_back(15);
-// // 	list->set(7, 90);
-// // 	// list->remove(1);
-// // 	// list->remove(12);
-// // 	for (size_t i = 0; i < list->size(); i++){
-// // 		cout << list->get(i) << endl;
-// // 	}
+// 	CircularListInt* list = new CircularListInt();
+// 	list->push_back(10);
+// 	list->push_back(11);
+// 	list->push_back(12);
+// 	list->push_back(13);
+// 	for (size_t i = 0; i < list->size(); i++){
+// 		cout << list->get(i) << endl;
+// 	}
+// 	cout<< endl;
+// 	list->remove(7);
+// 	for (size_t i = 0; i < list->size(); i++){
+// 		cout << list->get(i) << endl;
+// 	}
+// 	cout<< endl;
+// 	list->push_back(15);
+// 	list->set(7, 90);
+// 	list->remove(1);
+// 	list->remove(12);
+// 	for (size_t i = 0; i < list->size(); i++){
+// 		cout << list->get(i) << endl;
+// 	}
 // 	return 0; 
 // }

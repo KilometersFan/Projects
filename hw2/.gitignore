@@ -2,3 +2,5 @@ circular_list_int
 *.o
 selectionsort
 *.o
+duck_duck_goose
+*.o

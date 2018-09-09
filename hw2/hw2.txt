@@ -14,44 +14,5 @@
 
 4)
 The list returned after calling funcA with the input linked list (1, 2, 3, 4, 5) will be (5, 4, 3, 2, 1).
-The list can be represented as follows:
-0x01
-val = 1;
-next = 0x02
 
-0x02
-val = 2;
-next = 0x03
-
-0x03
-val = 3;
-next = 0x03
-
-0x04
-val = 4;
-next = 0x05
-
-0x05
-val = 5;
-next = NULL
-
-
-Going line by line:
-
-1: in is 0x01, the first item in the list. in is not NULL so we don't return NULL
-2: out = NULL;
-3: in->next == 0x02 which is not NULL
-5: out = funcA(0x02) so we enter a recursive call
-This recursive call cycles through the above lines until funcA(0x05) is called because in that case, in->next = NULL. Then we return in (0x05).
-
-So now we go back to the call of func(0x04) and its out now equals 0x05. Then we call funcB(in, out) where in = 0x04 and out = 0x05.
-In funcB because 0x05->next = NULL, 0x05->next is set to 0x04.
-Once funcB has terminated, in or 0x04 ->next = NULL,->next = NULL. Then we return out (0x05)
-
-So now the recusive call goes back to funcA(0x03). out in this case is 0x05 and then we call funcB(0x03, 0x05). 
-In funcB, we enter a recursive call of funcB because 0x05->next = 0x04. We call funcB(0x03, 0x04)
-In this call in2->next = NULL, so we set in2 or 0x04 ->next to 0x03.
-We exit funcB and return to funcA(0x03) and set 0x03->next to NULL.
-
-As you can see a pattern is showing up where funcB and funcA will swap the ne
-
+What happens in funcA is the variable out is set to a recursive call of funcA of in->next. In each call, an out variable is created until in->next is null. Once that happens, out is set to the last item in the list. Then funcB is called with out and in. In funcB the list is travesered until the end of the list and the out->next is set to in, moving it up the list. After funcB terminates, in->next is set to NULL, moving it to the end of the list. This process repeats until it hits the first recursive call and the last item becomes the first item in the list and vice versa. In summary, funcA and B reverse the order of the list.

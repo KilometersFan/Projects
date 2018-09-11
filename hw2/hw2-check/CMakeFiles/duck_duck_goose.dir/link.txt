@@ -1,0 +1,1 @@
+/usr/bin/c++    -Wall -g3 -Og   CMakeFiles/duck_duck_goose.dir/home/cs104/cs104/hw-milespha/hw2/duck_duck_goose.cpp.o CMakeFiles/duck_duck_goose.dir/home/cs104/cs104/hw-milespha/hw2/circular_list_int.cpp.o  -o duck_duck_goose 

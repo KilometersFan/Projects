@@ -1,0 +1,77 @@
+8 is a Duck!
+953 is a Duck!
+4 is a Duck!
+200 is a Duck!
+68 is a Duck!
+8 is a Duck!
+953 is a Duck!
+4 is a Duck!
+200 is a Duck!
+68 is a Duck!
+8 is a Goose!
+2 is out!
+8 was chosen as the new it.
+953 is a Duck!
+4 is a Duck!
+200 is a Duck!
+68 is a Duck!
+953 is a Duck!
+4 is a Duck!
+200 is a Duck!
+68 is a Duck!
+953 is a Duck!
+4 is a Duck!
+200 is a Goose!
+8 took 200's spot!
+953 is a Goose!
+200 is out!
+8 was chosen as the new it.
+953 is a Duck!
+4 is a Duck!
+68 is a Duck!
+953 is a Duck!
+4 is a Duck!
+68 is a Goose!
+8 took 68's spot!
+953 is a Duck!
+4 is a Duck!
+8 is a Duck!
+953 is a Duck!
+4 is a Duck!
+8 is a Duck!
+953 is a Duck!
+4 is a Duck!
+8 is a Duck!
+953 is a Duck!
+4 is a Duck!
+8 is a Goose!
+68 took 8's spot!
+953 is a Duck!
+4 is a Duck!
+68 is a Duck!
+953 is a Duck!
+4 is a Duck!
+68 is a Duck!
+953 is a Duck!
+4 is a Duck!
+68 is a Goose!
+8 took 68's spot!
+953 is a Duck!
+4 is a Duck!
+8 is a Goose!
+68 is out!
+953 was chosen as the new it.
+4 is a Goose!
+953 is out!
+4 was chosen as the new it.
+8 is a Duck!
+8 is a Duck!
+8 is a Duck!
+8 is a Goose!
+4 took 8's spot!
+4 is a Duck!
+4 is a Duck!
+4 is a Goose!
+8 is out!
+4 was chosen as the new it.
+Winner is 4!

@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/cs104/cs104/hw-milespha/hw2/hw2-check/selection_sort_tests/basic_tests.cpp
+gtest/gtest.h
+-
+selection_sort.h
+-
+selection_sort_utils.h
+-
+
+/home/cs104/cs104/hw-milespha/hw2/selection_sort.h
+
+testing_utils/./selection_sort_utils.h
+selection_sort.h
+-
+vector
+-
+limits
+-
+cstdlib
+-
+

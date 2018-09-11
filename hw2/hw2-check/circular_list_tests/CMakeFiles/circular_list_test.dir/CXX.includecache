@@ -1,0 +1,28 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/cs104/cs104/hw-milespha/hw2/circular_list_int.h
+string
+-
+
+/home/cs104/cs104/hw-milespha/hw2/hw2-check/circular_list_tests/basic_tests.cpp
+gtest/gtest.h
+-
+circular_list_int.h
+-
+circular_list_utils.h
+-
+
+testing_utils/./circular_list_utils.h
+circular_list_int.h
+-
+memory
+-
+vector
+-
+

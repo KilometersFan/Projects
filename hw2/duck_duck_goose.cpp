@@ -5,20 +5,19 @@
 #include <cstdlib>
 using namespace std;
 
-void simulateDDGRound(GameData * gameData, std::ostream & output) {
+void simulateDDGRound(GameData* gameData, std::ostream & output) {
 	size_t num = gameData->playerList.size();
 	size_t gooseID = 0;
 	while(num > 0){
-		//cout << "num " << num << endl;
 		size_t m = rand() % (4*num);
-		//cout << "m " << m << endl;
 		size_t i = 0;
 		while (i < m){
-			output << gameData->playerList.get(i) << " is Duck!" << endl;
+			// cerr << gameData->playerList.get(i) << " is a Duck!"<< endl;
+			output << gameData->playerList.get(i) << " is a Duck!"<< endl;
 			i++;
 		}
-		// cerr << endl;
-		output << gameData->playerList.get(i) << " is Goose!" << endl << endl;
+		output << gameData->playerList.get(i) << " is a Goose!"<< endl;
+		// cerr << gameData->playerList.get(i) << " is a Goose!"<< endl;
 		gooseID = gameData->playerList.get(i);
 		size_t itNum = (rand() % 49) + 1;
 		size_t gooseNum = (rand() % 49) + 1;
@@ -27,6 +26,8 @@ void simulateDDGRound(GameData * gameData, std::ostream & output) {
 			gooseNum = (rand() % 49) + 1;
 		}
 		if(itNum > gooseNum){
+			output << gameData->itPlayerID << " took " << gameData->playerList.get(i) << "'s spot!" << endl;
+			// cerr << gameData->itPlayerID << " took " << gameData->playerList.get(i) << "'s spot!" << endl;
 			size_t temp = gameData->itPlayerID;
 			gameData->itPlayerID = gooseID;
 			gameData->playerList.set(i, temp);
@@ -34,22 +35,29 @@ void simulateDDGRound(GameData * gameData, std::ostream & output) {
 		else {
 			size_t r = rand() % (m-1);
 			size_t newGooseID = gameData->playerList.get(r);
-			gameData->playerList.remove(r);
-			output << gameData->itPlayerID << " is Out!" << endl<< endl;
+			output << gameData->itPlayerID << " is out!"<< endl;
+			// cerr << gameData->itPlayerID << " is out!"<< endl;
 			gameData->itPlayerID = newGooseID;
-			output << gameData->itPlayerID << " was chosen as the new it."<< endl << endl;
+			output << gameData->itPlayerID << " was chosen as the new it."<< endl; 
+			// cerr << gameData->itPlayerID << " was chosen as the new it."<< endl;
+			if(num == 1){
+				break;
+			}
+			else{
+				gameData->playerList.remove(r);
+			}
 			num--;
 		}
-		// for (int j = 0; j < num; j++){
-		// 	cerr << gameData->playerList.get(j) << endl;
-		// }
+		cerr << endl;
 	}
-	output << "Winner is: " << gooseID << endl;
+	output << "Winner is " << gameData->itPlayerID << "!"<< endl;
+	// cerr << "Winner is " << gameData->itPlayerID << "!" << endl;
 }
 
 int main(int argc, char *argv[])	{
 	if(argc < 3){
 		cout << "Invalid number of inputs" << endl;
+		return 1;
 	}
 	ifstream ifile(argv[1]);
 	if(ifile.fail()){
@@ -64,27 +72,21 @@ int main(int argc, char *argv[])	{
 	int seed = 0;
 	ifile >> seed;
 	srand(seed);
-	cerr << "seed: " << seed << endl;
 	unsigned int num_players = 0;
 	ifile >> num_players;
-	cerr << "num players: " << num_players << endl;
 	unsigned int itID = 0; 
 	ifile >> itID;
-	cerr << "itID: " << itID << endl;
 	unsigned int buff = 0;
-	CircularListInt* list = new CircularListInt();
+	int i = 0;
+	GameData game;
+	game.itPlayerID = itID;
 	while (ifile >> buff){
-		list->push_back(buff);
-		cerr << "player ids: " << buff << endl;
+		game.playerList.push_back(buff);
+		i++;	
 	}
 	cerr << endl;
-	GameData* game = new GameData();
-	game->playerList = *list;
-	game->itPlayerID = itID;
-	simulateDDGRound(game, ofile);
+	simulateDDGRound(&game, ofile);
 	ifile.close();
 	ofile.close();
-	delete game;
-	delete list;
 	return 0;
 }

@@ -77,12 +77,10 @@ int main(int argc, char *argv[])	{
 	unsigned int itID = 0; 
 	ifile >> itID;
 	unsigned int buff = 0;
-	int i = 0;
 	GameData game;
 	game.itPlayerID = itID;
 	while (ifile >> buff){
 		game.playerList.push_back(buff);
-		i++;	
 	}
 	cerr << endl;
 	simulateDDGRound(&game, ofile);

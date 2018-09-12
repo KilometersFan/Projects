@@ -74,12 +74,14 @@ public:
 	void push_back(int value);
 
 	// Sets the item at the given index to have the given value.
-	// If an index is passed that is >= the number of items in the list, it should "wrap around" back to the first element.
+	// If an index is passed that is >= the number of items in the list, 
+	// it should "wrap around" back to the first element.
 	void set(size_t index, int value);
 
 	// Removes the item at the given index from the list.
-	// List elements after the removed element are pulled forward, so their indicies decrease by one.
-	// If an index is passed that is larger then the number of items in the list, it should "wrap around" back to the first element.
+	// List elements after the removed element are pulled forward, so their 
+	// indicies decrease by one. If an index is passed that is larger then the 
+	// number of items in the list, it should "wrap around" back to the first element.
 	void remove(size_t index);
 
 };

@@ -12,12 +12,12 @@ void simulateDDGRound(GameData* gameData, std::ostream & output) {
 		size_t m = rand() % (4*num);
 		size_t i = 0;
 		while (i < m){
-			// cerr << gameData->playerList.get(i) << " is a Duck!"<< endl;
+			cerr << gameData->playerList.get(i) << " is a Duck!"<< endl;
 			output << gameData->playerList.get(i) << " is a Duck!"<< endl;
 			i++;
 		}
 		output << gameData->playerList.get(i) << " is a Goose!"<< endl;
-		// cerr << gameData->playerList.get(i) << " is a Goose!"<< endl;
+		cerr << gameData->playerList.get(i) << " is a Goose!"<< endl;
 		gooseID = gameData->playerList.get(i);
 		size_t itNum = (rand() % 49) + 1;
 		size_t gooseNum = (rand() % 49) + 1;
@@ -26,32 +26,34 @@ void simulateDDGRound(GameData* gameData, std::ostream & output) {
 			gooseNum = (rand() % 49) + 1;
 		}
 		if(itNum > gooseNum){
-			output << gameData->itPlayerID << " took " << gameData->playerList.get(i) << "'s spot!" << endl;
-			// cerr << gameData->itPlayerID << " took " << gameData->playerList.get(i) << "'s spot!" << endl;
+			output << gameData->itPlayerID << " took " << 
+			gameData->playerList.get(i) << "'s spot!" << endl;
+			cerr << gameData->itPlayerID << " took " << 
+			gameData->playerList.get(i) << "'s spot!" << endl;
 			size_t temp = gameData->itPlayerID;
 			gameData->itPlayerID = gooseID;
 			gameData->playerList.set(i, temp);
 		}
 		else {
-			size_t r = rand() % (m-1);
-			size_t newGooseID = gameData->playerList.get(r);
-			output << gameData->itPlayerID << " is out!"<< endl;
-			// cerr << gameData->itPlayerID << " is out!"<< endl;
-			gameData->itPlayerID = newGooseID;
-			output << gameData->itPlayerID << " was chosen as the new it."<< endl; 
-			// cerr << gameData->itPlayerID << " was chosen as the new it."<< endl;
 			if(num == 1){
-				break;
+				output << gameData->itPlayerID << " is out!"<< endl;
+				gameData->itPlayerID = 0;
 			}
 			else{
+				size_t r = rand() % (m-1);
+				size_t newGooseID = gameData->playerList.get(r);
+				output << gameData->itPlayerID << " is out!"<< endl;
+				gameData->itPlayerID = newGooseID;
 				gameData->playerList.remove(r);
+				output << gameData->itPlayerID << " was chosen as the new it."<< endl; 
+				cerr << gameData->itPlayerID << " was chosen as the new it."<< endl; 
 			}
 			num--;
 		}
 		cerr << endl;
 	}
-	output << "Winner is " << gameData->itPlayerID << "!"<< endl;
-	// cerr << "Winner is " << gameData->itPlayerID << "!" << endl;
+	output << "Winner is " << gooseID << "!"<< endl;
+	cerr << "Winner is " << gooseID << "!"<< endl;
 }
 
 int main(int argc, char *argv[])	{

@@ -3,14 +3,14 @@
   b) README.md : tracked and modified; fun_problem.txt : untracked
   c) README.md : tracked and staged; fun_problem.txt : tracked and staged
   d) README.md : tracked and modified; fun_problem.txt : tracked and modified
-  e) README.md : tracked and staged; fun_problem.txt : tracked and unmodified
-  f) README.md : tracked, staged, and unstaged because git remembers the version of README prior to your edit as the one to be staged for commit but also knows that you editted README after running git add so the most recent version of README is unstaged while the previous version is staged.
+  e) README.md : tracked and staged; fun_problem.txt : tracked and unmodified and contains nothing
+  f) README.md : tracked, staged and unstaged because git remembers the version of README prior to your edit as the one to be staged for commit but also knows that you editted README after running git add so the most recent version of README is unstaged while the previous version is staged.
 
 3)
   1. A map of key value pairs where the keys are ints, representing the zip codes, and the values are structs which contain the statistics of various types. Maps are optimal for this data type because they act like functions producing an output for a specific input. Each zip code will have its own set of statistics.
   2. A set of strings where the values in the set are the names of the students who solved the problem. Sets are optimal here because the data type in question doesn't need to be accessed often or ordered in a specific way. It just needs to be updated as more students solve the chocolate problem.
   3. List of strings because lists where the position represents the pokemon's index and the value is the pokemon's name. Lists care about order, so if a pokemon's index is unknown, it can be slotted in the right location at any time.
-  4. Map of key value pairs where the keys are strings, representing the movie and release year, and the values are lists of strings, representing the reviews. Maps are optimal for this data type because they act like functions returning a specific output per input. Lists are good for the value data type because one can access the list to see the reviews and add to it long after the movie was released.
+  4. Map of key value pairs where the keys are strings, representing year, and the values are maps. These nested maps have key value pairs where the keys are movie name and the values are sets of reviews. Maps are optimal for this data type because they act like functions returning a specific output per input. If we pass in a year we can get another map of movies released that year and their repective reviews. Sets are good for the value data type in the inner map because duplicates are not allowed.
 
 4)
 The list returned after calling funcA with the input linked list (1, 2, 3, 4, 5) will be (5, 4, 3, 2, 1).

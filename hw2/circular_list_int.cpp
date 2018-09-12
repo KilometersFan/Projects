@@ -9,18 +9,14 @@ CircularListInt::CircularListInt(){
 }
 // Destructor. Should delete all data allocated by the list. 
 CircularListInt::~CircularListInt(){
-	cerr << "Destructor" << endl;
-	cerr << "count: " << count << endl;
-	for(size_t i =0; i < count; i++){
-		cerr << "item #" << i << ": " << get(i) << endl;
-	}
 	while(!empty()){
 		remove(0);
 	}
 }
 
 // Gets item at an index.
-// If an index is passed that is larger then the number of items in the list, it should "wrap around" back to the first element.
+// If an index is passed that is larger then the number of items in the list,
+// it should "wrap around" back to the first element.
 // If there are no elements in the list, returns 0.
 int CircularListInt::get(size_t index) const {
 	if(!count){
@@ -68,7 +64,8 @@ void CircularListInt::push_back(int value){
 }
 
 // Sets the item at the given index to have the given value.
-// If an index is passed that is >= the number of items in the list, it should "wrap around" back to the first element.
+// If an index is passed that is >= the number of items in the list, 
+//it should "wrap around" back to the first element.
 void CircularListInt::set(size_t index, int value){
 	if(!count){
 		return;
@@ -83,8 +80,10 @@ void CircularListInt::set(size_t index, int value){
 }
 
 // Removes the item at the given index from the list.
-// List elements after the removed element are pulled forward, so their indicies decrease by one.
-// If an index is passed that is larger then the number of items in the list, it should "wrap around" back to the first element.
+// List elements after the removed element are pulled forward, so 
+//their indicies decrease by one.
+// If an index is passed that is larger then the number of items
+// in the list, it should "wrap around" back to the first element.
 void CircularListInt::remove(size_t index){
 	if(empty() || index < 0){
 		return;
@@ -101,7 +100,6 @@ void CircularListInt::remove(size_t index){
 			temp = temp->next;
 		}
 		if(temp == head){
-			// cerr << "head val: " << head->value << endl;
 			head = head->next;
 		}
 		temp->prev->next = temp->next;
@@ -109,29 +107,4 @@ void CircularListInt::remove(size_t index){
 		delete temp;
 		count--;
 	}
-	// cerr << "count " << count << endl;
 }
-// int main(){
-// 	CircularListInt* list = new CircularListInt();
-// 	list->push_back(10);
-// 	list->push_back(11);
-// 	list->push_back(12);
-// 	list->push_back(13);
-// 	for (size_t i = 0; i < list->size(); i++){
-// 		cout << list->get(i) << endl;
-// 	}
-// 	cout<< endl;
-// 	list->remove(7);
-// 	for (size_t i = 0; i < list->size(); i++){
-// 		cout << list->get(i) << endl;
-// 	}
-// 	cout<< endl;
-// 	list->push_back(15);
-// 	list->set(7, 90);
-// 	list->remove(1);
-// 	list->remove(12);
-// 	for (size_t i = 0; i < list->size(); i++){
-// 		cout << list->get(i) << endl;
-// 	}
-// 	return 0; 
-// }

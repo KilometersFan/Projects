@@ -59,7 +59,8 @@ public:
 	~CircularListInt();
 
 	// Gets item at an index.
-	// If an index is passed that is larger then the number of items in the list, it should "wrap around" back to the first element.
+	// If an index is passed that is larger then the number of items 
+	//in the list, it should "wrap around" back to the first element.
 	// If there are no elements in the list, returns 0.
 	int get(size_t index) const;
 

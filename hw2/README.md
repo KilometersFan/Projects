@@ -4,7 +4,7 @@ Miles Phan
 milespha@usc.edu
 
 # Homework 2 consists of:
--Quiz on Git
+- Quiz on Git
 - Quiz on Abstract Data Types
 - Quiz on Recursion and Linked Lists
 - Selection Sort Practive

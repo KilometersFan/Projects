@@ -4,7 +4,7 @@
   c) README.md : tracked and staged; fun_problem.txt : tracked and staged
   d) README.md : tracked and modified; fun_problem.txt : tracked and modified
   e) README.md : tracked and staged; fun_problem.txt : tracked and unmodified and contains nothing
-  f) README.md : tracked, staged and unstaged because git remembers the version of README prior to your edit as the one to be staged for commit but also knows that you editted README after running git add so the most recent version of README is unstaged while the previous version is staged.
+  f) README.md : tracked, staged and unstaged/modified because git remembers the version of README prior to your edit as the one to be staged for commit but also knows that you editted README after running git add so the most recent version of README is unstaged while the previous version is staged.
 
 3)
   1. A map of key value pairs where the keys are ints, representing the zip codes, and the values are structs which contain the statistics of various types. Maps are optimal for this data type because they act like functions producing an output for a specific input. Each zip code will have its own set of statistics.

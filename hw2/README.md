@@ -1,7 +1,7 @@
 #CS104 HW2
-Miles Phan
-1297309286
-milespha@usc.edu
+Miles Phan\n
+1297309286\n
+milespha@usc.edu\n
 
 # Homework 2 consists of:
 - Quiz on Git

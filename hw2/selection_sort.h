@@ -36,7 +36,6 @@ Item* findMin(Item * head);
 
 // Sorts the given list in ascending order and returns the new head.
 // Returns nullptr iff head is nullptr.
-// Should NOT modify the original list.
 Item* LLSelectionSort(Item * head);
 
 #endif

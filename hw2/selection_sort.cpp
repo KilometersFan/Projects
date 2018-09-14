@@ -29,20 +29,21 @@ Item* LLSelectionSort(Item* head){
 	//get smallest item
 	Item* min = findMin(head);
 	//base case
-	// if head = min, then you know all of the list items after
-	// head are greater than head so continue onto the next
-	// recursive loop
-	if(head == min)
-		return min;
 	//rearrange pointers to fix the list
 	// if you're not at the last item in the list 
 	// you fix min->next
-	if(min->next){
-		min->next->prev = min->prev;
+	if(head != min){
+		if(min->next){
+			min->next->prev = min->prev;
+		}
+		min->prev->next = min->next;
+		min->prev = head->prev;
+		head->prev = min;
 	}
-	min->prev->next = min->next;
-	min->prev = head->prev;
-	head->prev = min;
+	// if head = min, then shift head to the next item in the list
+	else {
+		head = head->next;
+	}
 	//calculate next smallest item using recursive call
 	min->next = LLSelectionSort(head);
 	//after the recursive call is done, returns the smallest

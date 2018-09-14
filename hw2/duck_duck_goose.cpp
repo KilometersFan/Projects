@@ -18,7 +18,7 @@ void simulateDDGRound(GameData* gameData, std::ostream & output) {
 		size_t i = 0;
 		while (i < m){
 			//write to output
-			output << gameData->playerList.get(i) << " is a Duck!"<< endl;
+			output << gameData->playerList.get(i) << " is a Duck."<< endl;
 			i++;
 		}
 		//write to output
@@ -53,7 +53,7 @@ void simulateDDGRound(GameData* gameData, std::ostream & output) {
 			}
 			else{
 				//randomly choose new it player from list
-				size_t r = rand() % (m-1);
+				size_t r = rand() % (m+ 1);
 				size_t newGooseID = gameData->playerList.get(r);
 				//write to output
 				output << gameData->itPlayerID << " is out!"<< endl;
@@ -62,8 +62,8 @@ void simulateDDGRound(GameData* gameData, std::ostream & output) {
 				gameData->playerList.remove(r);
 				output << gameData->itPlayerID << " was chosen as the new it."<< endl; 
 			}
-			//decrement playerlist size
 			num_list--;
+			//decrement playerlist size
 		}
 	}
 	//write to output

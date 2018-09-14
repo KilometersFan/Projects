@@ -46,6 +46,10 @@ class CircularListInt
 	// pointer to current head of list (index 0)
 	Item * head = nullptr;
 
+	// Finds the pointer to an item at the given index.
+	// Handles wrapping the index around if it is ?= the size of the list.
+	// Assumes that the size of the list is not 0.
+	Item * findItem(size_t index) const;
 
 public:
 

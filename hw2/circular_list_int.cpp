@@ -124,3 +124,12 @@ void CircularListInt::remove(size_t index){
 		count--;
 	}
 }
+CircularListInt::Item* CircularListInt::findItem(size_t index) const {
+	size_t true_count = (index % count);
+	//moves through the list to the desired index
+	Item* temp = head;
+	for (size_t i = 0; i < true_count; i++){
+		temp = temp->next;
+	}
+	return temp;
+}

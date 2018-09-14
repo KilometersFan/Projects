@@ -1,9 +1,9 @@
-#CS104 HW2
+# CS104 HW2
 -Miles Phan
 -1297309286
 -milespha@usc.edu
 
-# Homework 2 consists of:
+## Homework 2 consists of:
 - Quiz on Git
 - Quiz on Abstract Data Types
 - Quiz on Recursion and Linked Lists
@@ -11,7 +11,7 @@
 - Circularly Linked List Practice
 - Duck Duck Goose Game
 
-# Instructions:
+## Instructions:
 - To test selection_sort, circular_link_int, 
 and duck_duck_goose files against the provided tests, 
 move into the hw2-check directory and type "cmake ." 

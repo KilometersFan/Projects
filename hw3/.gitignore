@@ -1,0 +1,7 @@
+parser
+*.o
+circular_list_int
+*.o
+stack
+*.o
+

@@ -12,9 +12,7 @@ StackInt::~StackInt(){
 * Returns true if the stack is empty, false otherwise
 */
 bool StackInt::empty() const {
-	if(list.empty())
-		return true;
-	return false;
+	return list.empty();
 }
 
 /**

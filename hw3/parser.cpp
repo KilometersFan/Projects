@@ -31,10 +31,10 @@ void parser(ifstream &ifile){
 	StackInt stack;
 	string s;
 	while(getline(ifile,s)){
-		stringstream ss(s);
 		char buff;
 		int final = 0, int1 = 0, int2 = 0;
-		bool add = false, multiply = false, malformed = false;
+		bool add = false, multiply = false, malformed = false, close_paren = false;
+		stringstream ss(s);
 		while(ss >> buff){
 			string prevOperation = "";
 			if(buff == '('){
@@ -91,11 +91,7 @@ void parser(ifstream &ifile){
 				stack.push(RIGHT_SHIFT);
 			}
 			else if(buff - '0' >= 0 && buff - '0' < 10){
-				if(stack.empty()){
-					malformed = true;
-					break;
-				}
-				else {
+				if (!stack.empty()) {
 					if(stack.top() > -1){
 						malformed = true;
 						break;
@@ -110,6 +106,7 @@ void parser(ifstream &ifile){
 				stack.push(stoi(temp));
 			}
 			else if(buff == ')'){
+				close_paren = true;
 				if(stack.empty()){
 					malformed = true;
 					break;
@@ -170,21 +167,32 @@ void parser(ifstream &ifile){
 					break;
 				}
 				reset_vals(add, multiply, int1, int2);
-			} 
+			}
+			else {
+				malformed = true;
+				break;
+			}
 		}
 		if(!stack.empty()){
 			while(!stack.empty()){
-				if(stack.top() == LEFT_SHIFT)
+				if(final && stack.top() == LEFT_SHIFT)
 					final *= 2;
-				else if(stack.top() == RIGHT_SHIFT)
+				else if(final && stack.top() == RIGHT_SHIFT)
 					final /= 2;
 				else if(stack.top() == OPEN_PAREN)
+					malformed = true;
+				else if(!close_paren && stack.top() > OPEN_PAREN)
+					final = stack.top();
+				else if(!close_paren && stack.top() < 0)
 					malformed = true;
 				stack.pop();
 			}			
 		}
-		if(!malformed) cout << "final value: "<< final << endl;
-		else cout << "Malformed."<<endl;
+		if(!malformed){ 
+			if(s != "")
+				cout << final << endl;
+		}
+		else cout << "Malformed"<<endl;
 	}
 }
 

@@ -10,7 +10,8 @@ void parser(ifstream &ifile);
 
 void reset_vals(bool &add, bool &multiply, int& int1, int& int2);
 
-void add_or_multiply(bool &add, bool &multiply, int& int1, int& int2, int& final, string& prev);
+void add_or_multiply(bool &add, bool &multiply, int& int1, 
+	int& int2, int& final, string& prev);
 
 int main(int argc, char const *argv[])
 {
@@ -27,7 +28,8 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 void parser(ifstream &ifile){
-	const int OPEN_PAREN = -1, LEFT_SHIFT = -2, RIGHT_SHIFT = -3, ADD = -4, MULTIPLY = -5;
+	const int OPEN_PAREN = -1, LEFT_SHIFT = -2, RIGHT_SHIFT = -3,
+	 ADD = -4, MULTIPLY = -5;
 	StackInt stack;
 	string s;
 	while(getline(ifile,s)){
@@ -138,7 +140,8 @@ void parser(ifstream &ifile){
 						stack.pop();
 					}
 					else {
-						if((add && prevOperation == "m") || (multiply && prevOperation == "a")){
+						if((add && prevOperation == "m") || 
+							(multiply && prevOperation == "a")){
 							malformed = true;
 							break;
 						}
@@ -150,7 +153,8 @@ void parser(ifstream &ifile){
 							else if(stack.top() == RIGHT_SHIFT)
 								int2 /= 2;
 							else{
-								add_or_multiply(add, multiply, int1, int2, final, prevOperation);
+								add_or_multiply(add, multiply, int1, 
+									int2, final, prevOperation);
 								stack.push(final);
 								reset_vals(add, multiply, int1, int2);
 							}
@@ -203,7 +207,8 @@ void reset_vals(bool &add, bool &multiply, int& int1, int& int2){
 	int2 = 0;
 }
 
-void add_or_multiply(bool &add, bool &multiply, int& int1, int& int2, int& final, string& prev){
+void add_or_multiply(bool &add, bool &multiply, int& int1, 
+	int& int2, int& final, string& prev){
 	if(add){
 		int1 += int2;
 		prev = "a";

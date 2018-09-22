@@ -106,21 +106,16 @@ void CircularListInt::remove(size_t index){
 		count--;
 	}
 	else {
-		//find true index
-		size_t true_index = index % count;
-		Item* temp = head;
-		//move through list till desired index
-		for (size_t i = 0; i < true_index; i++){
-			temp = temp->next;
-		}
-		//if temp is head, set head to next item
-		if(temp == head){
-			head = head->next;
-		}
+		Item* temp = head->prev;
 		//fix pointers so list remains intact
 		temp->prev->next = temp->next;
 		temp->next->prev = temp->prev;
 		delete temp;
+		if(temp == head){
+			head = nullptr;
+			head->next = nullptr;
+			head->prev = nullptr;
+		}
 		count--;
 	}
 }

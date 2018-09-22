@@ -28,17 +28,25 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 void parser(ifstream &ifile){
+	//set characters to negative values to pass into stack
 	const int OPEN_PAREN = -1, LEFT_SHIFT = -2, RIGHT_SHIFT = -3,
 	 ADD = -4, MULTIPLY = -5;
 	StackInt stack;
 	string s;
+	//loop through file and evaluate each line
 	while(getline(ifile,s)){
 		char buff;
+		//int1 and int2 will hold values that will be added and multiplied. 
+		//final holds the final val
 		int final = 0, int1 = 0, int2 = 0;
+		//checks to see if operations are used, if the string is malformed, 
+		//or if a close paren was seen
 		bool add = false, multiply = false, malformed = false, close_paren = false;
 		stringstream ss(s);
 		while(ss >> buff){
+			//holds prev operation if avaliable
 			string prevOperation = "";
+			//push '('' if the previous character is not a number, else the string is malformed
 			if(buff == '('){
 				if(!stack.empty()){
 					if(stack.top() > -1){
@@ -48,6 +56,7 @@ void parser(ifstream &ifile){
 				}
 				stack.push(OPEN_PAREN);
 			}
+			//push '*' or '+' when stack is not empty and the prev character was a number
 			else if(buff == '*'){
 				if(stack.empty()){
 					malformed = true;
@@ -74,6 +83,7 @@ void parser(ifstream &ifile){
 				}
 				stack.push(ADD);
 			}
+			//push '<' or '>' if prev character is not '(' of a number
 			else if(buff == '<'){
 				if(!stack.empty()){
 					if(stack.top() > -1){
@@ -92,6 +102,7 @@ void parser(ifstream &ifile){
 				}
 				stack.push(RIGHT_SHIFT);
 			}
+			//push a number if the stack isn't empty
 			else if(buff - '0' >= 0 && buff - '0' < 10){
 				if (!stack.empty()) {
 					if(stack.top() > -1){
@@ -101,6 +112,7 @@ void parser(ifstream &ifile){
 				}
 				string temp ="";
 				temp += buff;
+				//push the entire number not each digit
 				while(ss.peek() - '0' >= 0 && ss.peek() - '0' < 10){
 					ss >> buff;
 					temp += buff;
@@ -109,6 +121,8 @@ void parser(ifstream &ifile){
 			}
 			else if(buff == ')'){
 				close_paren = true;
+				//checks to see malformed cases. if empty stack or if a non-number
+				//is before the ')'
 				if(stack.empty()){
 					malformed = true;
 					break;
@@ -119,11 +133,15 @@ void parser(ifstream &ifile){
 						break;
 					}
 				}
+				//opop from stack until you hit '('
 				while(stack.top() != OPEN_PAREN){
+					//if you pop the whole stack without stopping, its malformed
 					if(stack.empty()){
 						malformed = true;
 						break;
 					}
+					//check to see if operations are present and set add and multiply to
+					//desired values
 					if (!add && !multiply){
 						if(stack.top() > OPEN_PAREN)
 							int1 = stack.top();
@@ -140,11 +158,14 @@ void parser(ifstream &ifile){
 						stack.pop();
 					}
 					else {
+						//check to see if there is a mix of add and multiply in the
+						//same expression
 						if((add && prevOperation == "m") || 
 							(multiply && prevOperation == "a")){
 							malformed = true;
 							break;
 						}
+						//add or multiply int1 and int2 
 						if(stack.top() > OPEN_PAREN)
 							int2 = stack.top();
 						else{
@@ -163,6 +184,8 @@ void parser(ifstream &ifile){
 							stack.pop();
 					}
 				}
+				//stack top is '('. pop it and if need be, add or multiply int1 and int2
+				//set final and push it to the stack. If no operations were present, string is malformed
 				stack.pop();
 				add_or_multiply(add, multiply, int1, int2, final, prevOperation);
 				stack.push(final);
@@ -177,6 +200,7 @@ void parser(ifstream &ifile){
 				break;
 			}
 		}
+		//if there is leftover characters or if no ')' was present, evaluate the expression
 		if(!stack.empty()){
 			while(!stack.empty()){
 				if(final && stack.top() == LEFT_SHIFT)
@@ -185,9 +209,13 @@ void parser(ifstream &ifile){
 					final /= 2;
 				else if(stack.top() == OPEN_PAREN)
 					malformed = true;
-				else if(!close_paren && stack.top() > OPEN_PAREN)
+				else if(!close_paren && stack.top() > OPEN_PAREN){
 					final = stack.top();
-				else if(!close_paren && stack.top() < 0)
+					close_paren = true;
+				}
+				else if(!close_paren && stack.top() < 0 && !final)
+					malformed = true;
+				else if (stack.top() == ADD || stack.top() == MULTIPLY)
 					malformed = true;
 				stack.pop();
 			}			
@@ -199,25 +227,23 @@ void parser(ifstream &ifile){
 		else cout << "Malformed"<<endl;
 	}
 }
-
+//resets the bools and ints used to evaluate the expression
 void reset_vals(bool &add, bool &multiply, int& int1, int& int2){
 	add = false;
 	multiply = false;
 	int1 = 0;
 	int2 = 0;
 }
-
+//adds or multiplies int 1 and int2 then sets final to their sum/product
 void add_or_multiply(bool &add, bool &multiply, int& int1, 
 	int& int2, int& final, string& prev){
 	if(add){
 		int1 += int2;
 		prev = "a";
 	}
-
 	else if(multiply){
 		int1 *= int2;
 		prev = "m";
 	}
-
 	final = int1;
 }

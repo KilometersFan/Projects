@@ -15,4 +15,4 @@
 - navigate into hw-milespha/hw3 directory
 - Type "make" in the terminal. This compiles the necessary executables.
 - Type "./parser " and an input .txt file
-- The program will output to the terminal either a number of the word "Malformed"
+- The program will output to the terminal either a number or the word "Malformed"

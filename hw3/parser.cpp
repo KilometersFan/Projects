@@ -184,7 +184,7 @@ void parser(ifstream &ifile){
 					}
 				}
 				//stack top is '('. pop it and if need be, add or multiply int1 and int2
-				//set final and push it to the stack. If no operations were present, string is malformed
+				//set final and push it to the stack. If no ops were present, str is malformed
 				stack.pop();
 				add_or_multiply(add, multiply, int1, int2, final, prevOperation);
 				stack.push(final);

@@ -1,6 +1,5 @@
 #include "stackint.h"
 #include <iostream>
-#include <stdlib.h>
 #include <fstream>
 #include <sstream>
 #include <string>
@@ -46,7 +45,7 @@ void parser(ifstream &ifile){
 		while(ss >> buff){
 			//holds prev operation if avaliable
 			string prevOperation = "";
-			//push '('' if the previous character is not a number, else the string is malformed
+			//push '('' if the previous character is not a number
 			if(buff == '('){
 				if(!stack.empty()){
 					if(stack.top() > -1){
@@ -56,7 +55,7 @@ void parser(ifstream &ifile){
 				}
 				stack.push(OPEN_PAREN);
 			}
-			//push '*' or '+' when stack is not empty and the prev character was a number
+			//push '*' or '+' when stack is not empty and prev char is a number
 			else if(buff == '*'){
 				if(stack.empty()){
 					malformed = true;
@@ -220,8 +219,10 @@ void parser(ifstream &ifile){
 				stack.pop();
 			}			
 		}
+		//print value of expression if not malformed and if line wasn't whitespace
 		if(!malformed){ 
-			if(s != "")
+			if(s.find_first_not_of(' ') != std::string::npos && 
+				s.find_first_not_of('\t') != std::string::npos)
 				cout << final << endl;
 		}
 		else cout << "Malformed"<<endl;

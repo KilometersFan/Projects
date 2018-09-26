@@ -19,21 +19,21 @@
 
 3. 
 a) 
-	Θ(nlog(n)).
+	theta(nlog(n)).
 	
 	for (int i = 0; i < n; i ++)
 	    if (A[i] == 0) {
 	       for (int j = 1; j < n; j *= 2)
-	          { /* do something that takes Θ(1) time */ }
+	          { /* do something that takes theta(1) time */ }
 	    }
 	The inner for loop runs in log(n) time because
-	it is a summation from k = 1 to log(n) of Θ(1).
+	it is a summation from k = 1 to log(n) of theta(1).
 	The outer for loop is a summation of log(n) from 0 to n,
 	which equates to nlog(n) based on the definition of a 
 	summation.
 
 b)
-	Θ(n^2)
+	theta(n^2)
 
 	int tally=0;
 	for (int i = 1; i < n; i ++)
@@ -50,17 +50,17 @@ b)
 	   }
 	}
 	The inner most for loop runs in log(n) time because
-	it is a summation from k = 1 to log(n) of Θ(1). However the loop
+	it is a summation from k = 1 to log(n) of theta(1). However the loop
 	only runs when j % i == 0. Notice the sequence of run times.
 	n, n/2, n/3 ... 1 because i must be a factor of j. The summation of this
-	sequence is from j = i to n-1 of Θ(log(n))/j which is the definition of 
-	a harmonic series. This then becomes Θ(log^2(n)). Then the outer for loop is a summation 
-	of Θ(log(n)^2) fromi = 1 to n, which is equivalent to Θ(n(log(n)^2)). However when 
-	j % i != 0, the run time is Θ(n^2) as only the if statement is ran in the second
-	for loop. Θ(n^2) > Θ(n(log(n)^2) so the worst run time is Θ(n^2).
+	sequence is from j = i to n-1 of theta(log(n))/j which is the definition of 
+	a harmonic series. This then becomes theta(log^2(n)). Then the outer for loop is a summation 
+	of theta(log(n)^2) fromi = 1 to n, which is equivalent to theta(n(log(n)^2)). However when 
+	j % i != 0, the run time is theta(n^2) as only the if statement is ran in the second
+	for loop. theta(n^2) > theta(n(log(n)^2) so the worst run time is theta(n^2).
 
 c)
-	Θ(n^2)
+	theta(n^2)
 
 	int *a = new int [10];
 	int size = 10;
@@ -81,15 +81,15 @@ c)
 	The inner most for loop is a summation from j = 0 to size.
 	Notice the size will always equal i because of the if block that
 	encompasses the loop and that size is always a multiple of ten. For now,
-	this for loop is a summation from j = 0 to i of Θ(1) which equals
-	Θ(i). This is also accompanied by the other statements which sum up to 
-	Θ(1) This loop will only run when i == size and size is a multiple of ten.
+	this for loop is a summation from j = 0 to i of theta(1) which equals
+	theta(i). This is also accompanied by the other statements which sum up to 
+	theta(1) This loop will only run when i == size and size is a multiple of ten.
 	So while the outer most for loop is a summation from i = 0
-	to n - 1 of Θ(i) + Θ(1), it is actually a summation from i = 0 to n/10 of Θ(10i) 
-	+ O(10). This equals Θ(n^2 + n) which is simplified to Θ(n^2).
+	to n - 1 of theta(i) + theta(1), it is actually a summation from i = 0 to n/10 of theta(10i) 
+	+ O(10). This equals theta(n^2 + n) which is simplified to theta(n^2).
 
 d)
-	Θ(n)
+	theta(n)
 
 	int *a = new int [10];
 	int size = 10;
@@ -110,9 +110,9 @@ d)
 	The inner most for loop is a summation from j = 0 to size.
 	Notice the size will always equal i because of the if block that
 	encompasses the loop and that size is always equal to 10 * 2^x where 
-	x is between 0 and n. This summation is akin to O(log(i)) The outer most loop
-	is a summation from i = 0 to n. The thing being summed is normally Θ(1) run 
-	time but when i = size, it is Θ(log(i)) + Θ(1) run time. This happens when i =
+	x is between 0 and n. This summation is akin to theta(log(i)) The outer most loop
+	is a summation from i = 0 to n. The thing being summed is normally theta(1) run 
+	time but when i = size, it is theta(log(i)) + theta(1) run time. This happens when i =
 	10 * 2^x and x is between 0 and n. We can rewrite this summation to be from i = 1 to
-	log(n/10) of Θ(10*2^i) which is equal to the previous summation. We can reduce this to 
-	be Θ(10*n/10) = Θ(n).
+	log(n/10) of theta(10*2^i) which is equal to the previous summation. We can reduce this to 
+	be theta(10*n/10) = theta(n).

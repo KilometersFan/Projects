@@ -53,14 +53,16 @@ The inner most for loop runs in log(n) time because the sequence of
 run times is 1, 2, 4, 8, 16 ... which is a summation from k = 1 to log(n) 
 of theta(1). However the loop only runs when j % i == 0. 
 Notice the sequence of run times: n, n/2, n/3 ... 1 because i must be a 
-factor of j. The summation of this sequence is from j = i to n-1 of theta(log(n))/j 
-which is the definition of a harmonic series. This then becomes theta(log^2(n)). 
-Then the outer for loop is a summation of theta(log(n)^2) from i = 1 to n, which is 
+factor of j. The summation of this sequence is from j = i to n-1 
+of theta(log(n))/j which is the definition of a harmonic series. 
+This then becomes theta(log^2(n)). Then the outer for loop is a 
+summation of theta(log(n)^2) from i = 1 to n, which is 
 equivalent to theta(n(log(n)^2)). However when j % i != 0, the run time
 is of the statements in the inner loop is theta(1) as only the if statement 
-is ran. The run time sequence for the second for loop is n-1, n-2, n-3, ... 1,
-which can be simplified into theta(n/2) total run time. The out for loop is a summation of
-theta(n/2) from 1 to n-1, which results in theta(n^2) after dropping the constant 
+is ran. The run time sequence for the second for loop is n-1, 
+n-2, n-3, ... 1, which can be simplified into theta(n/2) total run 
+time. The outerfor loop is a summation of theta(n/2) from 1 to
+n-1, which results in theta(n^2) after dropping the constant.
 theta(n^2) > theta(n(log(n)^2) so the worst run time is theta(n^2).
 
 c)

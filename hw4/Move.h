@@ -97,8 +97,6 @@ public:
 	void execute(Board & board, Bag & bag, Dictionary & dictionary);
 
 	//Add more public/protected/private functions/variables here.
-private: 
-	Player * _player;
 };
 
 // represents an exchange move, were a player replaces certain tiles
@@ -163,7 +161,6 @@ private:
 	size_t _x;
 	size_t _y;
 	bool _horizontal;
-	Player * _player;
 };
 
 

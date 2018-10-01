@@ -6,8 +6,9 @@ using namespace std;
 /* Constructor giving the player the given name, and setting their points to 0.
 Does not give the player any tiles.
 */
-Player::Player (std::string const & name, size_t maxTiles): _tileCount(maxTiles){
+Player::Player (string const & name, size_t maxTiles){
 	_name = name;
+	_tileCount = maxTiles;
 }
 
 /* Destructor for a player. Deletes all the tiles the player still has. */
@@ -20,9 +21,9 @@ Player::~Player (){
 }
 
 /* Returns the set of tiles the player currently holds. */
-std::set<Tile*> Player::getHandTiles() const {
+set<Tile*> Player::getHandTiles() const {
 	for (set<Tile*>::iterator it = _hand.begin(); it != _hand.end(); it++){
-			std::cout << *it << std::endl;
+			cout << *it << endl;
 		}
 	return _hand;
 }
@@ -40,8 +41,35 @@ By definition, if this function returns true, then takeTiles() would
 succeed.
 */
 
-bool Player::hasTiles(std::string const & move, bool resolveBlanks) const{
-	return true;
+bool Player::hasTiles(string const & move, bool resolveBlanks) const{
+	bool hasTile = false;
+	set<Tile*> temp = _hand;
+	for(unsigned int i = 0; i < move.length(); i++){
+		hasTile = false;
+		for(set<Tile*>::iterator it = temp.begin(); it != temp.end(); it++){
+			if(!resolveBlanks){
+				if(move[i] == (*it)->getLetter()){
+					hasTile = true;
+					temp.erase(it);
+					break;
+				}
+			}
+			else {
+				if(move[i] == '?')
+					++i;
+				if(move[i] != (*it)->getUse())
+					break;
+				else {
+					hasTile = true;
+					temp.erase(it);
+					++i;
+				}
+			}
+		}
+		if(!hasTile)
+			return hasTile;
+	}
+	return hasTile;
 }
 
 
@@ -57,14 +85,38 @@ and the "use" field of the tile is set accordingly.
 
 The move string is assumed to have correct syntax.
 */
-std::vector<Tile*> Player::takeTiles (std::string const & move, bool resolveBlanks){
-	std::vector<Tile*> myvect;
-	return myvect;
+vector<Tile*> Player::takeTiles (string const & move, bool resolveBlanks){
+	vector<Tile*> tilesToRemove;
+	for(unsigned int i = 0; i < move.length(); i++){
+		for(set<Tile*>::iterator it = _hand.begin(); it != _hand.end(); it++){
+			if(!resolveBlanks){
+				if(move[i] == (*it)->getLetter()){
+					tilesToRemove.push_back(*it);
+					_hand.erase(it);
+					break;
+				}
+			}
+			else {
+				if(move[i] == (*it)->getLetter()){
+					if(move[i] == '?'){
+						if(move[i+1] == (*it)->getUse())
+							tilesToRemove.push_back(*it);
+							_hand.erase(it);
+							++i;
+							break;
+					}
+				}
+			}
+		}
+	}
+	return tilesToRemove;
 }
 
 // Adds all the tiles in the vector to the player's hand.
-void Player::addTiles (std::vector<Tile*> const & tilesToAdd){
-
+void Player::addTiles (vector<Tile*> const & tilesToAdd){
+	for (size_t i = 0; i < tilesToAdd.size(); i++){
+		_hand.insert(tilesToAdd[i]);
+	}
 }
 size_t Player::getMaxTiles() const{
 	return _tileCount;

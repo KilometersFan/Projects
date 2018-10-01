@@ -70,8 +70,8 @@ public:
 	//Add more public/protected/private functions/variables here.
 
 	size_t getMaxTiles() const;
-private:
 	std::set<Tile*> _hand;
+private:
 	std::string _name;
 	size_t _score;
 	size_t _tileCount;

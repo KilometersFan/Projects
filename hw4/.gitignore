@@ -1,0 +1,14 @@
+scrabble
+*.o
+Move
+*.o
+Player
+*.o
+Board
+*.o
+Bag
+*.o
+Dictionary
+*.o
+ConsolePrinter
+*.o

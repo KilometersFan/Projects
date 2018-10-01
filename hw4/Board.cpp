@@ -57,7 +57,6 @@ vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m
 	vector<pair<string, unsigned int>> vectTemp;
 	vectTemp.push_back(temp);
 	return vectTemp;
-
 }
 
 /* Executes the given move by taking tiles and placing them on the board.

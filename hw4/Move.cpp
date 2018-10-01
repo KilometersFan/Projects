@@ -16,11 +16,11 @@ PassMove::PassMove(Player * player) : Move(player){
 	_player = player;
 }
 
-ExchangeMove::ExchangeMove(std::string tileString, Player * p) : Move(p){
+ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 	_tileString = tileString;
 }
 
-PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, std::string tileString, Player * p) : Move(p){
+PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Player * p) : Move(p){
 	_x = x;
 	_y = y;
 	_horizontal = horizontal;
@@ -28,7 +28,7 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, std::string tileStrin
 }
 
 
-Move * Move::parseMove(std::string moveString, Player &p){
+Move * Move::parseMove(string moveString, Player &p){
 	transform(moveString.begin(), moveString.end(), moveString.begin(), ::tolower);
 	stringstream ss(moveString);
 	string moveType = "";
@@ -61,9 +61,14 @@ void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 }
 
 void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
-	
+	vector<Tile*> playerTiles;
+	if(_player->hasTiles(_tileString, false)){
+		playerTiles = _player->takeTiles(_tileString, false);
+	}
+	bag.addTiles(playerTiles);
+	return;
 }
 
 void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
-
+	
 }

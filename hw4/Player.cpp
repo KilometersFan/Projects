@@ -55,14 +55,13 @@ bool Player::hasTiles(string const & move, bool resolveBlanks) const{
 				}
 			}
 			else {
-				if(move[i] == '?')
-					++i;
-				if(move[i] != (*it)->getUse())
-					break;
-				else {
+				if(move[i] == (*it)->getLetter()){
+					if(move[i] == '?'){
+						++i;
+					}
 					hasTile = true;
 					temp.erase(it);
-					++i;
+					break;
 				}
 			}
 		}
@@ -99,12 +98,12 @@ vector<Tile*> Player::takeTiles (string const & move, bool resolveBlanks){
 			else {
 				if(move[i] == (*it)->getLetter()){
 					if(move[i] == '?'){
-						if(move[i+1] == (*it)->getUse())
-							tilesToRemove.push_back(*it);
-							_hand.erase(it);
-							++i;
-							break;
+						(*it)->useAs(move[i+1]);
+						++i;
 					}
+					tilesToRemove.push_back(*it);
+					_hand.erase(it);
+					break;
 				}
 			}
 		}
@@ -120,4 +119,10 @@ void Player::addTiles (vector<Tile*> const & tilesToAdd){
 }
 size_t Player::getMaxTiles() const{
 	return _tileCount;
+}
+string Player::getName() const {
+	return _name;
+}
+size_t Player::getScore() const {
+	return _score;
 }

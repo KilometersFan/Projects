@@ -9,7 +9,7 @@ scrabble: scrabble.cpp Player.o Move.o Dictionary.o Bag.o Board.o ConsolePrinter
 Player.o: Player.cpp Player.h Tile.h
 	$(CXX) $(CPPFLAGS) -c $< -o $@
 
-Move.o: Move.cpp Move.h Tile.h Bag.h Dictionary.h Player.h 
+Move.o: Move.cpp Move.h Tile.h Bag.h Dictionary.h Player.h Board.h
 	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 Dictionary.o: Dictionary.cpp Dictionary.h

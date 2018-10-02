@@ -1,9 +1,12 @@
 #include "Move.h"
+#include "Board.h"
 #include <sstream>
 #include <algorithm>
 #include <locale>
 #include <string>
+#include <iostream>
 using namespace std;
+
 Move::~Move(){
 
 }
@@ -13,11 +16,12 @@ Move::Move(Player * player) {
 }
 
 PassMove::PassMove(Player * player) : Move(player){
-	_player = player;
 }
 
 ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 	_tileString = tileString;
+	if(_player->hasTiles(tileString, false))
+		_playerTiles = _player->takeTiles(_tileString, false);
 }
 
 PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Player * p) : Move(p){
@@ -25,6 +29,8 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 	_y = y;
 	_horizontal = horizontal;
 	_tileString = tileString;
+	if(_player->hasTiles(_tileString, true))
+		_playerTiles = _player->takeTiles(_tileString, true);
 }
 
 
@@ -61,14 +67,23 @@ void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 }
 
 void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
-	vector<Tile*> playerTiles;
-	if(_player->hasTiles(_tileString, false)){
-		playerTiles = _player->takeTiles(_tileString, false);
-	}
-	bag.addTiles(playerTiles);
+	bag.addTiles(_playerTiles);
+	_player->addTiles(bag.drawTiles(_playerTiles.size()));
 	return;
 }
 
+size_t PlaceMove::getX() const{
+	return _x;
+}
+
+size_t PlaceMove::getY() const{
+	return _y;
+}
+
+bool PlaceMove::isHorizontal() const{
+	return _horizontal;
+}
+
 void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
-	
+	vector<pair<string, unsigned int>> words = board.getPlaceMoveResults(*this);
 }

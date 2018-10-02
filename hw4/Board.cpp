@@ -1,5 +1,6 @@
 #include "Board.h"
 #include <fstream>
+#include <iostream>
 using namespace std;
 
 Board::Board (std::string board_file_name){
@@ -53,10 +54,25 @@ Board::~Board (){
    The words returned from this function must be checked against the dictionary to
    determine if the move is legal.	*/
 vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m) const{
-	pair<string, unsigned int> temp ("Hi", 0);
-	vector<pair<string, unsigned int>> vectTemp;
-	vectTemp.push_back(temp);
-	return vectTemp;
+	size_t x = m.getX();
+	size_t y = m.getY();
+	bool horizontal = m.isHorizontal();
+	cout << x << y<< horizontal << endl;
+	vector<Tile*> playerTiles = m.tileVector();
+	cout << playerTiles.size() << endl;
+	vector<pair<string, unsigned int>> results;
+	for (unsigned int i = 0; i < playerTiles.size(); i++){
+		cout << playerTiles[i]->getUse();
+	}
+	cout << endl;
+	for (unsigned int i = 0; i < playerTiles.size(); i++){
+		string word = "";
+		if(horizontal){
+			Square* s = getSquare(x + i, y);
+
+		}
+	}
+	return results;
 }
 
 /* Executes the given move by taking tiles and placing them on the board.

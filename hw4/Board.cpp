@@ -67,7 +67,7 @@ vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m
 			word = getWord(x + i, y, horizontal, playerTiles[i]);
 		else 
 			word = getWord(x, y + i, horizontal, playerTiles[i]);
-		if(word.second > -1 && word.first != "")
+		if(word.second > 0 && word.first != "")
 			results.push_back(word);
 		else 
 			continue;
@@ -85,68 +85,83 @@ pair<string, unsigned int> Board::getWord(size_t x, size_t y, bool isHorizontal,
 	pair<string, unsigned int> buff("", -1);
 	if(square->isOccupied())
 		return buff;
-	buff = getAdjacentWordsHelper(x, y, square, isHorizontal, tile);
+	buff = getAdjacentVerticalWordsHelper(x, y, square, isHorizontal, tile);
 	return buff;
 }
 
-pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t x, size_t y, Square* square, bool isHorizontal, Tile* tile){
-	unsigned int score = tile->getPoints() * square->getLMult() * square->getWMult();
-   	stack<char> upperLetters;
-	queue<char> lowerLetters;
-	size_t i = 1;
-	size_t j = 1;
+pair<string, unsigned int> Board::getAdjacentVerticalWordsHelper(size_t x, size_t y, Square* square, bool horizontal, Tile* tile){
+	unsigned int score = tile->getPoints() * square->getLMult();
+	unsigned int wordMult = square->getWMult();
+	size_t i = 0;
 	pair<string, unsigned int> result;
-	//get all letters above the initial square
-	if(isHorizontal)
-		square = getSquare(x - i, y);
-	else 
-		square = getSquare(x, y - i);
-	while (square->isOccupied() && x <= getRows()){
-		upperLetters.push(square->getLetter());
-		//calculate score of the tile
-		score += square->getScore() * square->getLMult() * square->getWMult();
+	Square* newSquare = getSquare(x - 1, y);
+	while (square->isOccupied() && x - i - 1 >0){
 		i++;
-		if(isHorizontal)
-			square = getSquare(x - i, y);
-		else 
-			square = getSquare(x, y - i);
+		newSquare = getSquare(x - i - 1, y);
 	}
-	//get all letter below the initial square
-	if(isHorizontal)
-		square = getSquare(x + j, y);
-	else
-		square = getSquare(x, y + j);
-	while (square->isOccupied() && x > 0){
-		lowerLetters.push(square->getLetter());
-		//calculate score of the tile
-		score += square->getScore() * square->getLMult() * square->getWMult();
-		j++;
-		if(isHorizontal)
-			square = getSquare(x + j, y);
-		else
-			square = getSquare(x, y + j);
-	}
-	//combine the letters to make the word
+	size_t k = 0;
+	size_t top_x = x - i;
+	//if nothing is 
+	newSquare = getSquare(top_x, y);
 	string word = "";
-	if(!upperLetters.empty() || !lowerLetters.empty()){
-		while(!upperLetters.empty()){
-			word += upperLetters.top();
-			upperLetters.pop();
+
+	while ((newSquare->isOccupied() || top_x + k == x) && top_x + k <= getRows()){
+		if(top_x + k == x){
+			word += tile->getUse();
 		}
-		word+=tile->getUse();
-		while(!lowerLetters.empty()){
-			word+= lowerLetters.front();
-			lowerLetters.pop();
+		else {
+			word += newSquare->getLetter();
+			score += newSquare->getScore();
 		}
+		k++;
+		newSquare = getSquare(top_x + k, y);
+
 	}
-	//create pair of word and score
-	result = make_pair(word, score);
+	score *= wordMult;
+	cout << word << " " << score << endl;
+	if(word.length() > 1)
+		result = make_pair(word, score);
 	return result;
 		
 }
 
-pair<string, unsigned int> getOriginalWord(size_t x, size_t y, bool horizontal, vector<Tile*> tiles){
+pair<string, unsigned int> Board::getAdjacentHorizontalWordsHelper(size_t x, size_t y, Square* square, bool horizontal, Tile* tile){
+	unsigned int score = tile->getPoints() * square->getLMult();
+	unsigned int wordMult = square->getWMult();
+	size_t i = 0;
+	pair<string, unsigned int> result;
+	Square* newSquare = getSquare(x - 1, y);
+	while (square->isOccupied() && x - i - 1 >0){
+		i++;
+		newSquare = getSquare(x - i - 1, y);
+	}
+	size_t k = 0;
+	size_t top_x = x - i;
+	//if nothing is 
+	newSquare = getSquare(top_x, y);
+	string word = "";
 
+	while ((newSquare->isOccupied() || top_x + k == x) && top_x + k <= getRows()){
+		if(top_x + k == x){
+			word += tile->getUse();
+		}
+		else {
+			word += newSquare->getLetter();
+			score += newSquare->getScore();
+		}
+		k++;
+		newSquare = getSquare(top_x + k, y);
+
+	}
+	score *= wordMult;
+	if(word.length() > 1)
+		result = make_pair(word, score);
+	return result;
+		
+}
+
+pair<string, unsigned int> Board::getOriginalWord(size_t x, size_t y, bool horizontal, vector<Tile*> tiles){
+	
 }
 /* Executes the given move by taking tiles and placing them on the board.
    This function does not check for correctness of the move, so could

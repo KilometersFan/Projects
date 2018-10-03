@@ -22,7 +22,7 @@
 #include "Move.h"
 #include "Dictionary.h"
 #include <utility>
-
+#include "Exceptions.h"
 class Board
 {
 	
@@ -47,8 +47,13 @@ public:
 	   This function does not check that the words formed are actually in the dictionary.
 	   The words returned from this function must be checked against the dictionary to
 	   determine if the move is legal.	*/
-	std::vector<std::pair<std::string, unsigned int>> getPlaceMoveResults(const PlaceMove &m) const;
+	std::vector<std::pair<std::string, unsigned int>> getPlaceMoveResults(const PlaceMove &m);
 
+	std::pair<std::string, unsigned int> getWord(size_t x, size_t y, bool isHor, Tile* tile);
+
+	std::pair<std::string, unsigned int> getAdjacentWordsHelper(size_t x, size_t y, Square* square, bool horizontal, Tile* tile);
+
+	std::pair<std::string, unsigned int> getOriginalWord(size_t x, size_t y, bool horizontal, std::vector<Tile*> tiles);
 	/* Executes the given move by taking tiles and placing them on the board.
 	   This function does not check for correctness of the move, so could
 	   segfault or cause other errors if called for an incorrect move.

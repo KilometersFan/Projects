@@ -15,11 +15,11 @@ int main(int argc, char const *argv[])
 	vector<Tile*> player1Hand = bag.drawTiles(8);
 	player1.addTiles(player1Hand);
 	console.printHand(player1);
-	Move* n = Move::parseMove("EXCHANGE aaeeeei", player1);
+	Move* n = Move::parseMove("EXCHANGE aaeeei", player1);
 	console.printHand(player1);
 	n->execute(board, bag, dic);
 	console.printHand(player1);
-	Move* m = Move::parseMove("PLACE - 3 3 ?VINE", player1);
+	Move* m = Move::parseMove("PLACE - 3 3 VINE", player1);
 	m->execute(board, bag, dic);
 	console.printHand(player1);
 	// Move* n = Move::parseMove("PLACE | 1 2 afr ", player1);

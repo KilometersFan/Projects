@@ -20,8 +20,16 @@ PassMove::PassMove(Player * player) : Move(player){
 
 ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 	_tileString = tileString;
-	if(_player->hasTiles(tileString, false))
-		_playerTiles = _player->takeTiles(_tileString, false);
+	try {
+		if(_player->hasTiles(tileString, false))
+			_playerTiles = _player->takeTiles(_tileString, false);
+		else
+			throw MoveException("Player does not have tiles: " + _tileString);
+	}
+	catch (MoveException &e){
+		cout << e.getMessage() << endl;
+	}
+	
 }
 
 PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Player * p) : Move(p){
@@ -29,8 +37,15 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 	_y = y;
 	_horizontal = horizontal;
 	_tileString = tileString;
-	if(_player->hasTiles(_tileString, true))
-		_playerTiles = _player->takeTiles(_tileString, true);
+	try {
+		if(_player->hasTiles(tileString, true))
+			_playerTiles = _player->takeTiles(_tileString, true);
+		else
+			throw MoveException("Player does not have tiles: " + _tileString);
+	}
+	catch (MoveException &e){
+		cout << e.getMessage() << endl;
+	}
 }
 
 

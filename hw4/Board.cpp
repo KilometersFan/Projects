@@ -1,6 +1,8 @@
 #include "Board.h"
 #include <fstream>
 #include <iostream>
+#include <stack>
+#include <queue>
 using namespace std;
 
 Board::Board (std::string board_file_name){
@@ -15,8 +17,8 @@ Board::Board (std::string board_file_name){
 			char c;
 			ifile >> c;
 			bool startCoord = false;
-			unsigned int LMult = 0;
-			unsigned int WMult = 0;
+			unsigned int LMult = 1;
+			unsigned int WMult = 1;
 			pair<size_t, size_t> location = make_pair(i, j);
 			if(i == _sx && j == _sy)
 				startCoord = true;
@@ -34,7 +36,7 @@ Board::Board (std::string board_file_name){
 Board::~Board (){
 	for (size_t i = 1; i <= _x; i++){
 		for (size_t j = 1; j <= _y; j++){
-			delete _board[std::pair<size_t, size_t> (i, j)];
+			delete _board[pair<size_t, size_t> (i, j)];
 		}
 	}
 }
@@ -53,28 +55,99 @@ Board::~Board (){
    This function does not check that the words formed are actually in the dictionary.
    The words returned from this function must be checked against the dictionary to
    determine if the move is legal.	*/
-vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m) const{
+vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m){
 	size_t x = m.getX();
 	size_t y = m.getY();
 	bool horizontal = m.isHorizontal();
-	cout << x << y<< horizontal << endl;
-	vector<Tile*> playerTiles = m.tileVector();
-	cout << playerTiles.size() << endl;
+	vector<Tile*> playerTiles = m.getPlayerTiles();
 	vector<pair<string, unsigned int>> results;
-	for (unsigned int i = 0; i < playerTiles.size(); i++){
-		cout << playerTiles[i]->getUse();
+	pair<string, unsigned int> word("",-1);
+	for (size_t i = 0; i < playerTiles.size(); i++){
+		if(horizontal)
+			word = getWord(x + i, y, horizontal, playerTiles[i]);
+		else 
+			word = getWord(x, y + i, horizontal, playerTiles[i]);
+		if(word.second > -1 && word.first != "")
+			results.push_back(word);
+		else 
+			continue;
 	}
-	cout << endl;
-	for (unsigned int i = 0; i < playerTiles.size(); i++){
-		string word = "";
-		if(horizontal){
-			Square* s = getSquare(x + i, y);
-
-		}
+	word = getOriginalWord(x, y, false, playerTiles);
+	results.push_back(word);
+	for (vector<pair<string, unsigned int>>::iterator it = results.begin(); it != results.end(); it++){
+		cout << (*it).first << endl;
 	}
 	return results;
 }
 
+pair<string, unsigned int> Board::getWord(size_t x, size_t y, bool isHorizontal, Tile* tile){
+	Square* square = getSquare(x, y); 
+	pair<string, unsigned int> buff("", -1);
+	if(square->isOccupied())
+		return buff;
+	buff = getAdjacentWordsHelper(x, y, square, isHorizontal, tile);
+	return buff;
+}
+
+pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t x, size_t y, Square* square, bool isHorizontal, Tile* tile){
+	unsigned int score = tile->getPoints() * square->getLMult() * square->getWMult();
+   	stack<char> upperLetters;
+	queue<char> lowerLetters;
+	size_t i = 1;
+	size_t j = 1;
+	pair<string, unsigned int> result;
+	//get all letters above the initial square
+	if(isHorizontal)
+		square = getSquare(x - i, y);
+	else 
+		square = getSquare(x, y - i);
+	while (square->isOccupied() && x <= getRows()){
+		upperLetters.push(square->getLetter());
+		//calculate score of the tile
+		score += square->getScore() * square->getLMult() * square->getWMult();
+		i++;
+		if(isHorizontal)
+			square = getSquare(x - i, y);
+		else 
+			square = getSquare(x, y - i);
+	}
+	//get all letter below the initial square
+	if(isHorizontal)
+		square = getSquare(x + j, y);
+	else
+		square = getSquare(x, y + j);
+	while (square->isOccupied() && x > 0){
+		lowerLetters.push(square->getLetter());
+		//calculate score of the tile
+		score += square->getScore() * square->getLMult() * square->getWMult();
+		j++;
+		if(isHorizontal)
+			square = getSquare(x + j, y);
+		else
+			square = getSquare(x, y + j);
+	}
+	//combine the letters to make the word
+	string word = "";
+	if(!upperLetters.empty() || !lowerLetters.empty()){
+		while(!upperLetters.empty()){
+			word += upperLetters.top();
+			upperLetters.pop();
+		}
+		word+=tile->getUse();
+		while(!lowerLetters.empty()){
+			word+= lowerLetters.front();
+			lowerLetters.pop();
+		}
+	}
+	//create pair of word and score
+	result = make_pair(word, score);
+	return result;
+		
+}
+
+pair<string, unsigned int> getOriginalWord(size_t x, size_t y, bool horizontal, vector<Tile*> tiles){
+
+}
 /* Executes the given move by taking tiles and placing them on the board.
    This function does not check for correctness of the move, so could
    segfault or cause other errors if called for an incorrect move.

@@ -31,5 +31,12 @@ public:
 private:
 	std::string _message;
 };
-
+class MoveException : public std::exception {
+   public:
+   MoveException (std::string message) { _message = message; }
+   ~MoveException () throw () {}
+   std::string getMessage () const { return _message; }
+private:
+   std::string _message;
+};
 #endif /* EXCEPTIONS_H_ */

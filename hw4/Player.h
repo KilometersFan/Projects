@@ -15,7 +15,7 @@
 #include <string>
 #include <set>
 #include <vector>
-
+#include "Exceptions.h"
 #include "Tile.h"
 
 

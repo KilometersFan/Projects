@@ -20,7 +20,7 @@
 #include "Player.h"
 #include "Bag.h"
 #include "Dictionary.h"
-
+#include "Exceptions.h"
 // forward declaration to prevent circular includes
 class Board;
 
@@ -57,6 +57,22 @@ public:
 	{
 		return false;
 	}
+	virtual std::vector<Tile*> getPlayerTiles () const  
+	{
+		return _playerTiles;
+	}
+	
+	virtual size_t getX() const{
+		return 0;
+	}
+
+	virtual	size_t getY() const{
+		return 0;
+	}
+
+	virtual bool isHorizontal() const{
+		return false;
+	}
 
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
@@ -70,7 +86,7 @@ public:
 protected:
 
 	Player * _player;
-
+	std::vector<Tile*> _playerTiles;
 	// constructor -- only accessible to subclasses
 	Move(Player * player);
 
@@ -146,14 +162,16 @@ public:
 		return true;
 	}
 
-	/* Returns the vector of tiles associated with a PLACE/EXCHANGE move.
-	   Return value could be arbitrary for PASS moves. */
-	std::vector<Tile*> const & tileVector () const;
-
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
 	   decide (and document) what exactly it throws*/
 	void execute(Board & board, Bag & bag, Dictionary & dictionary);
+
+	size_t getX() const;
+
+	size_t getY() const;
+
+	bool isHorizontal() const;
 
 	//Add more public/protected/private functions/variables here.
 private: 

@@ -8,7 +8,7 @@
 using namespace std;
 
 Move::~Move(){
-
+	
 }
 
 Move::Move(Player * player) {
@@ -100,5 +100,20 @@ bool PlaceMove::isHorizontal() const{
 }
 
 void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
+	bool legalWord = true;
 	vector<pair<string, unsigned int>> words = board.getPlaceMoveResults(*this);
+	try{
+		for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
+			legalWord = dictionary.isLegalWord(it->first);
+			if(!legalWord || !board.validPlaceMove(*this))
+				throw MoveException("Invalid Move!");
+		}
+		cout << "Valid Move!" << endl;
+		board.executePlaceMove(*this);
+		_player->addTiles(bag.drawTiles(_playerTiles.size()));
+	}
+	catch (MoveException &e){
+		cout << e.getMessage() << endl;
+		_player->addTiles(getPlayerTiles());
+	}
 }

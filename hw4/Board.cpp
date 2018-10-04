@@ -63,10 +63,10 @@ vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m
 	vector<pair<string, unsigned int>> results;
 	pair<string, unsigned int> word("",-1);
 	for (size_t i = 0; i < m.getPlayerTiles().size(); i++){
-		if(horizontal)
-			word = getAdjacentWords(x + i, y, horizontal, m.getPlayerTiles()[i]);
+		if(!horizontal)
+			word = getAdjacentWords(x , y+ i, horizontal, m.getPlayerTiles()[i]);
 		else 
-			word = getAdjacentWords(x, y + i, horizontal, m.getPlayerTiles()[i]);
+			word = getAdjacentWords(x+ i, y , horizontal, m.getPlayerTiles()[i]);
 		if(word.second >= 0 && word.first != "")
 			results.push_back(word);
 	}
@@ -86,22 +86,39 @@ bool Board::validPlaceMove(const PlaceMove &m){
 	bool startCoord = false;
 	bool connected = false;
 	while (squaresToFill != 0 && !connected && !startCoord){
-		square = getSquare(x, y + k);
+		if(!horizontal){
+			square = getSquare(x, y + k);
+			connected = validPlaceMoveHelper(x - 1, y + k);
+			if(connected)
+				break;
+			connected = validPlaceMoveHelper(x + 1, y + k);
+			if(connected)
+				break;
+			connected = validPlaceMoveHelper(x, y + k - 1);
+			if(connected)
+				break;
+			connected = validPlaceMoveHelper(x, y + k + 1);
+			if(connected)
+				break;
+		}
+		else{
+			square = getSquare(x + k, y);
+			connected = validPlaceMoveHelper(x - 1 + k, y);
+			if(connected)
+				break;
+			connected = validPlaceMoveHelper(x + 1 + k, y);
+			if(connected)
+				break;
+			connected = validPlaceMoveHelper(x + k, y - 1);
+			if(connected)
+				break;
+			connected = validPlaceMoveHelper(x + k,  y + 1);
+			if(connected)
+				break;
+		}
 		if(square->isStart()){
 			startCoord = true;
 		}
-		connected = validPlaceMoveHelper(x - 1, y + k);
-		if(connected)
-			break;
-		connected = validPlaceMoveHelper(x + 1, y + k);
-		if(connected)
-			break;
-		connected = validPlaceMoveHelper(x, y + k - 1);
-		if(connected)
-			break;
-		connected = validPlaceMoveHelper(x, y + k + 1);
-		if(connected)
-			break;
 		squaresToFill--;
 		k++;
 	}	
@@ -132,7 +149,7 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	size_t i = 0;
 	pair<string, unsigned int> result;
 	Square* newSquare;
-	if(horizontal){
+	if(!horizontal){
 	  	newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
 			i++;
@@ -150,7 +167,7 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	size_t top_x = x - i;
 	size_t top_y = y - i;
 	string word = "";
-	if(horizontal)	{
+	if(!horizontal)	{
 		newSquare = getSquare(top_x, y);
 		while ((newSquare->isOccupied() || top_x + k == x) && top_x + k <= getRows()){
 			if(top_x + k == x){
@@ -162,7 +179,6 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 			}
 			k++;
 			newSquare = getSquare(top_x + k, y);
-
 		}
 	}
 	else {
@@ -177,10 +193,8 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 			}
 			k++;
 			newSquare = getSquare(x, top_y + k);
-
 		}
 	}
-	
 	score *= wordMult;
 	if(word.length() > 1)
 		result = make_pair(word, score);
@@ -194,7 +208,7 @@ pair<string, unsigned int> Board::getOriginalWord(size_t &x, size_t &y, bool &ho
 	size_t i = 0;
 	pair<string, unsigned int> result;
 	Square* newSquare;
-	if(!horizontal){
+	if(horizontal){
 	  	newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
 			i++;
@@ -214,7 +228,7 @@ pair<string, unsigned int> Board::getOriginalWord(size_t &x, size_t &y, bool &ho
 	string word = "";
 	int squaresToFill = tiles.size();
 
-	if(!horizontal)	{
+	if(horizontal)	{
 		newSquare = getSquare(top_x, y);
 		while ((newSquare->isOccupied() || squaresToFill != 0) && top_x + k <= getRows()){
 			if(!newSquare->isOccupied()){
@@ -269,10 +283,9 @@ void Board::executePlaceMove (const PlaceMove & m){
 	Square* square = getSquare(x, y);
 	size_t i = 0;
 	vector<Tile*> playerTiles = m.getPlayerTiles();
-	cout << playerTiles.size() << endl;
 	size_t spacesToFill = playerTiles.size();
 	while (spacesToFill != 0){
-		if(horizontal)
+		if(!horizontal)
 			square = getSquare(x, y + i);
 		else 
 			square = getSquare(x + i, y);

@@ -105,6 +105,7 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	try{
 		for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
 			legalWord = dictionary.isLegalWord(it->first);
+			cout <<"LEGAL WORD IS: " <<it->first << endl;
 			if(!legalWord || !board.validPlaceMove(*this))
 				throw MoveException("Invalid Move!");
 		}

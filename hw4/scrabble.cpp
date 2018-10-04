@@ -19,9 +19,10 @@ int main(int argc, char const *argv[])
 	console.printHand(player1);
 	n->execute(board, bag, dic);
 	console.printHand(player1);
-	Move* m = Move::parseMove("PLACE - 3 3 VINE", player1);
+	Move* m = Move::parseMove("PLACE | 3 3 VINE?S", player1);
 	m->execute(board, bag, dic);
-	console.printHand(player1);
-	// Move* n = Move::parseMove("PLACE | 1 2 afr ", player1);
+	// console.printHand(player1);
+	// Move* t = Move::parseMove("PLACE - 1 2 RUY ", player1);
+	// t->execute(board, bag, dic);
 	return 0;
 }

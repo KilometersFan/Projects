@@ -3,122 +3,67 @@
 #include "Board.h"
 #include "ConsolePrinter.h"
 #include <iostream>
+#include <fstream>
 using namespace std;
+
 int main(int argc, char const *argv[])
 {
-	Dictionary dic("dictionary.txt");
-	Board board("board.txt");
-	Player player1 = Player("Miles", 8);
-	Bag bag = Bag("bag.txt", 99978);
-	ConsolePrinter console;
-	console.printBoard(board);
-	vector<Tile*> player1Hand = bag.drawTiles(8);
-	player1.addTiles(player1Hand);
-	console.printHand(player1);
+	try{
+		if(argc < 2){
+			throw FileException("No file specified.");
+		}
+		ifstream ifile(argv[1]);
+		if(ifile.fail()){
+			throw FileException("Unable to open file.");
+		}
+		size_t maxTiles = 0;
+		string boardFile = "";
+		string bagFile = "";
+		string dictionaryFile = "";
+		uint32_t seed = 0;
+		string buff;
+		while (ifile >> buff){
+			if(buff == "HANDSIZE:")
+				ifile >> maxTiles;
+			else if (buff == "TILES:")
+				ifile >> bagFile;
+			else if (buff == "DICTIONARY:")
+				ifile >> dictionaryFile;
+			else if (buff == "BOARD:")
+				ifile >> boardFile;
+			else if(buff == "SEED:")
+				ifile >> seed;
+		}	
+		ifile.close();
+		Dictionary dic(dictionaryFile);
+		Board board(boardFile);
+		Bag bag = Bag(bagFile, seed);
+		ConsolePrinter console;
+		bool gameOver = false;
+		cout << "Hello! Welcome to Scrabble. Please enter the number of players in the game (max 8): ";
+		int numPlayers;
+		cin >> numPlayers;
+		vector<Player*> players;
+		for (int i = 0; i < numPlayers; i++){
+			string name;
+			cout << "Please tell me your name: ";
+			cin >> name;
+			Player* player = new Player(name, maxTiles);
+			players.push_back(player);
+			vector <Tile*> initialHand = bag.drawTiles(maxTiles);
+			player->addTiles(initialHand);
+			cout << "Hello " + name + "!" << endl;
+			console.printHand(*(players[i])); 
+		}
+		// console.printBoard(board);
+		for(vector<Player*>::iterator it = players.begin(); it != players.end(); it++){
+			delete *it;
+		}
+	}
+	catch (FileException &e){
+		cout << e.getMessage() << endl;
+	}	
 
-	Move* n = Move::parseMove("EXCHANGE aaeeei", player1);
-	n->execute(board, bag, dic);
-	console.printHand(player1);
-	Move* m = Move::parseMove("PLACE - 8 8 VINE", player1);
-	console.printHand(player1);
-	m->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* t = Move::parseMove("PLACE | 11 6 RY", player1);
-	console.printHand(player1);
-	t->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* s = Move::parseMove("PLACE - 6 6 BITT?E", player1);
-	console.printHand(player1);
-	s->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* r = Move::parseMove("PLACE | 9 7 RAL", player1);
-	console.printHand(player1);
-	r->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* u = Move::parseMove("PLACE - 6 10 FAUT", player1);
-	console.printHand(player1);
-	u->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* y = Move::parseMove("EXCHANGE iiiudm", player1);
-	y->execute(board, bag, dic);
-	console.printHand(player1);
-	Move* z= Move::parseMove("PLACE - 10 7 O", player1);
-	z->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* a= Move::parseMove("PLACE | 8 7 EE", player1);
-	a->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* b= Move::parseMove("PLACE - 12 6 LOVE", player1);
-	b->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* c= Move::parseMove("PLACE | 15 5 TPID", player1);
-	c->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* d= Move::parseMove("PLACE - 12 9 RAI", player1);
-	d->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* e= Move::parseMove("PLACE - 1 6 BETUW", player1);
-	e->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* f= Move::parseMove("PLACE | 1 1 DEEFO", player1);
-	f->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	Move* g= Move::parseMove("PLACE - 5 5 OCPQSUU", player1);
-	g->execute(board, bag, dic);
-	console.printBoard(board);
-	console.printHand(player1);
-	cout << player1.getScore() << endl;
-	// Move* h= Move::parseMove("PLACE - 13 7 ON", player1);
-	// h->execute(board, bag, dic);
-	// console.printBoard(board);
-	// console.printHand(player1);
-	// cout << player1.getScore() << endl;
-	// Move* i= Move::parseMove("PLACE | 5 5 OAHHINNO", player1);
-	// i->execute(board, bag, dic);
-	// console.printBoard(board);
-	// console.printHand(player1);
-	// cout << player1.getScore() << endl;
-	
-	delete m;
-	delete n;
-	delete t;
-	delete s;
-	delete r;
-	delete u;
-	delete y;
-	delete z;
-	delete a;
-	delete b;
-	delete c;
-	delete d;
-	delete e;
-	delete f;
-	delete g;
-	// delete h;
-	// delete i;
 	return 0;
+	
 }

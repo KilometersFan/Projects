@@ -42,37 +42,23 @@ Board::~Board (){
 	}
 }
 
-/* returns a vector of all words that would be formed by executing the
-       given move. The first element of the pair is a string containing the word
-       formed, and the second element is the score that that word earns
-       (with all multipliers, but not the 50-point bonus for all letters).
-getSquare
-   Words returned are all in uppercase.
+/* Returns a pointer to the Square object representing the
+   (y,x) position of the board. Indexing starts at 1 here.
+   This is needed only to display the board. */
+Square * Board::getSquare (size_t x, size_t y) const {
+	pair<size_t, size_t> location = make_pair(x,y);
+	Square * square = _board.find(location)->second;
+	return square;
+}
 
-   The last entry of the vector is always the "main" word formed
-   in the direction chosen by the user; the others could be in arbitrary
-   order. (This is helpful for backtracking search.)
+/* Returns the number of rows of the board.*/
+size_t Board::getRows() const{
+	return _x;
+}
 
-   This function does not check that the words formed are actually in the dictionary.
-   The words returned from this function must be checked against the dictionary to
-   determine if the move is legal.	*/
-vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m){
-	size_t x = m.getX();
-	size_t y = m.getY();
-	bool horizontal = m.isHorizontal();
-	vector<pair<string, unsigned int>> results;
-	pair<string, unsigned int> word("",-1);
-	for (size_t i = 0; i < m.getPlayerTiles().size(); i++){
-		if(!horizontal)
-			word = getAdjacentWords(x , y+ i, horizontal, m.getPlayerTiles()[i]);
-		else 
-			word = getAdjacentWords(x+ i, y , horizontal, m.getPlayerTiles()[i]);
-		if(word.second >= 0 && word.first != "")
-			results.push_back(word);
-	}
-	word = getOriginalWord(x, y, horizontal, m.getPlayerTiles());
-	results.push_back(word);
-	return results;
+/* Returns the number of columns of the board.*/
+size_t Board::getColumns() const{
+	return _y;
 }
 
 bool Board::validPlaceMove(const PlaceMove &m){
@@ -80,46 +66,61 @@ bool Board::validPlaceMove(const PlaceMove &m){
 	size_t y = m.getY();
 	bool horizontal = m.isHorizontal();
 	vector<Tile*> tiles = m.getPlayerTiles();
-	Square* square;
+	Square* square = getSquare(x, y);
+	if(square->isOccupied())
+		return false;
 	size_t k = 0;
 	int squaresToFill = tiles.size();
-	bool startCoord = false;
 	bool connected = false;
-	while (squaresToFill != 0 && !connected && !startCoord){
+	bool startCoord = false;
+	while (squaresToFill != 0){
+		bool topConnected = false;
+		bool bottomConnected = false;
+		bool leftConnected = false;
+		bool rightConnected = false;
+		size_t top_x = x + k;
+		size_t top_y = y + k;
 		if(!horizontal){
+			if(top_y > getRows()){
+				return false;
+			}
 			square = getSquare(x, y + k);
-			connected = validPlaceMoveHelper(x - 1, y + k);
-			if(connected)
-				break;
-			connected = validPlaceMoveHelper(x + 1, y + k);
-			if(connected)
-				break;
-			connected = validPlaceMoveHelper(x, y + k - 1);
-			if(connected)
-				break;
-			connected = validPlaceMoveHelper(x, y + k + 1);
-			if(connected)
-				break;
+			if(!square->isOccupied()){
+				if(x - 1 > 0 && y + k <= getRows())
+					leftConnected = validPlaceMoveHelper(x - 1, top_y);
+				if(x + 1 <= getColumns() && y + k <= getRows())
+					rightConnected = validPlaceMoveHelper(x + 1, top_y);
+				if(top_y -1 > 0)
+					topConnected = validPlaceMoveHelper(x, top_y - 1);
+				if(top_y + 1 <= getRows()) 
+					bottomConnected = validPlaceMoveHelper(x, top_y + 1);
+				if(topConnected || bottomConnected || leftConnected || rightConnected)
+					connected = true;
+				squaresToFill--;
+			}
 		}
 		else{
+			if(top_x > getColumns()){
+				return false;
+			}
 			square = getSquare(x + k, y);
-			connected = validPlaceMoveHelper(x - 1 + k, y);
-			if(connected)
-				break;
-			connected = validPlaceMoveHelper(x + 1 + k, y);
-			if(connected)
-				break;
-			connected = validPlaceMoveHelper(x + k, y - 1);
-			if(connected)
-				break;
-			connected = validPlaceMoveHelper(x + k,  y + 1);
-			if(connected)
-				break;
+			if(!square->isOccupied()){
+				if(top_x - 1 > 0)
+					leftConnected = validPlaceMoveHelper(top_x - 1, y);
+				if(top_x + 1 <= getColumns())
+					rightConnected = validPlaceMoveHelper(top_x + 1, y);
+				if(top_x <= getColumns() && y -1 > 0)
+					topConnected = validPlaceMoveHelper(top_x, y - 1);
+				if(top_x <= getColumns() && y + 1 <= getRows())
+					bottomConnected = validPlaceMoveHelper(top_x, y + 1);
+				if(topConnected || bottomConnected || leftConnected || rightConnected)
+					connected = true;
+				squaresToFill--;
+			}
 		}
-		if(square->isStart()){
+		if(square->isStart() && !square->isOccupied()){
 			startCoord = true;
 		}
-		squaresToFill--;
 		k++;
 	}	
 	if(connected || startCoord)
@@ -134,12 +135,49 @@ bool Board::validPlaceMoveHelper(size_t x, size_t y){
 	return false;
 }
 
+vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m){
+	size_t x = m.getX();
+	size_t y = m.getY();
+	bool horizontal = m.isHorizontal();
+	vector<pair<string, unsigned int>> results;
+	pair<string, unsigned int> word("",0);
+	Square * square;
+	size_t spacesToFill = m.getPlayerTiles().size();
+	size_t i = 0;
+	size_t count = 0;
+	while (spacesToFill != 0){
+		word = make_pair("", 0);
+		if(!horizontal){
+			square = getSquare(x, y + i);
+			if(!square->isOccupied()){
+				word = getAdjacentWords(x , y+ i, horizontal, m.getPlayerTiles()[count]);
+				count++;
+				spacesToFill--;
+			}
+		}
+		else {
+			square = getSquare(x + i , y);
+			if(!square->isOccupied()){
+				word = getAdjacentWords(x+ i, y , horizontal, m.getPlayerTiles()[count]);
+				count++;
+				spacesToFill--;
+			}
+		}
+		if(word.second >= 0 && word.first != ""){
+			results.push_back(word);
+		}
+		i++;
+	}
+	word = getOriginalWord(m, m.getPlayerTiles());
+	results.push_back(word);
+	return results;
+}
+
 pair<string, unsigned int> Board::getAdjacentWords(size_t x, size_t y, bool horizontal, Tile* tile){
 	Square* square = getSquare(x, y); 
-	pair<string, unsigned int> buff("", -1);
-	if(square->isOccupied())
-		return buff;
-	buff = getAdjacentWordsHelper(x, y, square, horizontal, tile);	
+	pair<string, unsigned int> buff("", 0);
+	if(!square->isOccupied())
+		buff = getAdjacentWordsHelper(x, y, square, horizontal, tile);	
 	return buff;
 }
 //TODO Condense this function
@@ -149,14 +187,14 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	size_t i = 0;
 	pair<string, unsigned int> result;
 	Square* newSquare;
-	if(!horizontal){
+	if(!horizontal && x - 1 > 0){
 	  	newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
 			i++;
 			newSquare = getSquare(x - i - 1, y);
 		}
 	}
-	else {
+	else if (horizontal && y - 1 > 0){
 		newSquare = getSquare(x, y- 1);
 		while (newSquare->isOccupied() && y - i - 1 >0){
 			i++;
@@ -178,7 +216,8 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 				score += newSquare->getScore();
 			}
 			k++;
-			newSquare = getSquare(top_x + k, y);
+			if(top_x+k <= getRows())
+				newSquare = getSquare(top_x + k, y);
 		}
 	}
 	else {
@@ -192,7 +231,8 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 				score += newSquare->getScore();
 			}
 			k++;
-			newSquare = getSquare(x, top_y + k);
+			if(top_y + k <= getColumns())
+				newSquare = getSquare(x, top_y + k);
 		}
 	}
 	score *= wordMult;
@@ -202,24 +242,30 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 		
 }
 //TODO Condense this function
-pair<string, unsigned int> Board::getOriginalWord(size_t &x, size_t &y, bool &horizontal, vector<Tile*> tiles){
+pair<string, unsigned int> Board::getOriginalWord(const PlaceMove &m, vector<Tile*> tiles){
+	size_t x = m.getX();
+	size_t y = m.getY();
+	bool horizontal = m.isHorizontal();
 	unsigned int score = 0;
 	unsigned int wordMult = 1;
 	size_t i = 0;
+	size_t handSize = tiles.size();
 	pair<string, unsigned int> result;
 	Square* newSquare;
-	if(horizontal){
-	  	newSquare = getSquare(x - 1, y);
+	if(horizontal && x - 1 >0){
+		newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
 			i++;
-			newSquare = getSquare(x - i - 1, y);
+			if( x - i - 1 > 0)
+				newSquare = getSquare(x - i - 1, y);
 		}
 	}
-	else {
-		newSquare = getSquare(x, y- 1);
+	else if (!horizontal && y - 1 > 0){
+		newSquare = getSquare(x, y - 1);
 		while (newSquare->isOccupied() && y - i - 1 >0){
 			i++;
-			newSquare = getSquare(x, y- i - 1);
+			if(y - i - 1 > 0)
+				newSquare = getSquare(x, y - i - 1);
 		}
 	}
 	size_t k = 0;
@@ -229,8 +275,8 @@ pair<string, unsigned int> Board::getOriginalWord(size_t &x, size_t &y, bool &ho
 	int squaresToFill = tiles.size();
 
 	if(horizontal)	{
-		newSquare = getSquare(top_x, y);
-		while ((newSquare->isOccupied() || squaresToFill != 0) && top_x + k <= getRows()){
+		newSquare = getSquare(top_x + k, y);
+		while ((newSquare->isOccupied() || squaresToFill != 0) && top_x + k <= getColumns()){
 			if(!newSquare->isOccupied()){
 				word += tiles[0]->getUse();
 				wordMult *= newSquare->getWMult();
@@ -243,13 +289,13 @@ pair<string, unsigned int> Board::getOriginalWord(size_t &x, size_t &y, bool &ho
 				score += newSquare->getScore();
 			}
 			k++;
-			newSquare = getSquare(top_x + k, y);
-
+			if(top_x + k <= getColumns())
+				newSquare = getSquare(top_x + k, y);
 		}
 	}
 	else {
-		newSquare = getSquare(x, top_y);
-		while ((newSquare->isOccupied() || squaresToFill != 0) && top_y + k <= getColumns()){
+		newSquare = getSquare(x, top_y+k);
+		while ((newSquare->isOccupied() || squaresToFill != 0) && top_y + k <= getRows()){
 			if(!newSquare->isOccupied()){
 				word += tiles[0]->getUse();
 				wordMult *= newSquare->getWMult();
@@ -262,20 +308,16 @@ pair<string, unsigned int> Board::getOriginalWord(size_t &x, size_t &y, bool &ho
 				score += newSquare->getScore();
 			}
 			k++;
-			newSquare = getSquare(x, top_y + k);
-
+			if(top_y + k <= getRows())
+				newSquare = getSquare(x, top_y+k);
 		}
 	}
 	score *= wordMult;
+	if(handSize == m.getMaxTiles())
+		score += 50;
 	result = make_pair(word, score);
 	return result;
 }
-/* Executes the given move by taking tiles and placing them on the board.
-   This function does not check for correctness of the move, so could
-   segfault or cause other errors if called for an incorrect move.
-   When a blank tile '?' is placed on the board, it is treated as a letter,
-   i.e., the corresponding square has that letter (with score 0) placed on it.
-*/
 void Board::executePlaceMove (const PlaceMove & m){
 	size_t x = m.getX();
 	size_t y = m.getY();
@@ -296,23 +338,4 @@ void Board::executePlaceMove (const PlaceMove & m){
 		}
 		i++;
 	}
-}
-
-/* Returns a pointer to the Square object representing the
-   (y,x) position of the board. Indexing starts at 1 here.
-   This is needed only to display the board. */
-Square * Board::getSquare (size_t x, size_t y) const {
-	pair<size_t, size_t> location = make_pair(x,y);
-	Square * square = _board.find(location)->second;
-	return square;
-}
-
-/* Returns the number of rows of the board.*/
-size_t Board::getRows() const{
-	return _x;
-}
-
-/* Returns the number of columns of the board.*/
-size_t Board::getColumns() const{
-	return _y;
 }

@@ -24,7 +24,7 @@ ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 		if(_player->hasTiles(tileString, false))
 			_playerTiles = _player->takeTiles(_tileString, false);
 		else
-			throw MoveException("Player does not have tiles: " + _tileString);
+			throw MoveException("Error: Player does not have tiles: " + _tileString);
 	}
 	catch (MoveException &e){
 		cout << e.getMessage() << endl;
@@ -41,7 +41,7 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 		if(_player->hasTiles(tileString, true))
 			_playerTiles = _player->takeTiles(_tileString, true);
 		else
-			throw MoveException("Player does not have tiles: " + _tileString);
+			throw MoveException("Error: Player does not have tiles: " + _tileString);
 	}
 	catch (MoveException &e){
 		cout << e.getMessage() << endl;
@@ -98,20 +98,34 @@ size_t PlaceMove::getY() const{
 bool PlaceMove::isHorizontal() const{
 	return _horizontal;
 }
-
+size_t PlaceMove::getMaxTiles() const{
+	return _player->getMaxTiles();
+}
 void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	bool legalWord = true;
-	vector<pair<string, unsigned int>> words = board.getPlaceMoveResults(*this);
+	bool validMove = board.validPlaceMove(*this);
+	vector<pair<string, unsigned int>> words;
+	size_t points = 0;
 	try{
+		if(validMove)
+			words = board.getPlaceMoveResults(*this);
+		else 
+			throw MoveException("Error: Word was placed in an invalid location.");
 		for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
 			legalWord = dictionary.isLegalWord(it->first);
-			cout <<"LEGAL WORD IS: " <<it->first << endl;
-			if(!legalWord || !board.validPlaceMove(*this))
-				throw MoveException("Invalid Move!");
+			if(legalWord){
+				cout << "LEGAL WORD: " + legalWord << endl;
+				points += it->second;
+			}
+			else{
+				throw MoveException("Error: Word was not found in the dictionary: " + it->first);
+			}
 		}
+		_player->setScore(points);
 		cout << "Valid Move!" << endl;
 		board.executePlaceMove(*this);
 		_player->addTiles(bag.drawTiles(_playerTiles.size()));
+
 	}
 	catch (MoveException &e){
 		cout << e.getMessage() << endl;

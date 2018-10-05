@@ -75,6 +75,8 @@ public:
 
 	size_t getScore() const;
 
+	void setScore(size_t points);
+
 private:
 	std::set<Tile*> _hand;
 	std::string _name;

@@ -173,6 +173,7 @@ public:
 
 	bool isHorizontal() const;
 
+	size_t getMaxTiles() const;
 	//Add more public/protected/private functions/variables here.
 private: 
 	std::string _tileString;

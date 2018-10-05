@@ -9,6 +9,7 @@ Does not give the player any tiles.
 Player::Player (string const & name, size_t maxTiles){
 	_name = name;
 	_tileCount = maxTiles;
+	_score = 0;
 }
 
 /* Destructor for a player. Deletes all the tiles the player still has. */
@@ -125,4 +126,7 @@ string Player::getName() const {
 }
 size_t Player::getScore() const {
 	return _score;
+}
+void Player::setScore(size_t points) {
+	_score += points;
 }

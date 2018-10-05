@@ -10,6 +10,7 @@ Player::Player (string const & name, size_t maxTiles){
 	_name = name;
 	_tileCount = maxTiles;
 	_score = 0;
+	
 }
 
 /* Destructor for a player. Deletes all the tiles the player still has. */

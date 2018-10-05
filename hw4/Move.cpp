@@ -68,8 +68,8 @@ Move * Move::parseMove(string moveString, Player &p){
 	}
 	else {
 		ss >> dir;
-		ss >> x;
 		ss >> y;
+		ss >> x;
 		ss >> tileString;
 		if(dir == '-')
 			hor = true;

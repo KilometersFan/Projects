@@ -68,18 +68,19 @@ int main(int argc, char const *argv[])
 }
 void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dictionary, ConsolePrinter &console){
 	bool gameOver = false;
+	cin.ignore();
 	while (!gameOver){
 		for (unsigned int i = 0; i < players.size(); i++){
 			console.printBoard(board);
 			console.printHand(*(players[i]));
 			string move;
 			cout << "Hello " + players[i]->getName() + " what would you like to do?: ";
-			cin.ignore();
 			getline(cin, move);
+			cin.clear();
 			Move* m = Move::parseMove(move, *(players[i]));
-			m->execute(board, bag, dictionary);
-			console.printBoard(board);
-			console.printHand(*(players[i]));
+			while(m->execute(board, bag, dictionary));
+			cout << "Please press enter to end your turn." << endl;
+			cin.ignore();
 		}
 	}
 }

@@ -25,8 +25,10 @@ ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 			_playerTiles = _player->takeTiles(_tileString, false);
 		else
 			throw MoveException("Error: Player does not have tiles: " + _tileString);
+		setValidMove(true);
 	}
 	catch (MoveException &e){
+		setValidMove(false);
 		cout << e.getMessage() << endl;
 	}
 	
@@ -40,10 +42,12 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 	try {
 		if(_player->hasTiles(tileString, true))
 			_playerTiles = _player->takeTiles(_tileString, true);
-		else
+		else{
 			throw MoveException("Error: Player does not have tiles: " + _tileString);
+		}
 	}
 	catch (MoveException &e){
+		setValidMove(false);
 		cout << e.getMessage() << endl;
 	}
 }
@@ -51,6 +55,7 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 
 Move * Move::parseMove(string moveString, Player &p){
 	transform(moveString.begin(), moveString.end(), moveString.begin(), ::tolower);
+	cout << moveString << endl;
 	stringstream ss(moveString);
 	string moveType = "";
 	string tileString = "";
@@ -59,21 +64,28 @@ Move * Move::parseMove(string moveString, Player &p){
 	size_t y;
 	bool hor = false;
 	ss >> moveType;
-	if(moveType == "pass"){
+	try{
+		if(moveType == "pass"){
 		return new PassMove(&p);
+		}
+		else if (moveType == "exchange"){
+			ss >> tileString;
+			return new ExchangeMove(tileString, &p);
+		}
+		else if(moveType == "place"){
+			ss >> dir;
+			ss >> y;
+			ss >> x;
+			ss >> tileString;
+			if(dir == '-')
+				hor = true;
+			return new PlaceMove(x, y, hor, tileString, &p);
+		}
+		throw MoveException("Error: invalid action: " + moveType);
 	}
-	else if (moveType == "exchange"){
-		ss >> tileString;
-		return new ExchangeMove(tileString, &p);
-	}
-	else {
-		ss >> dir;
-		ss >> y;
-		ss >> x;
-		ss >> tileString;
-		if(dir == '-')
-			hor = true;
-		return new PlaceMove(x, y, hor, tileString, &p);
+	catch (MoveException &m){
+		setValidMove(false);
+		cerr << m.getMessage() << endl;
 	}
 }
 
@@ -83,7 +95,13 @@ void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 
 void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	bag.addTiles(_playerTiles);
-	_player->addTiles(bag.drawTiles(_playerTiles.size()));
+	vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());cout << "Tiles added to your hand:";
+	for (vector<Tile*>::iterator it = newTiles.begin(); it != newTiles.end(); it++){
+		cout << (*it)->getLetter();
+	}
+	cout << endl;
+	_player->addTiles(newTiles);
+	setValidMove(true);
 	return;
 }
 
@@ -109,12 +127,14 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	try{
 		if(validMove)
 			words = board.getPlaceMoveResults(*this);
-		else 
+		else{ 
+			setValidMove(false);
 			throw MoveException("Error: Word was placed in an invalid location.");
+		}
 		for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
 			legalWord = dictionary.isLegalWord(it->first);
 			if(legalWord){
-				cout << "LEGAL WORD: " + legalWord << endl;
+				cout << "Word created: " + it->first << endl;
 				points += it->second;
 			}
 			else{
@@ -122,12 +142,20 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 			}
 		}
 		_player->setScore(points);
-		cout << "Valid Move!" << endl;
+		cout << _player->getScore() << endl;
 		board.executePlaceMove(*this);
-		_player->addTiles(bag.drawTiles(_playerTiles.size()));
+		vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());
+		cout << "Tiles added to your hand: " << endl;
+		for (vector<Tile*>::iterator it = newTiles.begin(); it != newTiles.end(); it++){
+			cout << (*it)->getLetter();
+		}
+		cout << endl;
+		_player->addTiles(newTiles);
+		setValidMove(true);
 
 	}
 	catch (MoveException &e){
+		setValidMove(false);
 		cout << e.getMessage() << endl;
 		_player->addTiles(getPlayerTiles());
 	}

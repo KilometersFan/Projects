@@ -70,8 +70,10 @@ int main(int argc, char const *argv[])
 }
 void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dictionary, ConsolePrinter &console){
 	bool gameOver = false;
+	int pos = -1;
 	while (!gameOver){
 		unsigned int passCount = 0;
+		bool emptyHand = false;
 		for (unsigned int i = 0; i < players.size(); i++){
 			console.printBoard(board);
 			console.printHand(*(players[i]));
@@ -98,15 +100,19 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			}
 			if(m->isPass())
 				passCount++;
+			if(players[i]->getHandTiles().size() == 0){
+				emptyHand = true;
+				pos = i;
+			}
 			cout << "Please press enter to end your turn." << endl;
 			cin.ignore(10000, '\n');
 			delete m;
 		}
-		if(passCount == players.size() || !bag.tilesRemaining())
+		if(passCount == players.size() || emptyHand)
 			gameOver = true;
 	}
-	
 	cout << "Thanks for playing!" << endl;
+	int tileSum = 0;
 	for (unsigned int i = 0; i < players.size(); i++){
 		set<Tile*> playerHand =  players[i]->getHandTiles();
 		for(set<Tile*>::iterator it=playerHand.begin(); it != playerHand.end(); it++){
@@ -114,16 +120,20 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			int tileScore = static_cast<int>((*it)->getPoints());
 			if(playerScore - tileScore <= 0)
 				tileScore = 0;
-			else 
+			else {
+				tileSum += tileScore;
 				tileScore *= -1;
+			}
 			players[i]->setScore(tileScore);
 		}
-		cout << players[i]->getName() + "\'s final score: " << players[i]->getScore() << endl;
-			
 	}
+	if(pos >= 0)
+		players[pos]->setScore(tileSum);
+
 	size_t max = players[0]->getScore();
 	vector<Player*> winners;
 	for (unsigned int i = 0; i < players.size(); i++){
+		cout << players[i]->getName() << " " << players[i]->getScore() << endl;
 		if(players[i]->getScore() >= max)
 			max = players[i]->getScore();
 	}

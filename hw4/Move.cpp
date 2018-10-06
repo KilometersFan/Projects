@@ -16,6 +16,7 @@ Move::Move(Player * player) {
 }
 
 PassMove::PassMove(Player * player) : Move(player){
+	setValidMove(true);
 }
 
 ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
@@ -45,6 +46,7 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 		else{
 			throw MoveException("Error: Player does not have tiles: " + _tileString);
 		}
+		setValidMove(true);
 	}
 	catch (MoveException &e){
 		setValidMove(false);
@@ -60,8 +62,8 @@ Move * Move::parseMove(string moveString, Player &p){
 	string moveType = "";
 	string tileString = "";
 	char dir;
-	size_t x;
-	size_t y;
+	size_t x = 0;
+	size_t y = 0;
 	bool hor = false;
 	ss >> moveType;
 	try{
@@ -78,13 +80,12 @@ Move * Move::parseMove(string moveString, Player &p){
 			ss >> x;
 			ss >> tileString;
 			if(dir == '-')
-				hor = true;
+				hor = true;	
 			return new PlaceMove(x, y, hor, tileString, &p);
 		}
-		throw MoveException("Error: invalid action: " + moveType);
+		throw MoveException("Error: invalid action " + moveType);
 	}
 	catch (MoveException &m){
-		setValidMove(false);
 		cerr << m.getMessage() << endl;
 	}
 }
@@ -128,8 +129,7 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 		if(validMove)
 			words = board.getPlaceMoveResults(*this);
 		else{ 
-			setValidMove(false);
-			throw MoveException("Error: Word was placed in an invalid location.");
+			throw MoveException("Error: Word was placed in an invalid location.\nrow: " + to_string(getY()) + " col: " + to_string(getX()));
 		}
 		for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
 			legalWord = dictionary.isLegalWord(it->first);
@@ -142,7 +142,7 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 			}
 		}
 		_player->setScore(points);
-		cout << _player->getScore() << endl;
+		cout << "New score: " << _player->getScore() << endl;
 		board.executePlaceMove(*this);
 		vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());
 		cout << "Tiles added to your hand: " << endl;

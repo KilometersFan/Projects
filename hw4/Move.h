@@ -81,6 +81,14 @@ public:
 
 	virtual ~Move();
 
+	bool isValidMove() {
+		return validMove;
+	}
+
+	void setValidMove(bool m) {
+		validMove = m;
+	}
+
 	//Add more public/protected/private functions/variables here.
 
 protected:
@@ -89,6 +97,7 @@ protected:
 	std::vector<Tile*> _playerTiles;
 	// constructor -- only accessible to subclasses
 	Move(Player * player);
+	bool validMove = false;
 
 };
 

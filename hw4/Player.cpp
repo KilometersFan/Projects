@@ -24,9 +24,6 @@ Player::~Player (){
 
 /* Returns the set of tiles the player currently holds. */
 set<Tile*> Player::getHandTiles() const {
-	for (set<Tile*>::iterator it = _hand.begin(); it != _hand.end(); it++){
-			cout << *it << endl;
-		}
 	return _hand;
 }
 

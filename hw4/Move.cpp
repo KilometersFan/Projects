@@ -14,11 +14,19 @@ Move::~Move(){
 Move::Move(Player * player) {
 	_player = player;
 }
-
+//helps with checking validity of a move
+bool Move::isValidMove() {
+	return validMove;
+}
+//same as isValidMove
+void Move::setValidMove(bool m) {
+	validMove = m;
+}
+//do nothing but is a valid move
 PassMove::PassMove(Player * player) : Move(player){
 	setValidMove(true);
 }
-
+//gets tiles inputted by user, checks if they have them, then returns the tiles to appropriate location
 ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 	_tileString = tileString;
 	try {
@@ -34,7 +42,7 @@ ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 	}
 	
 }
-
+//reads in direction, location, and tilestring if player has the tiles inputted, 
 PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Player * p) : Move(p){
 	_x = x;
 	_y = y;
@@ -54,7 +62,7 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 	}
 }
 
-
+//takes in input, creates desired move with parameters
 Move * Move::parseMove(string moveString, Player &p){
 	transform(moveString.begin(), moveString.end(), moveString.begin(), ::tolower);
 	cout << moveString << endl;
@@ -89,11 +97,12 @@ Move * Move::parseMove(string moveString, Player &p){
 		cerr << m.getMessage() << endl;
 	}
 }
-
+//does nothing
 void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	return;
 }
-
+//adss tiles to bag, draws same number of tiles from bag into player's hand
+//returns what new tiles were added
 void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	bag.addTiles(_playerTiles);
 	vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());cout << "Tiles added to your hand:";
@@ -105,21 +114,24 @@ void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	setValidMove(true);
 	return;
 }
-
+//gets column number
 size_t PlaceMove::getX() const{
 	return _x;
 }
-
+//gets row number
 size_t PlaceMove::getY() const{
 	return _y;
 }
-
+//gets whether a move is horizontal or vertical
 bool PlaceMove::isHorizontal() const{
 	return _horizontal;
 }
+//gets player hands max number
 size_t PlaceMove::getMaxTiles() const{
 	return _player->getMaxTiles();
 }
+//gets all words formed by a move and places it on the board if the words are in the dictionary and in bounds
+//also returns the new score, tiles added, and words formed.
 void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	bool legalWord = true;
 	bool validMove = board.validPlaceMove(*this);

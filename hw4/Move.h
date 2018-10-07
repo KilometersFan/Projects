@@ -62,18 +62,6 @@ public:
 		return _playerTiles;
 	}
 	
-	virtual size_t getX() const{
-		return 0;
-	}
-
-	virtual	size_t getY() const{
-		return 0;
-	}
-
-	virtual bool isHorizontal() const{
-		return false;
-	}
-
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
 	   decide (and document) what exactly it throws*/
@@ -81,13 +69,9 @@ public:
 
 	virtual ~Move();
 
-	bool isValidMove() {
-		return validMove;
-	}
+	bool isValidMove();
 
-	void setValidMove(bool m) {
-		validMove = m;
-	}
+	void setValidMove(bool m);
 
 	//Add more public/protected/private functions/variables here.
 

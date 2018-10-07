@@ -116,15 +116,19 @@ void Player::addTiles (vector<Tile*> const & tilesToAdd){
 		_hand.insert(tilesToAdd[i]);
 	}
 }
+//returns max hand size
 size_t Player::getMaxTiles() const{
 	return _tileCount;
 }
+//gets player name
 string Player::getName() const {
 	return _name;
 }
+//gets player score
 size_t Player::getScore() const {
 	return _score;
 }
+//adds to player score
 void Player::setScore(size_t points) {
 	_score += points;
 }

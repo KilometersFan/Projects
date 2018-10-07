@@ -49,12 +49,6 @@ public:
 	   determine if the move is legal.	*/
 	std::vector<std::pair<std::string, unsigned int>> getPlaceMoveResults(const PlaceMove &m);
 
-	std::pair<std::string, unsigned int> getAdjacentWords(size_t x, size_t y, bool isHor, Tile* tile);
-
-	std::pair<std::string, unsigned int> getAdjacentWordsHelper(size_t &x, size_t &y, Square* &square, bool &horizontal, Tile* &tile);
-	
-	std::pair<std::string, unsigned int> getOriginalWord(const PlaceMove &m, std::vector<Tile*> tiles);
-
 	bool validPlaceMove(const PlaceMove &m);
 
 	bool validPlaceMoveHelper(size_t x, size_t y);
@@ -83,6 +77,12 @@ private:
 	size_t _sx;
 	size_t _sy;
 	std::map<std::pair<size_t, size_t>, Square*> _board;
+
+	std::pair<std::string, unsigned int> getAdjacentWords(size_t x, size_t y, bool isHor, Tile* tile);
+
+	std::pair<std::string, unsigned int> getAdjacentWordsHelper(size_t &x, size_t &y, Square* &square, bool &horizontal, Tile* &tile);
+	
+	std::pair<std::string, unsigned int> getOriginalWord(const PlaceMove &m, std::vector<Tile*> tiles);
 
 };
 

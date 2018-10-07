@@ -11,13 +11,15 @@ void validMoveCheck(string &str);
 int main(int argc, char const *argv[])
 {
 	try{
-		// if(argc < 2){
-		// 	throw FileException("No file specified.");
-		// }
-		ifstream ifile("config.txt");
+		//Retrieve config file
+		if(argc < 2){
+			throw FileException("No file specified.");
+		}
+		ifstream ifile(argv[1]);
 		if(ifile.fail()){
 			throw FileException("Unable to open file.");
 		}
+		//Read in config file information to set up game
 		size_t maxTiles = 0;
 		string boardFile = "";
 		string bagFile = "";
@@ -41,6 +43,7 @@ int main(int argc, char const *argv[])
 		Board board(boardFile);
 		Bag bag = Bag(bagFile, seed);
 		ConsolePrinter console;
+		//Add payers and starting hands
 		cout << "Hello! Welcome to Scrabble. Please enter the number of players in the game (max 8): ";
 		int numPlayers;
 		cin >> numPlayers;
@@ -56,6 +59,7 @@ int main(int argc, char const *argv[])
 			vector <Tile*> initialHand = bag.drawTiles(maxTiles);
 			player->addTiles(initialHand);
 		}
+		//start game
 		scrabble(players, board, bag, dictionary, console);
 		for(vector<Player*>::iterator it = players.begin(); it != players.end(); it++){
 			delete *it;
@@ -74,7 +78,9 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 	while (!gameOver){
 		unsigned int passCount = 0;
 		bool emptyHand = false;
+		//This loop represents a round for each player 1 to k
 		for (unsigned int i = 0; i < players.size(); i++){
+			//prints out scores, boad, and the player's hand
 			console.printBoard(board);
 			console.printHand(*(players[i]));
 			cout << "SCORES:\n";
@@ -86,6 +92,7 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			cout << "Hello " + players[i]->getName() + " what would you like to do?" << endl;
 			cout << "Examples: \nPASS\nEXCHANGE <tile string>\nPLACE <dir> <row> <col> <tile string>" << endl;
 			getline(cin, move);
+			//creates move based on player input. If malformed, asks again 
 			Move* m = Move::parseMove(move, *(players[i]));
 			while(!m->isValidMove()){
 				validMoveCheck(move);
@@ -113,6 +120,7 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 	}
 	cout << "Thanks for playing!" << endl;
 	int tileSum = 0;
+	//subtracts the sum of points for each tile a player has at the end of the game.
 	for (unsigned int i = 0; i < players.size(); i++){
 		set<Tile*> playerHand =  players[i]->getHandTiles();
 		for(set<Tile*>::iterator it=playerHand.begin(); it != playerHand.end(); it++){
@@ -127,9 +135,10 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			players[i]->setScore(tileScore);
 		}
 	}
+	//adds the sum of subtracted points to a player who has no tiles in their hand
 	if(pos >= 0)
 		players[pos]->setScore(tileSum);
-
+	//finds the winner(s) from the new scores
 	size_t max = players[0]->getScore();
 	vector<Player*> winners;
 	for (unsigned int i = 0; i < players.size(); i++){

@@ -5,6 +5,7 @@
 #include <queue>
 using namespace std;
 
+//creates board with desired squres using the inputted file
 Board::Board (std::string board_file_name){
 	ifstream ifile(board_file_name);
 	ifile >> _x;
@@ -32,7 +33,7 @@ Board::Board (std::string board_file_name){
 		}
 	}
 }
-
+//destroys each square
 Board::~Board (){
 	for (size_t i = 1; i <= _x; i++){
 		for (size_t j = 1; j <= _y; j++){
@@ -60,7 +61,7 @@ size_t Board::getRows() const{
 size_t Board::getColumns() const{
 	return _y;
 }
-
+//checks if a word is connected to at least one tile or if a word is the first move
 bool Board::validPlaceMove(const PlaceMove &m){
 	size_t x = m.getX();
 	size_t y = m.getY();
@@ -127,14 +128,14 @@ bool Board::validPlaceMove(const PlaceMove &m){
 		return true;
 	return false;
 }
-
+//checks to see if an adjacent square is occupied
 bool Board::validPlaceMoveHelper(size_t x, size_t y){
 	Square* temp = getSquare(x, y);
 	if(temp->isOccupied())
 		return true;
 	return false;
 }
-
+//returns all words formed by a place move
 vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m){
 	size_t x = m.getX();
 	size_t y = m.getY();
@@ -172,7 +173,7 @@ vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m
 	results.push_back(word);
 	return results;
 }
-
+//gets all adjacent moves. If a word was horizontally placed, returns all vertical words form by each tile
 pair<string, unsigned int> Board::getAdjacentWords(size_t x, size_t y, bool horizontal, Tile* tile){
 	Square* square = getSquare(x, y); 
 	pair<string, unsigned int> buff("", 0);
@@ -180,7 +181,7 @@ pair<string, unsigned int> Board::getAdjacentWords(size_t x, size_t y, bool hori
 		buff = getAdjacentWordsHelper(x, y, square, horizontal, tile);	
 	return buff;
 }
-//TODO Condense this function
+//builds the adjacent words and points
 pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, Square* &square, bool &horizontal, Tile* &tile){
 	unsigned int score = tile->getPoints() * square->getLMult();
 	unsigned int wordMult = square->getWMult();
@@ -241,7 +242,7 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	return result;
 		
 }
-//TODO Condense this function
+//gets original word
 pair<string, unsigned int> Board::getOriginalWord(const PlaceMove &m, vector<Tile*> tiles){
 	size_t x = m.getX();
 	size_t y = m.getY();
@@ -318,6 +319,7 @@ pair<string, unsigned int> Board::getOriginalWord(const PlaceMove &m, vector<Til
 	result = make_pair(word, score);
 	return result;
 }
+//places each tile down on the board in the appropriate square
 void Board::executePlaceMove (const PlaceMove & m){
 	size_t x = m.getX();
 	size_t y = m.getY();

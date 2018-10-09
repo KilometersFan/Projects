@@ -11,7 +11,7 @@ void validMoveCheck(string &str);
 int main(int argc, char const *argv[])
 {
 	try{
-		Retrieve config file
+		// Retrieve config file
 		if(argc < 2){
 			throw FileException("No file specified.");
 		}

@@ -96,6 +96,7 @@ Move * Move::parseMove(string moveString, Player &p){
 	catch (MoveException &m){
 		cerr << m.getMessage() << endl;
 	}
+	return new PassMove(&p);
 }
 //does nothing
 void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){

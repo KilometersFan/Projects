@@ -67,15 +67,18 @@ bool Board::validPlaceMove(const PlaceMove &m){
 	size_t y = m.getY();
 	bool horizontal = m.isHorizontal();
 	vector<Tile*> tiles = m.getPlayerTiles();
+	//if out of bouands return invalid
 	if(x < 1 || x > getColumns() || y < 1 || y > getRows())
 		return false;
 	Square* square = getSquare(x, y);
+	//if placed on occupied square return invalid
 	if(square->isOccupied())
 		return false;
 	size_t k = 0;
 	int squaresToFill = tiles.size();
 	bool connected = false;
 	bool startCoord = false;
+	//loop through squares to check validty
 	while (squaresToFill != 0){
 		bool topConnected = false;
 		bool bottomConnected = false;
@@ -83,6 +86,7 @@ bool Board::validPlaceMove(const PlaceMove &m){
 		bool rightConnected = false;
 		size_t top_x = x + k;
 		size_t top_y = y + k;
+		//see if connected to another tile or if a tile is on the start square
 		if(!horizontal){
 			if(top_y > getRows()){
 				return false;
@@ -148,6 +152,7 @@ vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m
 	size_t spacesToFill = m.getPlayerTiles().size();
 	size_t i = 0;
 	size_t count = 0;
+	//loops until the whole tile strings adjacent words are checked
 	while (spacesToFill != 0){
 		word = make_pair("", 0);
 		if(!horizontal){
@@ -191,6 +196,7 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	size_t i = 0;
 	pair<string, unsigned int> result;
 	Square* newSquare;
+	//finds top most adjacent tile or left most adjacent tile
 	if(!horizontal && x - 1 > 0){
 	  	newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
@@ -209,6 +215,7 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	size_t top_x = x - i;
 	size_t top_y = y - i;
 	string word = "";
+	//builds word from top most/left most tile
 	if(!horizontal)	{
 		newSquare = getSquare(top_x, y);
 		while ((newSquare->isOccupied() || top_x + k == x) && top_x + k <= getRows()){
@@ -256,6 +263,7 @@ pair<string, unsigned int> Board::getOriginalWord(const PlaceMove &m, vector<Til
 	size_t handSize = tiles.size();
 	pair<string, unsigned int> result;
 	Square* newSquare;
+	//finds top most/left most tile of the word
 	if(horizontal && x - 1 >0){
 		newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
@@ -277,7 +285,8 @@ pair<string, unsigned int> Board::getOriginalWord(const PlaceMove &m, vector<Til
 	size_t top_y = y - i;
 	string word = "";
 	int squaresToFill = tiles.size();
-
+	//builds word from top most/ left most tile
+	//also adds points/multiploiers to score
 	if(horizontal)	{
 		newSquare = getSquare(top_x + k, y);
 		while ((newSquare->isOccupied() || squaresToFill != 0) && top_x + k <= getColumns()){

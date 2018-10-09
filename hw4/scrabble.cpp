@@ -92,7 +92,7 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			cout << "Hello " + players[i]->getName() + " what would you like to do?" << endl;
 			cout << "Examples: \nPASS\nEXCHANGE <tile string>\nPLACE <dir> <row> <col> <tile string>" << endl;
 			getline(cin, move);
-			//creates move based on player input. If malformed, asks again 
+			//creates move based on player input. If malformed, asks again until well formed 
 			Move* m = Move::parseMove(move, *(players[i]));
 			while(!m->isValidMove()){
 				validMoveCheck(move);

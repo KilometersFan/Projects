@@ -74,6 +74,7 @@ Move * Move::parseMove(string moveString, Player &p){
 	size_t y = 0;
 	bool hor = false;
 	ss >> moveType;
+	//builds appropriate move type based on user input
 	try{
 		if(moveType == "pass"){
 		return new PassMove(&p);
@@ -140,6 +141,7 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	bool validMove = board.validPlaceMove(*this);
 	vector<pair<string, unsigned int>> words;
 	size_t points = 0;
+	//checks validty of move in several stapes: placement, legality of a word, size of word
 	try{
 		if(validMove)
 			words = board.getPlaceMoveResults(*this);

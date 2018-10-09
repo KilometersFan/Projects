@@ -108,6 +108,7 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 				m->execute(board, bag, dictionary);
 				move = "";
 			}
+			console.printHand(*(players[i]));
 			if(m->isPass())
 				passCount++;
 			if(players[i]->getHandTiles().size() == 0){
@@ -129,13 +130,11 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 		for(set<Tile*>::iterator it=playerHand.begin(); it != playerHand.end(); it++){
 			int playerScore = static_cast<int>(players[i]->getScore());
 			int tileScore = static_cast<int>((*it)->getPoints());
+			tileSum += tileScore;
 			if(playerScore - tileScore <= 0)
-				tileScore = 0;
-			else {
-				tileSum += tileScore;
-				tileScore *= -1;
-			}
-			players[i]->setScore(tileScore);
+				players[i]->setScore(-1 * playerScore);
+			else 
+				players[i]->setScore(-1 * tileScore);
 		}
 	}
 	//adds the sum of subtracted points to a player who has no tiles in their hand

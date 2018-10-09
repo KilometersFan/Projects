@@ -172,7 +172,8 @@ vector<pair<string, unsigned int>> Board::getPlaceMoveResults(const PlaceMove &m
 		i++;
 	}
 	word = getOriginalWord(m, m.getPlayerTiles());
-	results.push_back(word);
+	if(word.first.length() > 1)
+		results.push_back(word);
 	return results;
 }
 //gets all adjacent moves. If a word was horizontally placed, returns all vertical words form by each tile

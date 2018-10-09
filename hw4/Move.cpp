@@ -144,6 +144,9 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 		else{ 
 			throw MoveException("Error: Word was placed in an invalid location.\nrow: " + to_string(getY()) + " col: " + to_string(getX()));
 		}
+		if(words.size() == 0){
+			throw MoveException("Error: Single letters are not words.");
+		}
 		for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
 			legalWord = dictionary.isLegalWord(it->first);
 			if(legalWord){

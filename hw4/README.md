@@ -10,5 +10,5 @@
 #### To run the scrabble program: 
 - navigate into hw-milespha/hw4 directory
 - Type "make all" in the terminal. This compiles the necessary executables.
-- Type "./scrabble " and an config .txt file with the necessary board, bag, and dictionary files
+- Type "./scrabble " and a config .txt file with the necessary board, bag, and dictionary file names
 - Then follow the instructions specified by the console.

@@ -12,10 +12,10 @@ int main(int argc, char const *argv[])
 {
 	try{
 		//Retrieve config file
-		if(argc < 2){
-			throw FileException("No file specified.");
-		}
-		ifstream ifile(argv[1]);
+		// if(argc < 2){
+		// 	throw FileException("No file specified.");
+		// }
+		ifstream ifile("config.txt");
 		if(ifile.fail()){
 			throw FileException("Unable to open file.");
 		}
@@ -97,13 +97,16 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			while(!m->isValidMove()){
 				validMoveCheck(move);
 				m = Move::parseMove(move, *(players[i]));
+				move = "";
 			}
 			m->execute(board, bag, dictionary);
 			while(!m->isValidMove()){
 				validMoveCheck(move);
 				delete m;
+				m = nullptr;
 				m = Move::parseMove(move, *(players[i]));
 				m->execute(board, bag, dictionary);
+				move = "";
 			}
 			if(m->isPass())
 				passCount++;

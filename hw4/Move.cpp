@@ -104,6 +104,8 @@ void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 //adss tiles to bag, draws same number of tiles from bag into player's hand
 //returns what new tiles were added
 void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
+	if(!isValidMove())
+		return;
 	bag.addTiles(_playerTiles);
 	vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());cout << "Tiles added to your hand:";
 	for (vector<Tile*>::iterator it = newTiles.begin(); it != newTiles.end(); it++){
@@ -111,7 +113,6 @@ void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	}
 	cout << endl;
 	_player->addTiles(newTiles);
-	setValidMove(true);
 	return;
 }
 //gets column number

@@ -20,7 +20,7 @@ Board::Board (std::string board_file_name){
 			bool startCoord = false;
 			unsigned int LMult = 1;
 			unsigned int WMult = 1;
-			pair<size_t, size_t> location = make_pair(i, j);
+			pair<size_t, size_t> location = make_pair(j, i);
 			if(i == _sx && j == _sy)
 				startCoord = true;
 			if(c - '0' >= 0&& c- '0' <=9)
@@ -67,6 +67,8 @@ bool Board::validPlaceMove(const PlaceMove &m){
 	size_t y = m.getY();
 	bool horizontal = m.isHorizontal();
 	vector<Tile*> tiles = m.getPlayerTiles();
+	if(x < 1 || x > getColumns() || y < 1 || y > getRows())
+		return false;
 	Square* square = getSquare(x, y);
 	if(square->isOccupied())
 		return false;

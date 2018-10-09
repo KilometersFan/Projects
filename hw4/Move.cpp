@@ -96,6 +96,7 @@ Move * Move::parseMove(string moveString, Player &p){
 	catch (MoveException &m){
 		cerr << m.getMessage() << endl;
 	}
+	//this line is for the bytes autochecker since it returns an error if there is no return at the end
 	return new PassMove(&p);
 }
 //does nothing
@@ -108,7 +109,7 @@ void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	if(!isValidMove())
 		return;
 	bag.addTiles(_playerTiles);
-	vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());cout << "Tiles added to your hand:";
+	vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());cout << "Tiles added to your hand: ";
 	for (vector<Tile*>::iterator it = newTiles.begin(); it != newTiles.end(); it++){
 		cout << (*it)->getLetter();
 	}
@@ -155,14 +156,14 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 				points += it->second;
 			}
 			else{
-				throw MoveException("Error: Word was not found in the dictionary: " + it->first);
+				throw MoveException("Error: Word was not found in the dictionary \"" + it->first + "\"");
 			}
 		}
 		_player->setScore(points);
 		cout << "New score: " << _player->getScore() << endl;
 		board.executePlaceMove(*this);
 		vector<Tile*>newTiles = bag.drawTiles(_playerTiles.size());
-		cout << "Tiles added to your hand: " << endl;
+		cout << "Tiles added to your hand: ";
 		for (vector<Tile*>::iterator it = newTiles.begin(); it != newTiles.end(); it++){
 			cout << (*it)->getLetter();
 		}

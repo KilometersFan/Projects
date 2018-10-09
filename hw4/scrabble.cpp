@@ -11,11 +11,11 @@ void validMoveCheck(string &str);
 int main(int argc, char const *argv[])
 {
 	try{
-		//Retrieve config file
-		// if(argc < 2){
-		// 	throw FileException("No file specified.");
-		// }
-		ifstream ifile("config.txt");
+		Retrieve config file
+		if(argc < 2){
+			throw FileException("No file specified.");
+		}
+		ifstream ifile(argv[1]);
 		if(ifile.fail()){
 			throw FileException("Unable to open file.");
 		}

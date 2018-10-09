@@ -12,3 +12,7 @@ Dictionary
 *.o
 ConsolePrinter
 *.o
+Square
+*.o
+Tile
+*.o

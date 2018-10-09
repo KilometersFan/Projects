@@ -3,7 +3,7 @@ CPPFLAGS = -g -Wall -std=c++11
 
 all: scrabble
 
-scrabble: scrabble.cpp Player.o Move.o Dictionary.o Bag.o Board.o ConsolePrinter.o Square.h Tile.h 
+scrabble: scrabble.cpp Player.o Move.o Dictionary.o Bag.o Board.o ConsolePrinter.o Square.o Tile.o 
 	$(CXX) $(CPPFLAGS) $^ -o $@
 
 Player.o: Player.cpp Player.h Tile.h Exceptions.h
@@ -22,4 +22,10 @@ Board.o: Board.cpp Board.h Tile.h Square.h Move.h Dictionary.h Exceptions.h
 	$(CXX) $(CPPFLAGS) -c $< -o $@
 
 ConsolePrinter.o: ConsolePrinter.cpp ConsolePrinter.h rang.h Board.h Player.h
+	$(CXX) $(CPPFLAGS) -c $< -o $@
+
+Square.o: Square.cpp Square.h
+	$(CXX) $(CPPFLAGS) -c $< -o $@
+
+Tile.o: Tile.cpp Tile.h
 	$(CXX) $(CPPFLAGS) -c $< -o $@

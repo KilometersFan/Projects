@@ -68,70 +68,78 @@ bool Board::validPlaceMove(const PlaceMove &m){
 	bool horizontal = m.isHorizontal();
 	vector<Tile*> tiles = m.getPlayerTiles();
 	//if out of bouands return invalid
-	if(x < 1 || x > getColumns() || y < 1 || y > getRows())
+	try {
+		if(x < 1 || x > getColumns() || y < 1 || y > getRows())
+			throw MoveException("Error: Word placement is out of bounds.");
+		Square* square = getSquare(x, y);
+		//if placed on occupied square return invalid
+		if(square->isOccupied())
+			throw MoveException("Error: Word is placed on an occurpied square.");
+		size_t k = 0;
+		int squaresToFill = tiles.size();
+		bool connected = false;
+		bool startCoord = false;
+		//loop through squares to check validty
+		while (squaresToFill != 0){
+			bool topConnected = false;
+			bool bottomConnected = false;
+			bool leftConnected = false;
+			bool rightConnected = false;
+			size_t top_x = x + k;
+			size_t top_y = y + k;
+			//see if connected to another tile or if a tile is on the start square
+			if(!horizontal){
+				if(top_y > getRows()){
+					throw MoveException("Error: Word exceeds row boundary of board");
+				}
+				square = getSquare(x, y + k);
+				if(!square->isOccupied()){
+					if(x - 1 > 0 && y + k <= getRows())
+						leftConnected = validPlaceMoveHelper(x - 1, top_y);
+					if(x + 1 <= getColumns() && y + k <= getRows())
+						rightConnected = validPlaceMoveHelper(x + 1, top_y);
+					if(top_y -1 > 0)
+						topConnected = validPlaceMoveHelper(x, top_y - 1);
+					if(top_y + 1 <= getRows()) 
+						bottomConnected = validPlaceMoveHelper(x, top_y + 1);
+					if(topConnected || bottomConnected || leftConnected || rightConnected)
+						connected = true;
+					squaresToFill--;
+				}
+			}
+			else{
+				if(top_x > getColumns()){
+					throw MoveException("Error: Word exceeds column boundary of board.");
+				}
+				square = getSquare(x + k, y);
+				if(!square->isOccupied()){
+					if(top_x - 1 > 0)
+						leftConnected = validPlaceMoveHelper(top_x - 1, y);
+					if(top_x + 1 <= getColumns())
+						rightConnected = validPlaceMoveHelper(top_x + 1, y);
+					if(top_x <= getColumns() && y -1 > 0)
+						topConnected = validPlaceMoveHelper(top_x, y - 1);
+					if(top_x <= getColumns() && y + 1 <= getRows())
+						bottomConnected = validPlaceMoveHelper(top_x, y + 1);
+					if(topConnected || bottomConnected || leftConnected || rightConnected)
+						connected = true;
+					squaresToFill--;
+				}
+			}
+			if(square->isStart() && !square->isOccupied()){
+				startCoord = true;
+			}
+			k++;
+		}
+		if(connected || startCoord)
+			return true;
+		else 
+			throw MoveException("Error: Word was not placed on the start tile.");
+	}
+	catch (MoveException &m){
+		cout << m.getMessage() << endl;
 		return false;
-	Square* square = getSquare(x, y);
-	//if placed on occupied square return invalid
-	if(square->isOccupied())
-		return false;
-	size_t k = 0;
-	int squaresToFill = tiles.size();
-	bool connected = false;
-	bool startCoord = false;
-	//loop through squares to check validty
-	while (squaresToFill != 0){
-		bool topConnected = false;
-		bool bottomConnected = false;
-		bool leftConnected = false;
-		bool rightConnected = false;
-		size_t top_x = x + k;
-		size_t top_y = y + k;
-		//see if connected to another tile or if a tile is on the start square
-		if(!horizontal){
-			if(top_y > getRows()){
-				return false;
-			}
-			square = getSquare(x, y + k);
-			if(!square->isOccupied()){
-				if(x - 1 > 0 && y + k <= getRows())
-					leftConnected = validPlaceMoveHelper(x - 1, top_y);
-				if(x + 1 <= getColumns() && y + k <= getRows())
-					rightConnected = validPlaceMoveHelper(x + 1, top_y);
-				if(top_y -1 > 0)
-					topConnected = validPlaceMoveHelper(x, top_y - 1);
-				if(top_y + 1 <= getRows()) 
-					bottomConnected = validPlaceMoveHelper(x, top_y + 1);
-				if(topConnected || bottomConnected || leftConnected || rightConnected)
-					connected = true;
-				squaresToFill--;
-			}
-		}
-		else{
-			if(top_x > getColumns()){
-				return false;
-			}
-			square = getSquare(x + k, y);
-			if(!square->isOccupied()){
-				if(top_x - 1 > 0)
-					leftConnected = validPlaceMoveHelper(top_x - 1, y);
-				if(top_x + 1 <= getColumns())
-					rightConnected = validPlaceMoveHelper(top_x + 1, y);
-				if(top_x <= getColumns() && y -1 > 0)
-					topConnected = validPlaceMoveHelper(top_x, y - 1);
-				if(top_x <= getColumns() && y + 1 <= getRows())
-					bottomConnected = validPlaceMoveHelper(top_x, y + 1);
-				if(topConnected || bottomConnected || leftConnected || rightConnected)
-					connected = true;
-				squaresToFill--;
-			}
-		}
-		if(square->isStart() && !square->isOccupied()){
-			startCoord = true;
-		}
-		k++;
-	}	
-	if(connected || startCoord)
-		return true;
+	}
 	return false;
 }
 //checks to see if an adjacent square is occupied

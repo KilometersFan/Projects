@@ -32,6 +32,8 @@ ExchangeMove::ExchangeMove(string tileString, Player * p) : Move(p){
 	try {
 		if(_player->hasTiles(tileString, false))
 			_playerTiles = _player->takeTiles(_tileString, false);
+		else if (tileString.length() == 0)
+			throw MoveException("Error: Player did not specify any tiles.");
 		else
 			throw MoveException("Error: Player does not have tiles: " + _tileString);
 		setValidMove(true);
@@ -51,6 +53,8 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 	try {
 		if(_player->hasTiles(tileString, true))
 			_playerTiles = _player->takeTiles(_tileString, true);
+		else if (tileString.length() == 0)
+			throw MoveException("Error: Player did not specify any tiles.");
 		else{
 			throw MoveException("Error: Player does not have tiles: " + _tileString);
 		}
@@ -145,7 +149,7 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
 	try{
 		if(validMove)
 			words = board.getPlaceMoveResults(*this);
-		else{ 
+		else{
 			throw MoveException("Error: Word was placed in an invalid location.\nrow: " + to_string(getY()) + " col: " + to_string(getX()));
 		}
 		if(words.size() == 0){

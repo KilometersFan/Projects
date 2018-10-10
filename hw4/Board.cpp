@@ -201,14 +201,16 @@ pair<string, unsigned int> Board::getAdjacentWordsHelper(size_t &x, size_t &y, S
 	  	newSquare = getSquare(x - 1, y);
 		while (newSquare->isOccupied() && x - i - 1 >0){
 			i++;
-			newSquare = getSquare(x - i - 1, y);
+			if(x - i - 1 > 0)
+				newSquare = getSquare(x - i - 1, y);
 		}
 	}
 	else if (horizontal && y - 1 > 0){
 		newSquare = getSquare(x, y- 1);
 		while (newSquare->isOccupied() && y - i - 1 >0){
 			i++;
-			newSquare = getSquare(x, y- i - 1);
+			if(y - i - 1 > 0)
+				newSquare = getSquare(x, y- i - 1);
 		}
 	}
 	size_t k = 0;

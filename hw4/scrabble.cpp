@@ -49,6 +49,12 @@ int main(int argc, char const *argv[])
 		cin >> numPlayers;
 		cin.ignore(10000, '\n');
 		cin.clear();
+		while ( numPlayers < 1){
+			cout << "Please enter a number >= 1" << endl;
+			cin >> numPlayers;
+			cin.ignore(10000, '\n');
+			cin.clear();
+		}
 		vector<Player*> players;
 		for (int i = 0; i < numPlayers; i++){
 			string name;

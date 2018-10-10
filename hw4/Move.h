@@ -71,7 +71,6 @@ public:
 
 	bool isValidMove();
 
-	void setValidMove(bool m);
 
 	//Add more public/protected/private functions/variables here.
 
@@ -82,6 +81,7 @@ protected:
 	// constructor -- only accessible to subclasses
 	Move(Player * player);
 	bool validMove = false;
+	void setValidMove(bool m);
 
 };
 

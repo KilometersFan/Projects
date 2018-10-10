@@ -51,7 +51,6 @@ public:
 
 	bool validPlaceMove(const PlaceMove &m);
 
-	bool validPlaceMoveHelper(size_t x, size_t y);
 	/* Executes the given move by taking tiles and placing them on the board.
 	   This function does not check for correctness of the move, so could
 	   segfault or cause other errors if called for an incorrect move.
@@ -83,6 +82,8 @@ private:
 	std::pair<std::string, unsigned int> getAdjacentWordsHelper(size_t &x, size_t &y, Square* &square, bool &horizontal, Tile* &tile);
 	
 	std::pair<std::string, unsigned int> getOriginalWord(const PlaceMove &m, std::vector<Tile*> tiles);
+
+	bool validPlaceMoveHelper(size_t x, size_t y);
 
 };
 

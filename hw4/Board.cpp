@@ -74,7 +74,7 @@ bool Board::validPlaceMove(const PlaceMove &m){
 		Square* square = getSquare(x, y);
 		//if placed on occupied square return invalid
 		if(square->isOccupied())
-			throw MoveException("Error: Word is placed on an occurpied square.");
+			throw MoveException("Error: Word is placed on an occupied square.");
 		size_t k = 0;
 		int squaresToFill = tiles.size();
 		bool connected = false;

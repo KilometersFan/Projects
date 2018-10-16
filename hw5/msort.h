@@ -20,14 +20,19 @@ std::vector<std::pair<int,int>> findIndices (std::vector<T> &myArray, int k, Com
 }
 
 template <class T, class Comparator>
-void mergeSorter()
-
-template <class T, class Comparator>
 void mergeSort (std::vector<T>& myArray, int k, Comparator comp){
+	if(myArray.size() <= 1)
+		return;
 	std::vector<std::pair<int,int>> indices = findIndices(myArray, k, comp);
-	for (unsigned int j = 0; j < indices.size(); j++)
-		std::cout << indices[j].first << " " << indices[j].second<< std::endl;
-	// for (unsigned int i = 0; i < indices.size(); i++)
-	// 	mergeSort()
+	for(int i = 0; i < indices.size(); i++){
+		std::vector<T> kthArray;
+		for(int j = indices[i].first; j <= indices[i].second; j++)
+			kthArray.push_back(myArray[j]);
+		for(int k = 0; k < kthArray.size(); k++)
+			std::cout << kthArray[k] << std::endl;
+		std::cout << "index " << indices[i].first << std::endl; 
+		mergeSort(kthArray, k, comp);
+
+	}
 
 }

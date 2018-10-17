@@ -54,9 +54,9 @@ void mergeSort (std::vector<T>& myArray, int k, Comparator comp){
 		for(int i = indices[j].first; i <= indices[j].second; i++){
 			values.push_back(myArray[i]);
 		}
-		for(unsigned int m = 0; m < values.size(); m++)
-			std::cout << values[m] << std::endl;
-		std::cout << std::endl;
+		// for(unsigned int m = 0; m < values.size(); m++)
+		// 	std::cout << values[m] << std::endl;
+		// std::cout << std::endl;
 		kvectors.push_back(values);
 	}
 	for(unsigned int l = 0; l < kvectors.size(); l++){

@@ -4,3 +4,5 @@ functor
 *.o
 test
 *.o
+fatalist
+*.o

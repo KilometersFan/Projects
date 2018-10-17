@@ -1,5 +1,6 @@
 #include <string>
 #include <locale>
+#include <vector>
 
 std::string lowerCase(std::string str){
   std::string copy = str;
@@ -47,5 +48,17 @@ struct NumStrComp {
     if(lhsSum == rhsSum)
       return (lhs < rhs);
     return (lhsSum < rhsSum);
+  }
+};
+
+struct NumPairFirstComp {
+  bool operator()(const std::pair<int, int>& lhs, const std::pair<int, int>& rhs){
+    return (lhs.first >= rhs.first);
+  }
+};
+
+struct NumPairSecondComp {
+  bool operator()(const std::pair<int, int>& lhs, const std::pair<int, int>& rhs){
+    return (lhs.second >= rhs.second);
   }
 };

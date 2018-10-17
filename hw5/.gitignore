@@ -2,3 +2,5 @@ cave
 *.o
 functor
 *.o
+test
+*.o

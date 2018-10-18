@@ -1,7 +1,6 @@
 #include <vector>
 #include <iostream>
-#include <algorithm>
-#include "functor.h"
+
 template <class T>
 std::vector<std::pair<int,int>> findIndices(std::vector<T> &myArray, int k){
 	std::vector<std::pair<int, int>> indices;
@@ -21,24 +20,26 @@ std::vector<std::pair<int,int>> findIndices(std::vector<T> &myArray, int k){
 }
 
 template <class T, class Comparator>
-void merge (std::vector<T>& myArray, std::vector<std::vector<T>> subArrays, std::vector<std::pair<int,int>> indices, Comparator comp){
+void merge (std::vector<T>& myArray, std::vector<std::vector<T>> subArrays, Comparator comp){
 	int myArrayIterator = 0;
 	while(subArrays.size() > 1){
 		int index = 0;
 		for(unsigned int i = 0; i < subArrays.size(); i++){
-			if(!subArrays[i].empty()){
-				if(!comp(subArrays[index][0], subArrays[i][0]))
-					index = i;
-			}
+			if(!comp(subArrays[index][0], subArrays[i][0]))
+				index = i;
 		}
-		std::swap(subArrays[index][0], myArray[myArrayIterator]);
+		T temp = myArray[myArrayIterator];
+		myArray[myArrayIterator] = subArrays[index][0];
+		subArrays[index][0] = temp;
 		subArrays[index].erase(subArrays[index].begin());
 		myArrayIterator++;
 		if(subArrays[index].empty())
 			subArrays.erase(subArrays.begin() + index);
 	}
 	for	(unsigned int k = 0; k < subArrays[0].size(); k++){
-		std::swap(myArray[myArrayIterator], subArrays[0][k]);
+		T temp = myArray[myArrayIterator];
+		myArray[myArrayIterator] = subArrays[0][k];
+		subArrays[0][k] = temp;
 		myArrayIterator++;
 	}
 }
@@ -54,14 +55,10 @@ void mergeSort (std::vector<T>& myArray, int k, Comparator comp){
 		for(int i = indices[j].first; i <= indices[j].second; i++){
 			values.push_back(myArray[i]);
 		}
-		// for(unsigned int m = 0; m < values.size(); m++)
-		// 	std::cout << values[m] << std::endl;
-		// std::cout << std::endl;
 		kvectors.push_back(values);
 	}
 	for(unsigned int l = 0; l < kvectors.size(); l++){
 		mergeSort(kvectors[l], k , comp);
 	}
-	merge(myArray, kvectors, indices, comp);
-
+	merge(myArray, kvectors, comp);
 }

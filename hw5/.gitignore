@@ -6,3 +6,14 @@ test
 *.o
 fatalist
 *.o
+merge-test-run
+*.o
+merge-test-vlgr
+*.o
+functor-test
+*.o
+fatalist-test
+*.o
+tests/
+test.cpp
+Makefile

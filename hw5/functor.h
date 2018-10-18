@@ -1,6 +1,5 @@
 #include <string>
 #include <locale>
-#include <vector>
 
 std::string lowerCase(std::string str){
   std::string copy = str;

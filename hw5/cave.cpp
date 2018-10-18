@@ -15,7 +15,7 @@ int main(int argc, char const *argv[])
 		return 1;
 	}
 	stack<char> rope;
-	for(int i = 0; i < input.length(); i++){
+	for(unsigned int i = 0; i < input.length(); i++){
 		if(rope.empty())
 			rope.push(input[i]);
 		else{

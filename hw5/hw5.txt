@@ -1,0 +1,13 @@
+2. 
+
+A sample array that breaks the median of 3 quicksort is [0, 2, 4, 6, 8, 10, 1, 3, 5, 7, 9, 11]
+The reason why this array breaks median of three quicksort is because in each partition, the array sizes
+will be n-2 and 1 where n-2 elements are less than the pivot and 1 is greater than the pivot. In the first run of the algorithm, 0, 10, and 11  are the first, middle, and last elements respectively and the median of these three will be the pivot. 10 is the median and will be swapped with the last element 11. When the sorting begins, only 11 will be pushed to the right of 10. in the next partition, 0, 8, and 9 are the first, middle, and last elements and the cycle repeats. In each call of partition, we will be doing n work, n - 2 times, which makes the run time of the median of three quicksort on this array theta(n^2).
+
+4c.
+
+ finding the indices takes theta(k) time because the while loop in findIndices will take k steps to create the pairs and insert thme into the array of indices. The actual creation and insertion of the pairs takes theta(1) time.
+ The mergeSort algorithm will run log(n)/log(k) = theta(logn) times because the array is split up k times so the size of the arrays are n/k. Thus mergeSort acts like a for loop starting from n, ending at 1 where the iterator is divided by k. 
+ During mergeSort, theta(k*n) work is done findIndices is theta(k) and the for loop in mergeSort is theta(n) because it has a for loop that runs k times doing n/k work each iteration, making the loop run in theta (k * n/k) = theta(n) time. However when calling merge, each call of mergeSort does theta(n) work. This is because in merge we compare each sub array until we find the min value. Then we swap that val with the val in myArray. We do this until each subArray is empty, effectively doing n swaps so the runtime for merge is theta(n). Because there are logn levels in mergeSort, the total runtime for this algorithm is theta(nlogn).
+
+When k == n we have n levels doing theta(n) work so the runtime is theta(n^2). 

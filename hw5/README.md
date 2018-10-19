@@ -4,12 +4,20 @@
 ### milespha@usc.edu
 
 ## Homework 5 consists of:
+- class structures/inheritance practice
+- breaking quicksort
 - functor practice
 - cave exploration problem
 - k-way merge sort algorithm
 - fatalist hypothesis function
 
 ## Instructions:
+#### Break quicksort
+- Located in hw5.txt
+
+#### Class structures/inheritance practice
+- Located in ______________
+
 #### To use the functors: 
 - include functor.h in your program and run it
 

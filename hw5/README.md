@@ -16,7 +16,7 @@
 - Located in hw5.txt
 
 #### Class structures/inheritance practice
-- Located in ______________
+- Located in 
 
 #### To use the functors: 
 - include functor.h in your program and run it

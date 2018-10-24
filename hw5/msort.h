@@ -15,7 +15,7 @@ void findIndices(std::vector<std::pair<int,int>> &indices, int range, int k){
 }
 
 template <class T, class Comparator>
-void merge (std::vector<T>& myArray, std::vector<std::vector<T>> subArrays, Comparator comp){
+void merge (std::vector<T>& myArray, std::vector<std::vector<T>> &subArrays, Comparator comp){
 	int myArrayIterator = 0;
 	while(subArrays.size() > 1){
 		int index = 0;

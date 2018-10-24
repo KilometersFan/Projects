@@ -1,22 +1,17 @@
 #include <vector>
-#include <iostream>
 
-template <class T>
-std::vector<std::pair<int,int>> findIndices(std::vector<T> &myArray, int k){
-	std::vector<std::pair<int, int>> indices;
-	int range = myArray.size()-1;
+void findIndices(std::vector<std::pair<int,int>> &indices, int range, int k){
 	int i = 0;
 	while(i <= range){
 		if(range/k + i <= range){
 			indices.push_back(std::make_pair(i, range/k + i));
-			i += range/k + 1;
+			i += (range/k + 1);
 		}
 		else{
 			indices.push_back(std::make_pair(i, range));
 			break;
 		}
 	}
-	return indices;
 }
 
 template <class T, class Comparator>
@@ -48,7 +43,8 @@ template <class T, class Comparator>
 void mergeSort (std::vector<T>& myArray, int k, Comparator comp){
 	if(myArray.size() <= 1)
 		return;
-	std::vector<std::pair<int,int>> indices = findIndices(myArray, k);
+	std::vector<std::pair<int,int>> indices;
+	findIndices(indices, myArray.size() - 1, k);
 	std::vector<std::vector<T>> kvectors;
 	for(unsigned int j = 0; j < indices.size(); j++){
 		std::vector<T> values;

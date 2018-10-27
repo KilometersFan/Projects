@@ -40,15 +40,18 @@ int main(int argc, char const *argv[])
 			visited[k][l] = false;
 		}
 	}
-	vector<Country> countries;
+	vector<Country*> countries;
 	BFS(_map, visited, countries, rows, cols);
 	for (int i = 0; i < countries.size(); i++){
-		cout << countries[i].name << "-------"<< endl; 
-		for(set<char>::iterator it = countries[i].neighbors.begin(); it != countries[i].neighbors.end(); it++)
-			cout << *it << endl;
+		cout << countries[i]->name << "-------"<< endl; 
+		for(set<Country*>::iterator it = countries[i]->neighbors.begin(); it != countries[i]->neighbors.end(); it++)
+			cout << (*it)->name << endl;
 		cout << endl;
 	}
+	findColors(countries[0]);
 	//delete memory
+	for (int j = 0; j < countries.size(); j++)
+		delete countries[j];
 	for (int j = 0; j < rows; j++)
 		delete [] visited[j];
 	delete [] visited;
@@ -58,7 +61,7 @@ int main(int argc, char const *argv[])
 	return 0;
 }
 
-void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, int & cols){
+void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, int & cols){
 	queue<pair<int, int>> searcher;
 	for(int i = 0; i < rows; i++){
 		for(int j = 0; j < cols; j++){
@@ -66,8 +69,8 @@ void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, i
 				searcher.push(make_pair(i,j));
 				visited[i][j] = true;
 				char delim = _map[i][j];
-				Country newCountry;
-				newCountry.name = delim;
+				Country* newCountry = new Country;
+				newCountry->name = delim;
 				while(!searcher.empty()){
 					if(searcher.front().first - 1 >= 0){
 						if(_map[searcher.front().first - 1][searcher.front().second] == delim && !visited[searcher.front().first - 1][searcher.front().second]){
@@ -75,7 +78,14 @@ void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, i
 							visited[searcher.front().first - 1][searcher.front().second] = true;
 						}
 						else if(_map[searcher.front().first - 1][searcher.front().second] != delim){
-							newCountry.neighbors.insert(_map[searcher.front().first - 1][searcher.front().second]);
+							// newCountry.neighbors.insert(_map[searcher.front().first - 1][searcher.front().second]);
+							for(unsigned int i = 0; i < countries.size(); i++){
+								if(countries[i]->name == _map[searcher.front().first - 1][searcher.front().second]){
+									countries[i]->neighbors.insert(newCountry);
+									newCountry->neighbors.insert(countries[i]);
+									break;
+								}
+							}
 						}
 					}
 					if(searcher.front().first + 1 < rows){
@@ -84,7 +94,14 @@ void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, i
 							visited[searcher.front().first + 1][searcher.front().second] = true;
 						}
 						else if(_map[searcher.front().first + 1][searcher.front().second] != delim){
-							newCountry.neighbors.insert(_map[searcher.front().first + 1][searcher.front().second]);
+							// newCountry.neighbors.insert(_map[searcher.front().first + 1][searcher.front().second]);
+							for(unsigned int i = 0; i < countries.size(); i++){
+								if(countries[i]->name == _map[searcher.front().first + 1][searcher.front().second]){
+									countries[i]->neighbors.insert(newCountry);
+									newCountry->neighbors.insert(countries[i]);
+									break;
+								}
+							}
 						}
 					}
 					if(searcher.front().second - 1 >= 0){
@@ -93,7 +110,14 @@ void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, i
 							visited[searcher.front().first][searcher.front().second - 1] = true;
 						}
 						else if(_map[searcher.front().first][searcher.front().second - 1] != delim){
-							newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second - 1]);
+							// newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second - 1]);
+							for(unsigned int i = 0; i < countries.size(); i++){
+								if(countries[i]->name == _map[searcher.front().first][searcher.front().second - 1]){
+									countries[i]->neighbors.insert(newCountry);
+									newCountry->neighbors.insert(countries[i]);
+									break;
+								}
+							}
 						}
 					}
 					if(searcher.front().second + 1 < cols){
@@ -102,7 +126,14 @@ void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, i
 							visited[searcher.front().first][searcher.front().second + 1] = true;
 						}
 						else if(_map[searcher.front().first][searcher.front().second + 1] != delim){
-							newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second + 1]);
+							// newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second + 1]);
+							for(unsigned int i = 0; i < countries.size(); i++){
+								if(countries[i]->name == _map[searcher.front().first][searcher.front().second] + 1){
+									countries[i]->neighbors.insert(newCountry);
+									newCountry->neighbors.insert(countries[i]);
+									break;
+								}
+							}
 						}
 					}
 					searcher.pop();
@@ -110,5 +141,21 @@ void BFS(char**& _map, bool**&visited, vector<Country>& countries, int & rows, i
 				countries.push_back(newCountry);
 			}
 		}
+	}
+}
+
+void findColors(Country* country){
+	if(country->color > 0)
+		return;
+	set<int> colors;
+	for(int i = 1; i <= 4; i++)
+		colors.insert(i);
+	for(set<Country*>::iterator it = country->neighbors.begin(); it != country->neighbors.end(); it++){
+		colors.erase((*it)->color);
+	}
+	country->color = *(colors.begin());
+	cout << country->name << " " << country->color << endl;
+	for(set<Country*>::iterator it = country->neighbors.begin(); it != country->neighbors.end(); it++){
+		findColors(*it);
 	}
 }

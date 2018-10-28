@@ -8,3 +8,6 @@ search: search.cpp
 
 coloring: coloring.cpp coloring.h
 	$(CXX) $(CPPFLAGS) $^ -o $@
+
+test: test.cpp MinHeap.h
+	$(CXX) $(CPPFLAGS) $^ -o $@

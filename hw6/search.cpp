@@ -9,11 +9,11 @@ void BFS(char** &map, bool**&visited, int & rows, int & cols);
 
 int main(int argc, char const *argv[])
 {
-	// if(argc < 2){
-	// 	cout << "Please enter a file to read." << endl;
-	// 	return 1;
-	// }
-	ifstream ifile("test.txt");
+	if(argc < 2){
+		cout << "Please enter a file to read." << endl;
+		return 1;
+	}
+	ifstream ifile(argv[1]);
 	if(ifile.fail()){
 		cout << "Could not open file." << endl;
 		return 1;

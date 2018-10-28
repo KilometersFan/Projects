@@ -6,13 +6,17 @@
 #include "coloring.h" 
 using namespace std;
 
+bool compareASCII(Country* left, Country* right){
+	return ((int)left->name < (int)right->name);
+}
+
 int main(int argc, char const *argv[])
 {
-	// if(argc < 2){
-	// 	cout << "Please enter a file to read." << endl;
-	// 	return 1;
-	// }
-	ifstream ifile("test.txt");
+	if(argc < 2){
+		cout << "Please enter a file to read." << endl;
+		return 1;
+	}
+	ifstream ifile(argv[1]);
 	if(ifile.fail()){
 		cout << "Could not open file." << endl;
 		return 1;
@@ -42,13 +46,10 @@ int main(int argc, char const *argv[])
 	}
 	vector<Country*> countries;
 	BFS(_map, visited, countries, rows, cols);
-	for (int i = 0; i < countries.size(); i++){
-		cout << countries[i]->name << "-------"<< endl; 
-		for(set<Country*>::iterator it = countries[i]->neighbors.begin(); it != countries[i]->neighbors.end(); it++)
-			cout << (*it)->name << endl;
-		cout << endl;
-	}
+	std::sort(countries.begin(), countries.end(), compareASCII);
 	findColors(countries[0]);
+	for (int i = 0; i < countries.size(); i++)
+		cout << countries[i]->name << " " << countries[i]->color << endl;
 	//delete memory
 	for (int j = 0; j < countries.size(); j++)
 		delete countries[j];
@@ -128,7 +129,7 @@ void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, 
 						else if(_map[searcher.front().first][searcher.front().second + 1] != delim){
 							// newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second + 1]);
 							for(unsigned int i = 0; i < countries.size(); i++){
-								if(countries[i]->name == _map[searcher.front().first][searcher.front().second] + 1){
+								if(countries[i]->name == _map[searcher.front().first][searcher.front().second + 1]){
 									countries[i]->neighbors.insert(newCountry);
 									newCountry->neighbors.insert(countries[i]);
 									break;
@@ -154,7 +155,6 @@ void findColors(Country* country){
 		colors.erase((*it)->color);
 	}
 	country->color = *(colors.begin());
-	cout << country->name << " " << country->color << endl;
 	for(set<Country*>::iterator it = country->neighbors.begin(); it != country->neighbors.end(); it++){
 		findColors(*it);
 	}

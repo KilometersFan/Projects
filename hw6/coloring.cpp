@@ -48,10 +48,10 @@ int main(int argc, char const *argv[])
 	std::sort(countries.begin(), countries.end(), compareASCII);
 	//color the graph
 	findColors(countries[0]);
-	for (int i = 0; i < countries.size(); i++)
+	for (unsigned int i = 0; i < countries.size(); i++)
 		cout << countries[i]->name << " " << countries[i]->color << endl;
 	//delete memory
-	for (int j = 0; j < countries.size(); j++)
+	for (unsigned int j = 0; j < countries.size(); j++)
 		delete countries[j];
 	for (int j = 0; j < rows; j++)
 		delete [] visited[j];

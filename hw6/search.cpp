@@ -1,11 +1,9 @@
 #include <queue>
 #include <iostream>
 #include <fstream>
-#include <algorithm>
-#include <utility> 
+#include "search.h"
 using namespace std;
 
-void BFS(char** &map, bool**&visited, int & rows, int & cols);
 
 int main(int argc, char const *argv[])
 {

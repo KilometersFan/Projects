@@ -6,12 +6,9 @@
 #include "coloring.h" 
 using namespace std;
 
-bool compareASCII(Country* left, Country* right){
-	return ((int)left->name < (int)right->name);
-}
-
 int main(int argc, char const *argv[])
 {
+	//file validation
 	if(argc < 2){
 		cout << "Please enter a file to read." << endl;
 		return 1;
@@ -44,9 +41,12 @@ int main(int argc, char const *argv[])
 			visited[k][l] = false;
 		}
 	}
+	//create country list
 	vector<Country*> countries;
+	//find neighbors
 	BFS(_map, visited, countries, rows, cols);
 	std::sort(countries.begin(), countries.end(), compareASCII);
+	//color the graph
 	findColors(countries[0]);
 	for (int i = 0; i < countries.size(); i++)
 		cout << countries[i]->name << " " << countries[i]->color << endl;
@@ -63,23 +63,28 @@ int main(int argc, char const *argv[])
 }
 
 void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, int & cols){
+	//create queue to go through coordinates
 	queue<pair<int, int>> searcher;
+	//search through every coordinate in graph
 	for(int i = 0; i < rows; i++){
 		for(int j = 0; j < cols; j++){
+			//search through a country
 			if(!visited[i][j]){
 				searcher.push(make_pair(i,j));
 				visited[i][j] = true;
 				char delim = _map[i][j];
+				//create new country based on character
 				Country* newCountry = new Country;
 				newCountry->name = delim;
 				while(!searcher.empty()){
+					//search through adjacent nodes, if node has different delim add to neighbors
+					//search above node
 					if(searcher.front().first - 1 >= 0){
 						if(_map[searcher.front().first - 1][searcher.front().second] == delim && !visited[searcher.front().first - 1][searcher.front().second]){
 							searcher.push(make_pair(searcher.front().first - 1, searcher.front().second));
 							visited[searcher.front().first - 1][searcher.front().second] = true;
 						}
 						else if(_map[searcher.front().first - 1][searcher.front().second] != delim){
-							// newCountry.neighbors.insert(_map[searcher.front().first - 1][searcher.front().second]);
 							for(unsigned int i = 0; i < countries.size(); i++){
 								if(countries[i]->name == _map[searcher.front().first - 1][searcher.front().second]){
 									countries[i]->neighbors.insert(newCountry);
@@ -89,13 +94,13 @@ void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, 
 							}
 						}
 					}
+					//search below node
 					if(searcher.front().first + 1 < rows){
 						if(_map[searcher.front().first + 1][searcher.front().second] == delim && !visited[searcher.front().first + 1][searcher.front().second]){
 							searcher.push(make_pair(searcher.front().first + 1, searcher.front().second));
 							visited[searcher.front().first + 1][searcher.front().second] = true;
 						}
 						else if(_map[searcher.front().first + 1][searcher.front().second] != delim){
-							// newCountry.neighbors.insert(_map[searcher.front().first + 1][searcher.front().second]);
 							for(unsigned int i = 0; i < countries.size(); i++){
 								if(countries[i]->name == _map[searcher.front().first + 1][searcher.front().second]){
 									countries[i]->neighbors.insert(newCountry);
@@ -105,13 +110,13 @@ void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, 
 							}
 						}
 					}
+					//search left node
 					if(searcher.front().second - 1 >= 0){
 						if(_map[searcher.front().first][searcher.front().second -1] == delim && !visited[searcher.front().first][searcher.front().second -1]){
 							searcher.push(make_pair(searcher.front().first, searcher.front().second - 1));
 							visited[searcher.front().first][searcher.front().second - 1] = true;
 						}
 						else if(_map[searcher.front().first][searcher.front().second - 1] != delim){
-							// newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second - 1]);
 							for(unsigned int i = 0; i < countries.size(); i++){
 								if(countries[i]->name == _map[searcher.front().first][searcher.front().second - 1]){
 									countries[i]->neighbors.insert(newCountry);
@@ -121,13 +126,13 @@ void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, 
 							}
 						}
 					}
+					//search right node
 					if(searcher.front().second + 1 < cols){
 						if(_map[searcher.front().first][searcher.front().second + 1] == delim && !visited[searcher.front().first][searcher.front().second + 1]){
 							searcher.push(make_pair(searcher.front().first, searcher.front().second + 1));
 							visited[searcher.front().first][searcher.front().second + 1] = true;
 						}
 						else if(_map[searcher.front().first][searcher.front().second + 1] != delim){
-							// newCountry.neighbors.insert(_map[searcher.front().first][searcher.front().second + 1]);
 							for(unsigned int i = 0; i < countries.size(); i++){
 								if(countries[i]->name == _map[searcher.front().first][searcher.front().second + 1]){
 									countries[i]->neighbors.insert(newCountry);
@@ -139,6 +144,7 @@ void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, 
 					}
 					searcher.pop();
 				}
+				//add to countries list
 				countries.push_back(newCountry);
 			}
 		}
@@ -148,14 +154,21 @@ void BFS(char**& _map, bool**&visited, vector<Country*>& countries, int & rows, 
 void findColors(Country* country){
 	if(country->color > 0)
 		return;
+	//create set of possible colors
 	set<int> colors;
 	for(int i = 1; i <= 4; i++)
 		colors.insert(i);
+	//eliminate colors that can't be used
 	for(set<Country*>::iterator it = country->neighbors.begin(); it != country->neighbors.end(); it++){
 		colors.erase((*it)->color);
 	}
+	//set first available color
 	country->color = *(colors.begin());
 	for(set<Country*>::iterator it = country->neighbors.begin(); it != country->neighbors.end(); it++){
 		findColors(*it);
 	}
+}
+
+bool compareASCII(Country* left, Country* right){
+	return ((int)left->name < (int)right->name);
 }

@@ -10,3 +10,5 @@ struct Country
 void BFS(char** &_map, bool**&visited, std::vector<Country*>& countries, int & rows, int & cols);
 
 void findColors(Country *country);
+
+bool compareASCII(Country* left, Country* right);

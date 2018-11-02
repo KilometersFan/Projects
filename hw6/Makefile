@@ -1,9 +1,9 @@
 CXX = g++
 CPPFLAGS = -g -Wall -std=c++11
 
-all: search
+all: search coloring
 
-search: search.cpp
+search: search.cpp search.h
 	$(CXX) $(CPPFLAGS) $^ -o $@
 
 coloring: coloring.cpp coloring.h

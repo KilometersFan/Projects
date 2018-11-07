@@ -466,7 +466,6 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::remove(const std::pair<Key, Value>& keyValuePair)
 {
 	// TODO
-	Node<Key, Value>* temp = mRoot;
 	//check to see if key is in the tree
 	Node<Key, Value>* temp = internalFind(keyValuePair.first);
 	Node<Key, Value>* parent = temp->getParent();
@@ -482,11 +481,11 @@ void BinarySearchTree<Key, Value>::remove(const std::pair<Key, Value>& keyValueP
 		else if(temp->getLeft() == NULL && temp->getRight() != NULL){
 			if(parent->getLeft() == temp){
 				parent->setLeft(temp->getRight());
-				temp->getRight()->getParent(parent);
+				temp->getRight()->setParent(parent);
 			}
 			else{
 				parent->setRight(temp->getRight());
-				temp->getRight()->getParent(parent)
+				temp->getRight()->setParent(parent);
 			}
 		}
 		else if(temp->getLeft() != NULL && temp->getRight() == NULL){
@@ -504,24 +503,42 @@ void BinarySearchTree<Key, Value>::remove(const std::pair<Key, Value>& keyValueP
 			while(predecessor->getRight() != NULL){
 				predecessor= predecessor->getRight();
 			}
-			predecessor->getParent()->setRight(predecessor->getLeft());
-			if(predecessor->getLeft() != NULL)
-				predecessor->getLeft()->setParent(predecessor->getParent());
-			predecessor->setParent(parent);
-			predecessor->setRight(temp->getRight());
-			//TODO make sure predecessor connects with temps children and that predecessors old children connect with predecessor's parent
-			if(temp->getRight() != NULL){
-				temp->getRight()->setParent(predecessor);
-			}
+			Node<Key, Value>* predLeft = predecessor->getLeft();
+			Node<Key, Value>* predParent = predecessor->getParent();
 			if(parent != NULL){
-				if(parent->getLeft() == temp){
+				//fix predecessors area
+				if(predParent != temp){
+					predParent->setRight(predLeft);
+					if(predLeft != NULL)
+						predLeft->setParent(predParent);
+				}
+				//fix temps right and predecessor
+				predecessor->setRight(temp->getRight());
+				temp->getRight()->setParent(predecessor);
+
+				//fix temps parent and predcessor
+				predecessor->setParent(parent);
+				if(predecessor != temp->getLeft()){
+					temp->getLeft()->setParent(predecessor);
+					predecessor->setLeft(temp->getLeft());
+				}
+				if(parent->getLeft() == temp)
 					parent->setLeft(predecessor);
-				}
-				else{
+				else
 					parent->setRight(predecessor);
-				}
 			}
-			else{
+			else {
+				if(predParent != temp){
+					predParent->setRight(predLeft);
+					if(predLeft != NULL)
+						predLeft->setParent(predParent);
+				}
+				//fix temps area
+				predecessor->setParent(parent);
+				predecessor->setRight(temp->getRight());
+				temp->getRight()->setParent(predecessor);
+				predecessor->setLeft(temp->getLeft());
+				temp->getLeft()->setParent(predecessor);
 				mRoot = predecessor;
 			}
 		}

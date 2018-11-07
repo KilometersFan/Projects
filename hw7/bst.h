@@ -431,7 +431,6 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<Key, Value>& keyValuePair)
 {
 	// TODO
-	// TODO
 	if(mRoot == NULL){
 		mRoot = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, NULL);
 		size++;
@@ -506,6 +505,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 			else {
 				temp->getRight()->setParent(parent);
 			}
+			mRoot = temp->getRight();
 		}
 		else if(temp->getLeft() != NULL && temp->getRight() == NULL){
 			if(parent != NULL){
@@ -520,7 +520,8 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 			}
 			else {
 				temp->getLeft()->setParent(parent);
-			}	
+			}
+			mRoot = temp->getLeft();
 		}
 		else if(temp->getLeft() != NULL && temp->getRight() != NULL){
 			Node<Key, Value>* predecessor = temp->getLeft();
@@ -563,12 +564,12 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 				temp->getRight()->setParent(predecessor);
 				predecessor->setLeft(temp->getLeft());
 				temp->getLeft()->setParent(predecessor);
-				mRoot = predecessor;
 			}
+			mRoot = predecessor;
 		}
 		delete temp;
+		size--;
 	}
-	size--;
 }
 
 /**
@@ -581,6 +582,7 @@ void BinarySearchTree<Key, Value>::clear()
 	// TODO
 	for(int i = 0; i < size; i++){
 		remove(mRoot->getKey());
+		print();
 	}
 	return;
 }

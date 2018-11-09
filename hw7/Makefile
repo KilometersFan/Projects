@@ -1,7 +1,10 @@
 CXX = g++
 CPPFLAGS = -g -Wall -std=c++11
 
-all: test 
+all: test
 
-test: test.cpp rotateBST.h bst.h
+test: test.cpp bst.h rotateBST.h
 	$(CXX) $(CPPFLAGS) $^ -o $@
+
+clean:
+	rm -f *o test

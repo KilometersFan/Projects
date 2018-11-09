@@ -40,12 +40,16 @@ void rotateBST<Key, Value>::leftRotate(Node<Key, Value>* r){
 		rRight->setLeft(r);
 		r->setParent(rRight);
 		r->setRight(leftTree);
+		if(leftTree != NULL)
+			leftTree->setParent(r);
 	}
 	else{
 		rRight->setParent(rParent);
 		rRight->setLeft(r);
 		r->setParent(rRight);
 		r->setRight(leftTree);
+		if(leftTree != NULL)
+			leftTree->setParent(r);
 		this->mRoot = rRight;
 	}
 };
@@ -65,12 +69,16 @@ void rotateBST<Key, Value>::rightRotate(Node<Key, Value>* r){
 		rLeft->setRight(r);
 		r->setParent(rLeft);
 		r->setLeft(rightTree);
+		if(rightTree != NULL)
+			rightTree->setParent(r);
 	}
 	else {
-		rLeft->setParent(rParent);
+		rLeft->setParent(NULL);
 		rLeft->setRight(r);
 		r->setParent(rLeft);
 		r->setLeft(rightTree);
+		if(rightTree != NULL)
+			rightTree->setParent(r);
 		this->mRoot = rLeft;
 	}
 };
@@ -95,7 +103,6 @@ void rotateBST<Key, Value>::transformRightHelper(Node<Key, Value>* node){
 	Node<Key, Value>* right = node->getRight();
 	while(node->getLeft() != NULL){
 		rightRotate(node);
-		std::cout << "ROTATING RIGHT" << std::endl;
 	}
 	transformRightHelper(right);
 }
@@ -103,19 +110,21 @@ template<typename Key, typename Value>
 void rotateBST<Key, Value>::transformLeftHelper(Node<Key, Value>* node, Node<Key, Value>* trueNode){
 	if(node == NULL)
 		return;
-	else if(node->getKey() == trueNode->getKey()){
-		return;
+	Node<Key, Value>* left = node->getLeft();
+	Node<Key, Value>* right = node->getRight();
+	if(node->getKey() == trueNode->getKey()){
+		transformLeftHelper(node->getRight(), trueNode->getRight());
+		transformLeftHelper(node->getLeft(), trueNode->getLeft());
 	}
-	if(node->getKey() != trueNode->getKey()){
-		leftRotate(node);
-		transformLeftHelper(node->getRight(), trueNode);
-	}
-	if(node->getKey() != trueNode->getKey()){
+	else if(node->getKey() > trueNode->getKey() && left != NULL){
 		rightRotate(node);
-		transformLeftHelper(node->getLeft(), trueNode);
+		transformLeftHelper(left, trueNode);
 	}
-	transformLeftHelper(node->getLeft(), trueNode->getLeft());
-	transformLeftHelper(node->getRight(), trueNode->getRight());
+	else {
+		leftRotate(node);
+		transformLeftHelper(right, trueNode);
+	}
+	
 }
 
 template<typename Key, typename Value>
@@ -126,10 +135,8 @@ void rotateBST<Key, Value>::transform(rotateBST& t2) const {
 		t2.rightRotate(t2.mRoot);
 	}
 	t2.transformRightHelper(t2.mRoot->getRight());
-	t2.print();
 	while(t2.mRoot->getKey() != this->mRoot->getKey()){
 		t2.leftRotate(t2.mRoot);
 	}
 	t2.transformLeftHelper(t2.mRoot, this->mRoot);
-	t2.print();
 }

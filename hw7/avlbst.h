@@ -126,6 +126,9 @@ public:
 private:
 	/* Helper functions are strongly encouraged to help separate the problem
 	   into smaller pieces. You should not need additional data members. */
+    void fixHeights(AVLNode<Key, Value>* node);
+    AVLNode<Key, Value>* getUnbalancedNode(AVLNode<Key, Value>* node) const;
+    AVLNode<Key, Value>* getUnbalancedNodeChild(AVLNode<Key, Value>* newNode, AVLNode<Key, Value>* z) const;
 };
 
 /*
@@ -141,6 +144,65 @@ template<typename Key, typename Value>
 void AVLTree<Key, Value>::insert(const std::pair<Key, Value>& keyValuePair)
 {
     // TODO
+    AVLNode<Key, Value>* newNode;
+    if(this->mRoot == NULL){
+        this->mRoot = new AVLNode<Key, Value>(keyValuePair.first, keyValuePair.second, NULL);
+        newNode = dynamic_cast<AVLNode<Key,Value>*>(this->mRoot);
+    }
+    else{
+        AVLNode<Key, Value>* temp = dynamic_cast<AVLNode<Key,Value>*>(this->mRoot);
+        bool done = false;
+        while(!done){
+            if(keyValuePair.first == temp->getKey()){
+                temp->setValue(keyValuePair.second);
+                done = true;
+            }
+            else if(keyValuePair.first > temp->getKey()){
+                if(temp->getRight() != NULL)
+                    temp = temp->getRight();
+                else{
+                    newNode = new AVLNode<Key, Value>(keyValuePair.first, keyValuePair.second, temp);
+                    temp->setRight(newNode);
+                    done = true;
+                }
+            }
+            else{
+                if(temp->getLeft() != NULL)
+                    temp = temp->getLeft();
+                else{
+                    newNode = new AVLNode<Key, Value>(keyValuePair.first, keyValuePair.second, temp);
+                    temp->setLeft(newNode);
+                    done = true;
+                }
+            }
+        }
+    }
+    this->print();
+    fixHeights(newNode);
+    if(!(this->isBalanced())){
+        std::cout << "Not balanced!" << std::endl;
+        AVLNode<Key, Value>* z = getUnbalancedNode(newNode);
+        AVLNode<Key, Value>* y = getUnbalancedNodeChild(newNode, z);
+        AVLNode<Key, Value>* x = getUnbalancedNodeChild(newNode, y);
+        if(y == z->getLeft() && x == y->getLeft()){
+            this->rightRotate(z);
+        }
+        else if(y == z->getLeft() && x == y->getRight()){
+            this->leftRotate(y);
+            this->rightRotate(z);
+        }
+        else if(y == z->getRight() && x == y->getRight()){
+            this->leftRotate(z);
+        }
+        else if(y == z->getRight() && x == y->getLeft()){
+            this->rightRotate(y);
+            this->leftRotate(z);
+        }
+        std::cout << "Balanced Tree:" << std::endl;
+        this->print();
+    }
+    else 
+        std::cout << "Balanced!" << std::endl;
 }
 
 /**
@@ -152,6 +214,51 @@ void AVLTree<Key, Value>::remove(const Key& key)
    // TODO
 }
 
+template<typename Key, typename Value>
+void AVLTree<Key, Value>::fixHeights(AVLNode<Key, Value>* node){
+    if(node == NULL)
+        return;
+    if(node->getLeft() == NULL && node->getRight() != NULL)
+        node->setHeight(node->getRight()->getHeight() + 1);
+    else if(node->getLeft() != NULL && node->getRight() == NULL)
+        node->setHeight(node->getLeft()->getHeight() + 1);
+    else if(node->getLeft() != NULL && node->getRight() != NULL)
+        node->setHeight(std::max(node->getLeft()->getHeight(), node->getRight()->getHeight()) + 1);
+    else
+        node->setHeight(1);
+    fixHeights(node->getParent());
+}
+
+template<typename Key, typename Value>
+AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNode(AVLNode<Key, Value>* node) const
+{
+    if(node == NULL)
+        return NULL;
+    if(node->getLeft() != NULL && node->getRight() != NULL){
+        int diff = std::abs(node->getLeft()->getHeight() - node->getRight()->getHeight());
+        if(diff > 1)
+            return node;
+    }
+    else if(node->getLeft() != NULL && node->getRight() == NULL){
+        if(node->getLeft()->getHeight() > 1)
+            return node;
+    }
+    else if(node->getLeft() == NULL && node->getRight() != NULL){
+        if(node->getRight()->getHeight() > 1)
+            return node;
+    }
+    return getUnbalancedNode(node->getParent());
+}
+
+template<typename Key, typename Value>
+AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNodeChild(AVLNode<Key, Value>* node, AVLNode<Key, Value>* z) const
+{
+    if(node == NULL)
+        return NULL;
+    if(node->getParent() == z)
+        return node;
+    return getUnbalancedNodeChild(node->getParent(), z);
+}
 /*
 ------------------------------------------
 End implementations for the AVLTree class.

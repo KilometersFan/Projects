@@ -100,10 +100,12 @@ template<typename Key, typename Value>
 void rotateBST<Key, Value>::transformRightHelper(Node<Key, Value>* node){
 	if(node == NULL)
 		return;
-	Node<Key, Value>* right = node->getRight();
 	while(node->getLeft() != NULL){
 		rightRotate(node);
+		node=node->getParent();
 	}
+	// this->print();
+	Node<Key, Value>* right = node->getRight();
 	transformRightHelper(right);
 }
 template<typename Key, typename Value>
@@ -133,8 +135,11 @@ void rotateBST<Key, Value>::transform(rotateBST& t2) const {
 		return;
 	while(t2.mRoot->getLeft() != NULL){
 		t2.rightRotate(t2.mRoot);
+		// t2.print();
 	}
+	// t2.print();
 	t2.transformRightHelper(t2.mRoot->getRight());
+	// t2.print();
 	while(t2.mRoot->getKey() != this->mRoot->getKey()){
 		t2.leftRotate(t2.mRoot);
 	}

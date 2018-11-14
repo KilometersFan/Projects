@@ -1,3 +1,6 @@
 test
 *.o
 test.cpp
+hw7_api_check/
+jtest_hw7.py
+hw7-check/

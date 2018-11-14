@@ -28,7 +28,7 @@ if(NOT DEFINED HW7_DIR)
 	else()
 		get_filename_component(PARENT_DIR_REALPATH "${CMAKE_BINARY_DIR}/.." REALPATH)
 		message(STATUS "HW7_DIR autoset to ${PARENT_DIR_REALPATH}")
-		set(HW3_DIR ${PARENT_DIR_REALPATH} CACHE PATH "Path to hw7 assignment directory")
+		set(HW7_DIR ${PARENT_DIR_REALPATH} CACHE PATH "Path to hw7 assignment directory")
 	endif()
 endif()
 

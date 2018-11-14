@@ -170,7 +170,7 @@ CS104-HW7-API-Check_BINARY_DIR:STATIC=/home/cs104/cs104/hw-milespha/hw7/hw7_api_
 CS104-HW7-API-Check_SOURCE_DIR:STATIC=/home/cs104/cs104/hw-milespha/hw7/hw7_api_check
 
 //Path to hw7 assignment directory
-HW3_DIR:PATH=/home/cs104/cs104/hw-milespha/hw7
+HW7_DIR:PATH=/home/cs104/cs104/hw-milespha/hw7
 
 
 ########################

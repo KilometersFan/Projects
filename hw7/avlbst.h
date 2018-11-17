@@ -234,6 +234,8 @@ void AVLTree<Key, Value>::remove(const Key& key)
    // TODO
     //finds node to search through to check unbalance
     AVLNode<Key, Value>* node = (dynamic_cast<AVLNode<Key, Value>*>(this->internalFind(key)));
+    if(node == NULL)
+        return;
     AVLNode<Key, Value>* parent = node->getParent();
     if(node->getLeft() != NULL && node->getRight() != NULL){
         parent = node->getLeft();

@@ -3,7 +3,7 @@
 ### 1297309286
 ### milespha@usc.edu
 
-## Homework 4 consists of:
+## Homework 8 consists of:
 - Scrabble Program
 
 ## Instructions:

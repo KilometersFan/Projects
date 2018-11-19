@@ -49,7 +49,7 @@ public:
 	   determine if the move is legal.	*/
 	std::vector<std::pair<std::string, unsigned int>> getPlaceMoveResults(const PlaceMove &m);
 
-	bool validPlaceMove(const PlaceMove &m);
+	bool validPlaceMove(const PlaceMove &m, bool firstmove);
 
 	/* Executes the given move by taking tiles and placing them on the board.
 	   This function does not check for correctness of the move, so could

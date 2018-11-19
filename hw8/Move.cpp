@@ -105,12 +105,12 @@ Move * Move::parseMove(string moveString, Player &p){
 	return new PassMove(&p);
 }
 //does nothing
-void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
+void PassMove::execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue){
 	return;
 }
 //adss tiles to bag, draws same number of tiles from bag into player's hand
 //returns what new tiles were added
-void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
+void ExchangeMove::execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue){
 	if(!isValidMove())
 		return;
 	bag.addTiles(_playerTiles);
@@ -145,9 +145,9 @@ size_t PlaceMove::getStringLength() const{
 
 //gets all words formed by a move and places it on the board if the words are in the dictionary and in bounds
 //also returns the new score, tiles added, and words formed.
-void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){
+void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue){
 	bool legalWord = true;
-	bool validMove = board.validPlaceMove(*this);
+	bool validMove = board.validPlaceMove(*this, initTrue);
 	vector<pair<string, unsigned int>> words;
 	size_t points = 0;
 	//checks validty of move in several stapes: placement, legality of a word, size of word

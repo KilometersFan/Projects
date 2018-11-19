@@ -65,7 +65,7 @@ public:
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
 	   decide (and document) what exactly it throws*/
-	virtual void execute(Board & board, Bag & bag, Dictionary & dictionary) = 0;
+	virtual void execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue) = 0;
 
 	virtual ~Move();
 
@@ -103,7 +103,7 @@ public:
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
 	   decide (and document) what exactly it throws*/
-	void execute(Board & board, Bag & bag, Dictionary & dictionary);
+	void execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue);
 
 	//Add more public/protected/private functions/variables here.
 };
@@ -128,7 +128,7 @@ public:
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
 	   decide (and document) what exactly it throws*/
-	void execute(Board & board, Bag & bag, Dictionary & dictionary);
+	void execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue);
 
 	//Add more public/protected/private functions/variables here.
 private: 
@@ -158,7 +158,7 @@ public:
 	/* Executes this move, whichever type it is.
 	   This may throw exceptions; students: it's up to you to
 	   decide (and document) what exactly it throws*/
-	void execute(Board & board, Bag & bag, Dictionary & dictionary);
+	void execute(Board & board, Bag & bag, Dictionary & dictionary, bool initTrue);
 
 	size_t getX() const;
 

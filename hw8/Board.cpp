@@ -62,7 +62,7 @@ size_t Board::getColumns() const{
 	return _y;
 }
 //checks if a word is connected to at least one tile or if a word is the first move
-bool Board::validPlaceMove(const PlaceMove &m){
+bool Board::validPlaceMove(const PlaceMove &m, bool firstmove){
 	size_t x = m.getX();
 	size_t y = m.getY();
 	bool horizontal = m.isHorizontal();
@@ -131,7 +131,7 @@ bool Board::validPlaceMove(const PlaceMove &m){
 			}
 			k++;
 		}
-		if(connected || startCoord)
+		if(connected || startCoord || firstmove)
 			return true;
 		else 
 			throw MoveException("Error: Word was not placed on the start tile.");

@@ -99,6 +99,7 @@ int main(int argc, char const *argv[])
 void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console){
 	bool gameOver = false;
 	int pos = -1;
+	bool firstmove = true;
 	while (!gameOver){
 		unsigned int passCount = 0;
 		bool emptyHand = false;
@@ -123,13 +124,13 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 				m = Move::parseMove(move, *(players[i]));
 				move = "";
 			}
-			m->execute(board, bag, dictionary);
+			m->execute(board, bag, dictionary, firstmove);
 			while(!m->isValidMove()){
 				validMoveCheck(move);
 				delete m;
 				m = nullptr;
 				m = Move::parseMove(move, *(players[i]));
-				m->execute(board, bag, dictionary);
+				m->execute(board, bag, dictionary, firstmove);
 				move = "";
 			}
 			console.printHand(*(players[i]));
@@ -157,6 +158,7 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 			cout << "Please press enter to end your turn." << endl;
 			cin.ignore(10000, '\n');
 			delete m;
+			firstmove = false;
 		}
 		if(passCount == players.size() || emptyHand)
 			gameOver = true;

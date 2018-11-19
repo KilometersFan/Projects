@@ -138,6 +138,11 @@ bool PlaceMove::isHorizontal() const{
 size_t PlaceMove::getMaxTiles() const{
 	return _player->getMaxTiles();
 }
+
+size_t PlaceMove::getStringLength() const{
+	return _tileString.length();
+}
+
 //gets all words formed by a move and places it on the board if the words are in the dictionary and in bounds
 //also returns the new score, tiles added, and words formed.
 void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary){

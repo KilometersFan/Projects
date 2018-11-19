@@ -6,11 +6,12 @@
 #include <fstream>
 #include <ctype.h>
 #include <stdlib.h>
+#include <set>
 using namespace std;
 
-void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dictionary, ConsolePrinter &console);
+void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console);
 void validMoveCheck(string &str);
-void initializeBoard(string &initFile, Board& board);
+void initializeBoard(string &initFile, Board& board, set<pair<size_t, size_t>> &occupiedCoords);
 
 int main(int argc, char const *argv[])
 {
@@ -50,7 +51,8 @@ int main(int argc, char const *argv[])
 		Board board(boardFile);
 		Bag bag = Bag(bagFile, seed);
 		ConsolePrinter console;
-		initializeBoard(initFile, board);
+		set<pair<size_t, size_t>> occupiedCoords;
+		initializeBoard(initFile, board, occupiedCoords);
 		//Add payers and starting hands
 		cout << "Hello! Welcome to Scrabble. Please enter the number of players in the game (max 8): ";
 		int numPlayers;
@@ -82,7 +84,7 @@ int main(int argc, char const *argv[])
 			player->addTiles(initialHand);
 		}
 		//start game
-		scrabble(players, board, bag, dictionary, console);
+		scrabble(players, board, occupiedCoords, bag, dictionary, console);
 		for(vector<Player*>::iterator it = players.begin(); it != players.end(); it++){
 			delete *it;
 		}
@@ -94,7 +96,7 @@ int main(int argc, char const *argv[])
 	return 0;
 	
 }
-void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dictionary, ConsolePrinter &console){
+void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console){
 	bool gameOver = false;
 	int pos = -1;
 	while (!gameOver){
@@ -133,6 +135,21 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 			console.printHand(*(players[i]));
 			if(m->isPass())
 				passCount++;
+			if(m->isWord()){
+				if((dynamic_cast<PlaceMove*>(m))->isHorizontal()){
+					for(unsigned int i = 0; i < (dynamic_cast<PlaceMove*>(m))->getStringLength(); i++){
+						occupiedCoords.insert(make_pair((dynamic_cast<PlaceMove*>(m))->getY(), (dynamic_cast<PlaceMove*>(m))->getX() + i));
+					}
+				}
+				else {
+					for(unsigned int i = 0; i < (dynamic_cast<PlaceMove*>(m))->getStringLength(); i++){
+						occupiedCoords.insert(make_pair((dynamic_cast<PlaceMove*>(m))->getY() + i, (dynamic_cast<PlaceMove*>(m))->getX()));
+					}
+				}
+			}
+			for (set<pair<size_t,size_t>>::iterator it = occupiedCoords.begin(); it != occupiedCoords.end(); it++){
+				cout << it->first << " " << it->second << endl;
+			}
 			if(players[i]->getHandTiles().size() == 0){
 				emptyHand = true;
 				pos = i;
@@ -191,14 +208,14 @@ void validMoveCheck(string &str){
 	getline(cin, str);
 	cin.clear();
 }
-void initializeBoard(string &initFile, Board &board){
+void initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& occupiedCoords){
 	if(initFile.length() == 0)
 		return;
 	ifstream ifile(initFile);
-	int row = 1;
+	size_t row = 1;
 	string line;
 	while (getline(ifile,line)){
-		for(int i = 0; i < line.length(); i+=3){
+		for(size_t i = 0; i < line.length(); i+=3){
 			if(isalpha(line[i])){
 				line[i] = tolower(line[i]);
 				string _points = "";
@@ -208,6 +225,7 @@ void initializeBoard(string &initFile, Board &board){
 				Square* square = board.getSquare(i/3 +1, row);
 				Tile* tile = new Tile(line[i], points);
 				square->placeTile(tile);
+				occupiedCoords.insert(make_pair(row, i/3+1));
 			}
 		}
 		row++;

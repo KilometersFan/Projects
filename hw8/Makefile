@@ -27,5 +27,5 @@ ConsolePrinter.o: ConsolePrinter.cpp ConsolePrinter.h rang.h Board.h Player.h
 Trie.o: Trie.cpp Trie.h
 	$(CXX) $(CPPFLAGS) -c $< -o $@
 
-test: test.cpp Trie.o
+test: test.cpp Trie.o Dictionary.o
 	$(CXX) $(CPPFLAGS) $^ -o $@

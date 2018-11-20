@@ -1,17 +1,15 @@
 #include "Trie.h"
+#include "Dictionary.h"
 #include <iostream>
 using namespace std;
 
 int main(int argc, char const *argv[])
 {
+	Dictionary dict("dictionary.txt");
 	TrieSet trie;
-	trie.insert("a");
-	trie.insert("apple");
-	trie.insert("zebra");
-	cout << trie.inTrie("apple") << endl;
-	cout << trie.inTrie("appl") << endl;
-	cout << trie.inTrie("a") << endl;
-	cout << trie.inTrie("bapple") << endl;
-	cout << trie.inTrie("apples") << endl;
+	for(set<string>::iterator it = dict.dictionary.begin(); it != dict.dictionary.end(); it++)
+		trie.insert(*it);
+	cout << trie.inTrie("zebra") << endl;
+
 	return 0;
 } 

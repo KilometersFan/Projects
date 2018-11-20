@@ -16,3 +16,7 @@ Square
 *.o
 Tile
 *.o
+Trie
+*.o
+test
+*.o

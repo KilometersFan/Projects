@@ -1,5 +1,5 @@
 #include <string>
-#include <set>
+#include <map>
 
 struct TrieNode {
   bool inSet;   // Is this node the end of a string in your dictionary?
@@ -29,7 +29,6 @@ class TrieSet {
 private:
   bool isLeafNode(TrieNode* node);
   TrieNode* root;
+  std::map<std::string, bool> words;
   int size;
-  std::set<std::string> words;
-
 };

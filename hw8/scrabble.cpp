@@ -9,9 +9,9 @@
 #include <set>
 using namespace std;
 
-void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console);
+void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove);
 void validMoveCheck(string &str);
-void initializeBoard(string &initFile, Board& board, set<pair<size_t, size_t>> &occupiedCoords);
+bool initializeBoard(string &initFile, Board& board, set<pair<size_t, size_t>> &occupiedCoords);
 
 int main(int argc, char const *argv[])
 {
@@ -52,7 +52,7 @@ int main(int argc, char const *argv[])
 		Bag bag = Bag(bagFile, seed);
 		ConsolePrinter console;
 		set<pair<size_t, size_t>> occupiedCoords;
-		initializeBoard(initFile, board, occupiedCoords);
+		bool firstmove = initializeBoard(initFile, board, occupiedCoords);
 		//Add payers and starting hands
 		cout << "Hello! Welcome to Scrabble. Please enter the number of players in the game (max 8): ";
 		int numPlayers;
@@ -84,7 +84,7 @@ int main(int argc, char const *argv[])
 			player->addTiles(initialHand);
 		}
 		//start game
-		scrabble(players, board, occupiedCoords, bag, dictionary, console);
+		scrabble(players, board, occupiedCoords, bag, dictionary, console, firstmove);
 		for(vector<Player*>::iterator it = players.begin(); it != players.end(); it++){
 			delete *it;
 		}
@@ -96,10 +96,9 @@ int main(int argc, char const *argv[])
 	return 0;
 	
 }
-void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console){
+void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove){
 	bool gameOver = false;
 	int pos = -1;
-	bool firstmove = true;
 	while (!gameOver){
 		unsigned int passCount = 0;
 		bool emptyHand = false;
@@ -210,9 +209,9 @@ void validMoveCheck(string &str){
 	getline(cin, str);
 	cin.clear();
 }
-void initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& occupiedCoords){
+bool initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& occupiedCoords){
 	if(initFile.length() == 0)
-		return;
+		return false;
 	ifstream ifile(initFile);
 	size_t row = 1;
 	string line;
@@ -232,5 +231,6 @@ void initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& 
 		}
 		row++;
 	}
+	return true;
 }
 

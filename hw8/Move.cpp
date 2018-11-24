@@ -150,7 +150,7 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary, bool 
 	bool validMove = board.validPlaceMove(*this, initTrue);
 	vector<pair<string, unsigned int>> words;
 	size_t points = 0;
-	//checks validty of move in several stapes: placement, legality of a word, size of word
+	//checks validty of move in several stages: placement, legality of a word, size of word
 	try{
 		if(validMove)
 			words = board.getPlaceMoveResults(*this);

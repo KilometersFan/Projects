@@ -18,7 +18,7 @@ TrieSet::~TrieSet(){
 };
 
 void TrieSet::insert(std::string input){
-	if(inTrie(input))
+	if(prefix(input))
 		return;
 	for(unsigned int i = 0; i < input.length(); i++){
 		if(!isalpha(input[i]))
@@ -46,7 +46,7 @@ void TrieSet::insert(std::string input){
 
 
 void TrieSet::remove (std::string input){
-	if(!inTrie(input))
+	if(!prefix(input))
 		return;
 	TrieNode* temp = root;
 	for (unsigned int i = 0; i < input.length(); i++){
@@ -77,16 +77,14 @@ void TrieSet::remove (std::string input){
 
 
 TrieNode* TrieSet::prefix(std::string px){
-	if(!inTrie(px))
-		return NULL;
-	else{
-		TrieNode* temp = root;
-		for(unsigned int i = 0; i < px.length(); i++){
-			int index = tolower(px[i]) - 'a'; 
-			temp = temp->children[index];
-		}
-		return temp;
+	TrieNode* temp = root;
+	for(unsigned int i = 0; i < px.length(); i++){
+		int index = tolower(px[i]) - 'a'; 
+		temp = temp->children[index];
+		if(!temp)
+			return NULL;
 	}
+	return temp;
 }
 
 bool TrieSet::inTrie(std::string input){
@@ -101,6 +99,8 @@ bool TrieSet::inTrie(std::string input){
 			temp = temp->children[index];
 		}
 	}
+	if(!temp->inSet)
+		return false;
 	return true;
 }
 

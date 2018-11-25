@@ -2,17 +2,25 @@
 #include "Move.h"
 #include "Board.h"
 #include "ConsolePrinter.h"
+#include "Trie.h"
 #include <iostream>
 #include <fstream>
 #include <ctype.h>
 #include <stdlib.h>
 #include <set>
+#include <bits/stdc++.h> 
 using namespace std;
 
-void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove);
+void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove, TrieSet& trie);
 void validMoveCheck(string &str);
 bool initializeBoard(string &initFile, Board& board, set<pair<size_t, size_t>> &occupiedCoords);
+void permute(string str, string out, set<string>& combos);
+void findSubsets(string str, string out, size_t count, set<string>& sets);
+set<pair<size_t, size_t>> getVerticalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& occupiedCoords);
+set<pair<size_t, size_t>> getHorizontalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& occupiedCoords);
+void getValidHorizontalMoves(string str, set<pair<size_t, size_t>> &startCoords, Board& board, set<string> &moves, TrieSet& trie);
 
+void getValidVerticalMoves(string str, set<pair<size_t, size_t>> &startCoords, Board& board, set<string> &moves, TrieSet& trie);
 int main(int argc, char const *argv[])
 {
 	try{
@@ -48,6 +56,9 @@ int main(int argc, char const *argv[])
 		}	
 		ifile.close();
 		Dictionary dictionary(dictionaryFile);
+		TrieSet trie;
+		for(set<string>::iterator it = dictionary.dictionary.begin(); it != dictionary.dictionary.end(); it++)
+			trie.insert(*it);
 		Board board(boardFile);
 		Bag bag = Bag(bagFile, seed);
 		ConsolePrinter console;
@@ -84,7 +95,7 @@ int main(int argc, char const *argv[])
 			player->addTiles(initialHand);
 		}
 		//start game
-		scrabble(players, board, occupiedCoords, bag, dictionary, console, firstmove);
+		scrabble(players, board, occupiedCoords, bag, dictionary, console, firstmove, trie);
 		for(vector<Player*>::iterator it = players.begin(); it != players.end(); it++){
 			delete *it;
 		}
@@ -96,7 +107,7 @@ int main(int argc, char const *argv[])
 	return 0;
 	
 }
-void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove){
+void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove, TrieSet& trie){
 	bool gameOver = false;
 	int pos = -1;
 	while (!gameOver){
@@ -112,6 +123,37 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 				cout << (players[j])->getName() + ": " << (players[j]->getScore()) << endl;
 			}
 			cout << endl;
+			if(players[i]->getType() != "human"){
+				string handLetters = players[i]->getLetters();
+				set<string> permutations;
+				permute(handLetters, "", permutations);
+				cerr << "created permutations" << endl;
+				set<string> subsets;
+				for(set<string>::iterator it = permutations.begin(); it != permutations.end(); ++it)
+					findSubsets(*it, "", 0, subsets);
+				cerr << "created subsets" << endl;
+				//subsets now has all permutations of every subset of the cpu's hand
+				//retirieve all possible start coords for every sub set length
+				map<int, set<pair<size_t, size_t>>> horCoordinateBank;
+				map<int, set<pair<size_t, size_t>>> vertCoordinateBank;
+				size_t size = players[i]->getLetters().length();
+				for(int i = 1; i <= size; i++){
+					horCoordinateBank[i] = getHorizontalStartCoords(i, board, occupiedCoords);
+					vertCoordinateBank[i] = getVerticalStartCoords(i, board, occupiedCoords);
+				}
+				cerr << "created start coordinate banks" << endl;
+				set<string> moves;
+				for(set<string>::iterator it = subsets.begin(); it != subsets.end(); it++){
+					getValidHorizontalMoves(*it, horCoordinateBank[it->length()], board, moves, trie);
+					getValidVerticalMoves(*it, vertCoordinateBank[it->length()], board, moves, trie);
+				}
+				// for(set<string>::iterator it = moves.begin(); it != moves.end(); it++)
+				// 	cout << *it << endl;
+				console.printBoard(board);
+			}
+			// set<pair<size_t, size_t>> temp = getHorizontalStartCoords(1, board, occupiedCoords);
+			// for (set<pair<size_t, size_t>>::iterator it = temp.begin(); it != temp.end(); it++)
+			// 	cout << it->first << " " << it->second << endl;
 			string move;
 			cout << "Hello " + players[i]->getName() + " what would you like to do?" << endl;
 			cout << "Examples: \nPASS\nEXCHANGE <tile string>\nPLACE <dir> <row> <col> <tile string>" << endl;
@@ -135,6 +177,7 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 			console.printHand(*(players[i]));
 			if(m->isPass())
 				passCount++;
+			//adds occupied coords to a list for use in AI turns
 			if(m->isWord()){
 				if((dynamic_cast<PlaceMove*>(m))->isHorizontal()){
 					for(unsigned int i = 0; i < (dynamic_cast<PlaceMove*>(m))->getStringLength(); i++){
@@ -226,7 +269,7 @@ bool initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& 
 				Square* square = board.getSquare(i/3 +1, row);
 				Tile* tile = new Tile(line[i], points);
 				square->placeTile(tile);
-				occupiedCoords.insert(make_pair(row, i/3+1));
+				occupiedCoords.insert(make_pair(i/3+1, row));
 			}
 		}
 		row++;
@@ -234,3 +277,183 @@ bool initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& 
 	return true;
 }
 
+void permute(string str, string out, set<string>& combos) 
+{ 
+    // When size of str becomes 0, out has a 
+    // permutation (length of out is n) 
+    if (str.size() == 0 && out != "") 
+    { 
+        combos.insert(out); 
+        return; 
+    } 
+  
+    // One be one move all characters at 
+    // the beginning of out (or result) 
+    for (unsigned int i = 0; i < str.size(); i++) 
+    { 
+        // Remove first character from str and 
+        // add it to out 
+        permute(str.substr(1), out + str[0], combos); 
+  
+        // Rotate string in a way second character 
+        // moves to the beginning. 
+        rotate(str.begin(), str.begin() + 1, str.end()); 
+    } 
+}
+
+void findSubsets(string str, string out, size_t count, set<string>& sets){
+	if(count == (str.length())){
+		if(out != "")
+			sets.insert(out);
+		return;
+	}
+	findSubsets(str, out + "", count + 1, sets);
+	findSubsets(str, out + str[count], count + 1, sets);
+}
+
+set<pair<size_t, size_t>> getHorizontalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& occupiedCoords) {
+	set<pair<size_t, size_t>> startCoords;
+	for (set<pair<size_t, size_t>>::iterator it = occupiedCoords.begin(); it != occupiedCoords.end(); it++){
+		size_t _length = length;
+		size_t x = it->first;
+		size_t y = it->second;
+		//go left until you hit the edge of board or an occupied square
+		size_t i = 0;
+		while(x - i - 1 > 0 && _length > 0){
+			if(board.getSquare(x - i - 1, y)->isOccupied())
+				break;
+			i++;
+			_length--;
+		}			
+		//add each empty square to start coord set (dupes will not be added)
+		while(i != 0){
+			startCoords.insert(make_pair(x-i, y));
+			i--;
+		}
+		_length = length;
+		size_t j = 0;
+		while(x + j + 1 <= board.getColumns() && _length > 0){
+			if(!board.getSquare(x + j + 1, y)->isOccupied())
+				break;
+			j++;
+			_length--;
+		}
+		if(x + j + 1 <= board.getColumns()){
+			if(!board.getSquare(x+j+1, y)->isOccupied())
+				startCoords.insert(make_pair(x + j + 1, y));
+		}
+	}
+	return startCoords;
+}
+set<pair<size_t, size_t>> getVerticalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& occupiedCoords) {
+	set<pair<size_t, size_t>> startCoords;
+	for (set<pair<size_t, size_t>>::iterator it = occupiedCoords.begin(); it != occupiedCoords.end(); it++){
+		size_t x = it->first;
+		size_t y = it->second;
+		size_t _length = length;
+		size_t i = 0;
+		while(y - i - 1 > 0 && _length > 0){
+			if(board.getSquare(x, y - i - 1)->isOccupied())
+				break;
+			i++;
+			_length--;
+		}			
+		while(i != 0){
+			startCoords.insert(make_pair(x, y-i));
+			i--;
+		}
+		_length = length;
+		size_t j = 0;
+		while(y + j + 1 <= board.getRows() && _length > 0){
+			if(!board.getSquare(x, y + j + 1)->isOccupied())
+				break;
+			j++;
+			_length--;
+		}
+		if(y + j + 1 <= board.getRows()){
+			if(!board.getSquare(x, y+j+1)->isOccupied())
+				startCoords.insert(make_pair(x, y + j + 1));
+		}
+	}
+	return startCoords;
+}
+
+void getValidHorizontalMoves(string str, set<pair<size_t, size_t>> &startCoords, Board& board, set<string> &moves, TrieSet& trie){
+	for(set<pair<size_t, size_t>>::iterator it = startCoords.begin(); it != startCoords.end(); it++){
+		size_t x = it->first;
+		size_t y = it->second;
+		size_t i = 0;
+		bool inTrie = true;
+		while(x - i - 1 > 0){
+			if(!board.getSquare(x - i - 1, y)->isOccupied())
+				break;
+			i++;
+		}
+		size_t newX = x - i;
+		size_t count = 0;
+		string word = "";
+		while(count != str.length() || board.getSquare(newX, y)->isOccupied()){
+			Square* s = board.getSquare(newX, y);
+			if(s->isOccupied())
+				word += s->getLetter();
+			else{
+				word += str[count];
+				count++;
+			}
+			if(!trie.prefix(word)){
+				inTrie = false;
+				break;
+			}
+			newX++;
+			if(newX > board.getColumns())
+				break;
+		}
+		// cout << word << " " << trie.inTrie(word) << endl;
+		if(inTrie && trie.inTrie(word)){
+			// cout << word << endl;
+			string move = "place - " + to_string(y) + " " + to_string(x) + " " + str;
+			// cout << move << endl;
+			moves.insert(move);
+		}
+	}
+}
+
+void getValidVerticalMoves(string str, set<pair<size_t, size_t>> &startCoords, Board& board, set<string> &moves, TrieSet& trie){
+	for(set<pair<size_t, size_t>>::iterator it = startCoords.begin(); it != startCoords.end(); it++){
+		size_t x = it->first;
+		size_t y = it->second;
+		size_t i = 0;
+		bool inTrie = true;
+		while(y - i - 1 > 0){
+			if(!board.getSquare(x, y - i - 1)->isOccupied())
+				break;
+			i++;
+		}
+		size_t newY = y - i;
+		size_t count = 0;
+		string word = "";
+		while(count != str.length() || board.getSquare(x, newY)->isOccupied()){
+			Square* s = board.getSquare(x, newY);
+			if(s->isOccupied())
+				word += s->getLetter();
+			else{
+				word += str[count];
+				count++;
+			}
+			if(!trie.prefix(word)){
+				inTrie = false;
+				break;
+			}
+			newY++;
+			if(newY > board.getRows())
+				break;
+		}
+		// cout << word << " " << trie.inTrie(word) << endl;
+		if(inTrie && trie.inTrie(word)){
+			cout << word << endl;
+			string move = "place | " + to_string(y) + " " + to_string(x) + " " + str;
+			cout << move << endl;
+			moves.insert(move);
+		}
+	}
+}

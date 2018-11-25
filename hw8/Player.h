@@ -77,7 +77,9 @@ public:
 
 	void setScore(size_t points);
 
-	void getType();
+	std::string getType();
+
+	std::string getLetters() const;
 
 protected:
 	std::string _type;

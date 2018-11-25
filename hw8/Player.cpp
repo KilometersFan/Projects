@@ -141,6 +141,14 @@ void Player::setScore(size_t points) {
 	_score += points;
 }
 
-void Player::getType(){
-	cout << _type << endl;
+string Player::getType(){
+	return _type;
+}
+
+string Player::getLetters() const {
+	string letters = "";
+	for(set<Tile*>::iterator it = _hand.begin(); it != _hand.end(); ++it){
+		letters += (*it)->getUse();
+	}
+	return letters;
 }

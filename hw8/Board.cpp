@@ -61,6 +61,11 @@ size_t Board::getRows() const{
 size_t Board::getColumns() const{
 	return _y;
 }
+
+std::pair<size_t, size_t> Board::getStartCoords() const{
+	return make_pair(_sy, _sx);
+}
+
 //checks if a word is connected to at least one tile or if a word is the first move
 bool Board::validPlaceMove(const PlaceMove &m, bool firstmove){
 	size_t x = m.getX();
@@ -131,13 +136,14 @@ bool Board::validPlaceMove(const PlaceMove &m, bool firstmove){
 			}
 			k++;
 		}
-		if(connected || startCoord || firstmove)
+		if(connected || (startCoord && firstmove))
 			return true;
 		else 
 			throw MoveException("Error: Word was not placed on the start tile.");
 	}
-	catch (MoveException &m){
-		cout << m.getMessage() << endl;
+	catch (MoveException &e){
+		if(m.getPlayer()->getType() == "human")
+			cout << e.getMessage() << endl;
 		return false;
 	}
 	return false;

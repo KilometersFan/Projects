@@ -22,6 +22,10 @@ bool Move::isValidMove() {
 void Move::setValidMove(bool m) {
 	validMove = m;
 }
+
+Player* Move::getPlayer() const{
+	return _player;
+}
 //do nothing but is a valid move
 PassMove::PassMove(Player * player) : Move(player){
 	setValidMove(true);
@@ -69,7 +73,7 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 //takes in input, creates desired move with parameters
 Move * Move::parseMove(string moveString, Player &p){
 	transform(moveString.begin(), moveString.end(), moveString.begin(), ::tolower);
-	cout << moveString << endl;
+	// cout << moveString << endl;
 	stringstream ss(moveString);
 	string moveType = "";
 	string tileString = "";
@@ -185,7 +189,8 @@ void PlaceMove::execute(Board & board, Bag & bag, Dictionary & dictionary, bool 
 	}
 	catch (MoveException &e){
 		setValidMove(false);
-		cout << e.getMessage() << endl;
+		if(_player->getType() == "human")
+			cout << e.getMessage() << endl;
 		_player->addTiles(getPlayerTiles());
 	}
 }

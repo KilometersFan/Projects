@@ -71,7 +71,7 @@ public:
 
 	bool isValidMove();
 
-
+	Player* getPlayer() const;
 	//Add more public/protected/private functions/variables here.
 
 protected:

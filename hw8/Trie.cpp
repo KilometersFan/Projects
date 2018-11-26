@@ -18,7 +18,7 @@ TrieSet::~TrieSet(){
 };
 
 void TrieSet::insert(std::string input){
-	if(prefix(input))
+	if(inTrie(input))
 		return;
 	for(unsigned int i = 0; i < input.length(); i++){
 		if(!isalpha(input[i]))

@@ -69,7 +69,7 @@ public:
 
 	/* Returns the number of columns of the board.*/
 	size_t getColumns() const;
-
+	std::pair<size_t, size_t> getStartCoords() const;
 private:
 	size_t _x;
 	size_t _y;

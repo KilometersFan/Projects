@@ -130,15 +130,33 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 				for(set<string>::iterator it = permutations.begin(); it != permutations.end(); it++){
 					//deals with blank tiles
 					size_t pos = it->find("?");
-					if(pos != string::npos){
+					if(pos != string::npos && pos != 18446744073709551615){
+						string temp;
 						for(size_t i = 0; i < 26; i++){
-							string temp = *it;
-							temp.insert(pos + 1, ("a" + i));
-							pos = temp.find("?", pos+1);
-							if(pos != string::npos){
-								string temp2 = temp;
+							temp = *it;
+							if(pos < temp.length()-1){
+								char c = 'a' + i;
+								string p1 = temp.substr(0, pos+1);
+								string p2 = temp.substr(pos+1);
+								temp = p1 + c + p2;
+							}
+							else 
+								temp.push_back('a' + i);
+							if(pos+1 > temp.length())
+								continue;
+							int newpos = temp.find("?", pos+1);
+							if(newpos != string::npos && newpos != 18446744073709551615){
+								string temp2;
 								for(size_t i = 0; i < 26; i++){
-									temp2.insert(pos + 1, ("a" + i));
+									temp2 = temp;
+									if(newpos < temp2.length()-1){
+										char c = 'a' + i;
+										string p1 = temp2.substr(0, newpos+1);
+										string p2 = temp2.substr(newpos+1);
+										temp2 = p1 + c + p2;
+									}
+									else 
+										temp2.push_back('a' + i);
 									getValidHorizontalMoves(temp2, horCoordinateBank, board, moves, trie);
 									getValidVerticalMoves(temp2, vertCoordinateBank, board, moves, trie);
 								}
@@ -162,7 +180,7 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 					finalMove = returnMaxPointMove(moves, *(players[i]), dictionary, board, firstmove);
 				else
 					finalMove = returnMaxLengthMove(moves, *(players[i]), dictionary, board, firstmove);
-				cout << "FINAL MOVE: " << finalMove << endl;
+				// cout << "FINAL MOVE: " << finalMove << endl;
 				if(!finalMove.length())
 					m = Move::parseMove("pass", *(players[i]));
 				else

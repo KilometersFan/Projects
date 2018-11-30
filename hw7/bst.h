@@ -434,6 +434,7 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::insert(const std::pair<Key, Value>& keyValuePair)
 {
 	// TODO
+	//create new root if tree is empty 
 	if(mRoot == NULL){
 		mRoot = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, NULL);
 		size++;
@@ -442,13 +443,16 @@ void BinarySearchTree<Key, Value>::insert(const std::pair<Key, Value>& keyValueP
 		Node<Key, Value>* temp = mRoot;
 		bool done = false;
 		while(!done){
+			//replace value if key already exists
 			if(keyValuePair.first == temp->getKey()){
 				temp->setValue(keyValuePair.second);
 				done = true;
 			}
+			//searches through tree to find appropriate spot
 			else if(keyValuePair.first > temp->getKey()){
 				if(temp->getRight() != NULL)
 					temp = temp->getRight();
+				//creates node at appropriate spot
 				else{
 					Node<Key, Value>* newNode = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, temp);
 					temp->setRight(newNode);
@@ -459,6 +463,7 @@ void BinarySearchTree<Key, Value>::insert(const std::pair<Key, Value>& keyValueP
 			else{
 				if(temp->getLeft() != NULL)
 					temp = temp->getLeft();
+				//creates node at appropriate spot
 				else{
 					Node<Key, Value>* newNode = new Node<Key, Value>(keyValuePair.first, keyValuePair.second, temp);
 					temp->setLeft(newNode);
@@ -478,14 +483,13 @@ template<typename Key, typename Value>
 void BinarySearchTree<Key, Value>::remove(const Key& key)
 {
 	// TODO
+	//makes sure node to be deleted exists
 	Node<Key, Value>* temp = internalFind(key);
-	// std::cout << temp->getKey() << std::endl;
 	if(temp == NULL)
 		return;
 	else{
+		//deletes leaf node
 		Node<Key, Value>* parent = temp->getParent();
-		// if(parent != NULL)
-			// std::cout << "PARENT" << parent->getKey() << std::endl;
 		if(temp->getLeft() == NULL && temp->getRight() == NULL){
 			if(parent != NULL){
 				if(parent->getLeft() == temp)
@@ -497,6 +501,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 				mRoot = NULL;
 			}
 		}
+		//promotes deleted node's one child 
 		else if(temp->getLeft() == NULL && temp->getRight() != NULL){
 			if(parent != NULL){
 				if(parent->getLeft() == temp){
@@ -514,6 +519,7 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 			}
 			
 		}
+		//promotes deleted node's one child 
 		else if(temp->getLeft() != NULL && temp->getRight() == NULL){
 			if(parent != NULL){
 				if(parent->getLeft() == temp){
@@ -530,12 +536,12 @@ void BinarySearchTree<Key, Value>::remove(const Key& key)
 				mRoot = temp->getLeft();
 			}
 		}
+		//finds predecessor node, replaces deleted node, and fixes pointers along the way
 		else if(temp->getLeft() != NULL && temp->getRight() != NULL){
 			Node<Key, Value>* predecessor = temp->getLeft();
 			while(predecessor->getRight() != NULL){
 				predecessor= predecessor->getRight();
 			}
-			// std::cout <<"PRED:" <<predecessor->getKey() << std::endl;
 			Node<Key, Value>* predLeft = predecessor->getLeft();
 			Node<Key, Value>* predParent = predecessor->getParent();
 			if(parent != NULL){

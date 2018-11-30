@@ -148,13 +148,11 @@ template<typename Key, typename Value>
 AVLTree<Key, Value>::AVLTree(){
 
 };
-
+//removes every node
 template<typename Key, typename Value>
 AVLTree<Key, Value>::~AVLTree(){
-    // this->clear();
     while(this->mRoot != NULL){
         AVLTree<Key, Value>::remove(this->mRoot->getKey());
-        // this->print();
     }
 };
 
@@ -163,8 +161,8 @@ template<typename Key, typename Value>
 void AVLTree<Key, Value>::insert(const std::pair<Key, Value>& keyValuePair)
 {
     // TODO
+    //inserts new node at appropriate spot
     AVLNode<Key, Value>* newNode = dynamic_cast<AVLNode<Key, Value>*>(this->internalFind(keyValuePair.first));
-    // std::cout << newNode->getKey() << std::endl;
     if(this->mRoot == NULL){
         this->mRoot = new AVLNode<Key, Value>(keyValuePair.first, keyValuePair.second, NULL);
         newNode = dynamic_cast<AVLNode<Key,Value>*>(this->mRoot);
@@ -173,10 +171,12 @@ void AVLTree<Key, Value>::insert(const std::pair<Key, Value>& keyValuePair)
         AVLNode<Key, Value>* temp = dynamic_cast<AVLNode<Key,Value>*>(this->mRoot);
         bool done = false;
         while(!done){
+            //replaces node value if key already exists
             if(keyValuePair.first == temp->getKey()){
                 temp->setValue(keyValuePair.second);
                 done = true;
             }
+            //finds appropriate spot to create new node and then creates it
             else if(keyValuePair.first > temp->getKey()){
                 if(temp->getRight() != NULL)
                     temp = temp->getRight();
@@ -197,11 +197,14 @@ void AVLTree<Key, Value>::insert(const std::pair<Key, Value>& keyValuePair)
             }
         }
     }
+    //fxies heights of newly inserted node
     fixHeights(newNode);
     if(!(this->isBalanced())){
+        //rotates approriate unbalanced nodes to rebalance tree
         AVLNode<Key, Value>* z = getUnbalancedNode(newNode);
         AVLNode<Key, Value>* y = getUnbalancedNodeChild(newNode, z);
         AVLNode<Key, Value>* x = getUnbalancedNodeChild(newNode, y);
+        //4 cases handled (leftleft, leftright, rightright, rightleft)
         if(y == z->getLeft() && x == y->getLeft()){
             this->rightRotate(z);
         }
@@ -229,7 +232,10 @@ template<typename Key, typename Value>
 void AVLTree<Key, Value>::remove(const Key& key)
 {
    // TODO
+    //finds node to search through to check unbalance
     AVLNode<Key, Value>* node = (dynamic_cast<AVLNode<Key, Value>*>(this->internalFind(key)));
+    if(node == NULL)
+        return;
     AVLNode<Key, Value>* parent = node->getParent();
     if(node->getLeft() != NULL && node->getRight() != NULL){
         parent = node->getLeft();
@@ -244,12 +250,13 @@ void AVLTree<Key, Value>::remove(const Key& key)
         parent = node->getRight();
     else if (parent == NULL && node->getLeft() != NULL && node->getRight() == NULL)
         parent = node->getLeft();
+    //removes node and fixes heights
     rotateBST<Key, Value>::remove(key);
     fixHeights(parent);
+    //sets heights of tree to appropriate vals
     setHeights(dynamic_cast<AVLNode<Key,Value>*>(this->mRoot));
-    // this->print();
+    //handles 4 cases of unbalance
     while(!(this->isBalanced())){
-        // std::cout << "Not balanced!" << std::endl;
         AVLNode<Key, Value>* z = getUnbalancedNode(parent);
         AVLNode<Key, Value>* y = getUnbalancedNodeHeavyChild(z);
         AVLNode<Key, Value>* x = getUnbalancedNodeHeavyChild(z, y);
@@ -275,6 +282,7 @@ void AVLTree<Key, Value>::remove(const Key& key)
 
 template<typename Key, typename Value>
 void AVLTree<Key, Value>::fixHeights(AVLNode<Key, Value>* node){
+    //adjusts heights of nodes to make sure tree can be checked later
     if(node == NULL)
         return;
     if(node->getLeft() == NULL && node->getRight() != NULL){
@@ -291,7 +299,7 @@ void AVLTree<Key, Value>::fixHeights(AVLNode<Key, Value>* node){
     }
     fixHeights(node->getParent());
 }
-
+//sets heights of nodes 
 template<typename Key, typename Value>
 int AVLTree<Key, Value>::setHeights(AVLNode<Key, Value>* root){
     if(root == NULL)
@@ -303,7 +311,7 @@ int AVLTree<Key, Value>::setHeights(AVLNode<Key, Value>* root){
     // std::cout << "height of " << root->getKey() << ": " << root->getHeight() << std::endl;
     return newHeight;
 }
-
+//finds unbalanced node in tree
 template<typename Key, typename Value>
 AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNode(AVLNode<Key, Value>* node) const
 {
@@ -324,7 +332,7 @@ AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNode(AVLNode<Key, Value>*
     }
     return getUnbalancedNode(node->getParent());
 }
-
+//finds unbalanced child of tree for insertion
 template<typename Key, typename Value>
 AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNodeChild(AVLNode<Key, Value>* node, AVLNode<Key, Value>* z) const
 {
@@ -334,7 +342,7 @@ AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNodeChild(AVLNode<Key, Va
         return node;
     return getUnbalancedNodeChild(node->getParent(), z);
 }
-
+//find heavy child of unbalanced node for deletion
 template<typename Key, typename Value>
 AVLNode<Key, Value>* AVLTree<Key, Value>::getUnbalancedNodeHeavyChild(AVLNode<Key, Value>* z, AVLNode<Key, Value>* y) {
     if(z->getLeft() != NULL && z->getRight() == NULL && y == NULL)

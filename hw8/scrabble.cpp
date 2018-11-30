@@ -1,11 +1,5 @@
 #include "scrabble.h"
 using namespace std;
-string returnMaxPointMove(set<string>& moves, Player& player, Board& board, bool firstmove, TrieSet& trie);
-void returnCPUTiles(Player& player, Move* m);
-string returnMaxLengthMove(set<string>& moves, Player& player, Board& board, bool firstmove, TrieSet& trie);
-void blankTileStrings(string str, int pos, set<pair<size_t, size_t>>& horCoordinateBank, set<pair<size_t, size_t>>& vertCoordinateBank, Board& board, vector<pair<string, int>>& moves, TrieSet& trie, bool &firstmove);
-bool hasValidAdjacentWords(size_t x, size_t y, Board& board, bool horizontal, char letter, TrieSet& trie);
-void getStartOfWord(size_t &x, size_t &y, Board& board, bool horizontal);
 int main(int argc, char const *argv[])
 {
 	try{
@@ -47,8 +41,7 @@ int main(int argc, char const *argv[])
 		Board board(boardFile);
 		Bag bag = Bag(bagFile, seed);
 		ConsolePrinter console;
-		set<pair<size_t, size_t>> occupiedCoords;
-		bool firstmove = initializeBoard(initFile, board, occupiedCoords);
+		bool firstmove = initializeBoard(initFile, board);
 		//Add payers and starting hands
 		cout << "Hello! Welcome to Scrabble. Please enter the number of players in the game (max 8): ";
 		int numPlayers;
@@ -80,7 +73,7 @@ int main(int argc, char const *argv[])
 			player->addTiles(initialHand);
 		}
 		//start game
-		scrabble(players, board, occupiedCoords, bag, dictionary, console, firstmove, trie);
+		scrabble(players, board, bag, dictionary, console, firstmove, trie);
 		for(vector<Player*>::iterator it = players.begin(); it != players.end(); it++){
 			delete *it;
 		}
@@ -92,7 +85,7 @@ int main(int argc, char const *argv[])
 	return 0;
 	
 }
-void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove, TrieSet& trie){
+void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove, TrieSet& trie){
 	bool gameOver = false;
 	int pos = -1;
 	while (!gameOver){
@@ -110,36 +103,35 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 				cout << (players[j])->getName() + ": " << (players[j]->getScore()) << endl;
 			}
 			cout << endl;
+			cout << "Hello " + players[i]->getName() + " what would you like to do?" << endl;
+			cout << "Examples: \nPASS\nEXCHANGE <tile string>\nPLACE <dir> <row> <col> <tile string>" << endl;
 			Move* m = nullptr;
 			//Bot moves
 			if(players[i]->getType() != "human"){
 				string handLetters = players[i]->getLetters();
-				if(occupiedCoords.size() > 0){
-					size_t size = players[i]->getHandTiles().size();
-					getHorizontalStartCoords(size, board, occupiedCoords, horCoordinateBank);
-					getVerticalStartCoords(size, board, occupiedCoords, vertCoordinateBank);
-				}
-				else {
+				size_t size = players[i]->getHandTiles().size();
+				getHorizontalStartCoords(size, board, horCoordinateBank);
+				getVerticalStartCoords(size, board, vertCoordinateBank);
+				if(horCoordinateBank.size() == 0 && vertCoordinateBank.size() == 0){
 					pair<size_t, size_t> sc = board.getStartCoords();
 					horCoordinateBank.insert(sc);
 					vertCoordinateBank.insert(sc);
 				}
-				string move = "";
-				TrieNode* root = trie.prefix("");
-				cout << root << endl;
 				set<string> moves;
+				// for(set<pair<size_t, size_t>>::iterator it = horCoordinateBank.begin(); it != horCoordinateBank.end(); it++)
+				// 	cout << "HORIZONTAL: " <<it->first << " " << it->second << endl;
 				for(set<pair<size_t, size_t>>::iterator it = horCoordinateBank.begin(); it != horCoordinateBank.end(); it++){
 					size_t x = it->first; size_t y = it->second;
-					string move = "place - " + to_string(y) + " " + to_string(x) + " ";
-					getStartOfWord( x,  y, board, true);
-					getValidHorizontalMoves(players[i]->getHandTiles(), x, y, board, "", move, moves, trie, firstmove, root);
+					findHorizontalMoves(players[i]->getHandTiles(), x, y, trie, board, moves);
 				}
+				// for(set<pair<size_t, size_t>>::iterator it = vertCoordinateBank.begin(); it != vertCoordinateBank.end(); it++)
+				// 	cout << "VERTICAL : "<< it->first << " " << it->second << endl;
 				for(set<pair<size_t, size_t>>::iterator it = vertCoordinateBank.begin(); it != vertCoordinateBank.end(); it++){
 					size_t x = it->first; size_t y = it->second;
-					string move = "place | " + to_string(y) + " " + to_string(x) + " ";
-					getStartOfWord( x,  y, board, false);
-					getValidVerticalMoves(players[i]->getHandTiles(), x, y, board, "", move, moves, trie, firstmove, root);
+					findVerticalMoves(players[i]->getHandTiles(), x, y, trie, board, moves);
 				}
+				// for(set<string>::iterator it = moves.begin(); it != moves.end(); it++)
+				// 	cout << "POSSIBLE MOVE: " << *it << endl;
 				// retrieve final move
 				string finalMove = "";
 				if(players[i]->getType() == "cpus")
@@ -156,8 +148,6 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 			//human moves
 			else {
 				string move;
-				cout << "Hello " + players[i]->getName() + " what would you like to do?" << endl;
-				cout << "Examples: \nPASS\nEXCHANGE <tile string>\nPLACE <dir> <row> <col> <tile string>" << endl;
 				getline(cin, move);
 				//creates move based on player input. If malformed, asks again until well formed 
 				m = Move::parseMove(move, *(players[i]));
@@ -179,29 +169,7 @@ void scrabble(vector<Player*> &players, Board &board, set<pair<size_t, size_t>>&
 			console.printBoard(board);
 			if(m->isPass())
 				passCount++;
-			//adds occupied coords to a list for use in AI turns
-			if(m->isWord()){
-				if((dynamic_cast<PlaceMove*>(m))->isHorizontal()){
-					for(unsigned int i = 0; i < (dynamic_cast<PlaceMove*>(m))->getStringLength(); i++){
-						pair<size_t, size_t> temp = make_pair((dynamic_cast<PlaceMove*>(m))->getX() + i, (dynamic_cast<PlaceMove*>(m))->getY());
-						occupiedCoords.insert(temp);
-						if(horCoordinateBank.find(temp)!= horCoordinateBank.end())
-							horCoordinateBank.erase(temp);
-						if(vertCoordinateBank.find(temp)!= vertCoordinateBank.end())
-							vertCoordinateBank.erase(temp);
-					}
-				}
-				else {
-					for(unsigned int i = 0; i < (dynamic_cast<PlaceMove*>(m))->getStringLength(); i++){
-						pair<size_t, size_t> temp = make_pair((dynamic_cast<PlaceMove*>(m))->getX(), (dynamic_cast<PlaceMove*>(m))->getY() + i);
-						occupiedCoords.insert(temp);
-						if(horCoordinateBank.find(temp)!= horCoordinateBank.end())
-							horCoordinateBank.erase(temp);
-						if(vertCoordinateBank.find(temp)!= vertCoordinateBank.end())
-							vertCoordinateBank.erase(temp);
-					}
-				}
-			}
+			// adds occupied coords to a list for use in AI turns
 			if(players[i]->getHandTiles().size() == 0){
 				emptyHand = true;
 				pos = i;
@@ -261,12 +229,14 @@ void validMoveCheck(string &str){
 	getline(cin, str);
 	cin.clear();
 }
-bool initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& occupiedCoords){
+bool initializeBoard(string &initFile, Board &board){
+	//if no file provided, proceed as normal
 	if(initFile.length() == 0)
 		return false;
 	ifstream ifile(initFile);
 	size_t row = 1;
 	string line;
+	//adds tiles onto board if they exist, also allows player to place on any tile following placement of the tile(s)
 	while (getline(ifile,line)){
 		for(size_t i = 0; i < line.length(); i+=3){
 			if(isalpha(line[i])){
@@ -278,7 +248,6 @@ bool initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& 
 				Square* square = board.getSquare(i/3 +1, row);
 				Tile* tile = new Tile(line[i], points);
 				square->placeTile(tile);
-				occupiedCoords.insert(make_pair(i/3+1, row));
 			}
 		}
 		row++;
@@ -286,297 +255,385 @@ bool initializeBoard(string &initFile, Board &board, set<pair<size_t, size_t>>& 
 	return true;
 }
 
-void getHorizontalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& occupiedCoords, set<pair<size_t, size_t>>& startCoords) {
-	for (set<pair<size_t, size_t>>::iterator it = occupiedCoords.begin(); it != occupiedCoords.end(); it++){
-		size_t _length = length;
-		size_t x = it->first;
-		size_t y = it->second;
-		//go left until you hit the edge of board or an occupied square
-		size_t i = 0;
-		while(x - i - 1 > 0 && _length > 0){
-			if(board.getSquare(x - i - 1, y)->isOccupied())
-				break;
-			i++;
-			_length--;
-		}			
-		//add each empty square to start coord set (dupes will not be added)
-		while(i != 0){
-			startCoords.insert(make_pair(x-i, y));
-			i--;
-		}
-		_length = length;
-		size_t j = 0;
-		while(x + j + 1 <= board.getColumns() && _length > 0){
-			if(!board.getSquare(x + j + 1, y)->isOccupied())
-				break;
-			j++;
-			_length--;
-		}
-		if(y-1 > 0){
-			if(!board.getSquare(x, y-1)->isOccupied()){
-				startCoords.insert(make_pair(x, y-1));
+void getHorizontalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& startCoords) {
+	size_t xMax = board.getColumns();
+	size_t yMax = board.getRows();
+	for(size_t x = 1; x <= xMax; x++){
+		for(size_t y = 1; y <= yMax; y++){
+			if(board.getSquare(x,y)->isOccupied()){
+				size_t i = 1;
+				int count = 0;
+				while(x - i > 0 && count != length){
+					if(!board.getSquare(x - i, y)->isOccupied()){
+						startCoords.insert(make_pair(x-i, y));
+						count++;
+					}
+					i++;
+				}
+				if(x + 1 <= xMax){
+					if(!board.getSquare(x+1, y)->isOccupied()){
+						startCoords.insert(make_pair(x+1, y));
+					}
+				}
+				size_t j = 0;
+				count = 0;
+				if(y - 1 > 0){
+					if(!board.getSquare(x, y-1)->isOccupied()){
+						while(x - j > 0 && count != length){
+							if(!board.getSquare(x-j, y -1)->isOccupied()){
+								startCoords.insert(make_pair(x-j,y-1));
+								count++;
+							}
+							j++;
+						}
+					}
+				}
+				j=0;
+				if(y + 1 <= yMax){
+					if(!board.getSquare(x, y+1)->isOccupied()){
+						while(x - j > 0 && count != length){
+							if(!board.getSquare(x-j, y +1)->isOccupied()){
+								startCoords.insert(make_pair(x-j,y+1));
+								count++;
+							}
+							j++;
+						}
+					}
+				}
 			}
-		}
-		else if(y+1 <= board.getRows()){
-			if(!board.getSquare(x, y+1)->isOccupied()){
-				startCoords.insert(make_pair(x, y+1));
-			}
-		}
-		if(x + j + 1 <= board.getColumns()){
-			if(!board.getSquare(x+j+1, y)->isOccupied())
-				startCoords.insert(make_pair(x + j + 1, y));
 		}
 	}
 }
-void getVerticalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& occupiedCoords, set<pair<size_t, size_t>>& startCoords) {
-	for(set<pair<size_t, size_t>>::iterator it = occupiedCoords.begin(); it != occupiedCoords.end(); it++){
-		size_t x = it->first;
-		size_t y = it->second;
-		size_t _length = length;
-		size_t i = 0;
-		while(y - i - 1 > 0 && _length > 0){
-			if(board.getSquare(x, y - i - 1)->isOccupied())
-				break;
-			i++;
-			_length--;
-		}			
-		while(i != 0){
-			startCoords.insert(make_pair(x, y-i));
-			i--;
-		}
-		_length = length;
-		size_t j = 0;
-		while(y + j + 1 <= board.getRows() && _length > 0){
-			if(!board.getSquare(x, y + j + 1)->isOccupied())
-				break;
-			j++;
-			_length--;
-		}
-		if(x-1 > 0){
-			if(!board.getSquare(x-1, y)->isOccupied()){
-				startCoords.insert(make_pair(x-1, y));
+void getVerticalStartCoords(size_t length, Board &board, set<pair<size_t, size_t>>& startCoords) {
+	size_t xMax = board.getColumns();
+	size_t yMax = board.getRows();
+	for(size_t y = 1; y <= yMax; y++){
+		for(size_t x = 1; x <= xMax; x++){
+			if(board.getSquare(x,y)->isOccupied()){
+				size_t i = 1;
+				int count = 0;
+				while(y - i > 0 && count != length){
+					if(!board.getSquare(x, y- i)->isOccupied()){
+						startCoords.insert(make_pair(x, y- i));
+						count++;
+					}
+					i++;
+				}
+				size_t j = 0;
+				count = 0;
+				if(y + 1 <= yMax){
+					if(!board.getSquare(x, y+1)->isOccupied()){
+						startCoords.insert(make_pair(x, y+1));
+					}
+				}
+				if(x - 1 > 0){
+					if(!board.getSquare(x-1, y)->isOccupied()){
+						while(y - j > 0 && count != length){
+							if(!board.getSquare(x-1, y -j)->isOccupied()){
+								startCoords.insert(make_pair(x-1,y-j));
+								count++;
+							}
+							j++;
+						}
+					}
+				}
+				j=0;
+				if(x + 1 <= xMax){
+					if(!board.getSquare(x+1, y)->isOccupied()){
+						while(y - j > 0 && count != length){
+							if(!board.getSquare(x+1, y - j)->isOccupied()){
+								startCoords.insert(make_pair(x+1,y - j));
+								count++;
+							}
+							j++;
+						}
+					}
+				}
 			}
-		}
-		else if(x+1 <= board.getColumns()){
-			if(!board.getSquare(x+1, y)->isOccupied()){
-				startCoords.insert(make_pair(x+1, y));
-			}
-		}
-		if(y + j + 1 <= board.getRows()){
-			if(!board.getSquare(x, y+j+1)->isOccupied())
-				startCoords.insert(make_pair(x, y + j + 1));
 		}
 	}
 }
 
-void getValidHorizontalMoves(set<Tile*> hand, size_t x, size_t y, Board& board, string word, string move, set<string>& validMoves, TrieSet& trie, bool connected, TrieNode* node){
-	if((node == nullptr || x > board.getColumns() || y > board.getRows()) || x < 0 || y < 0)
+
+void findHorizontalMoves(set<Tile*> hand, size_t x, size_t y, TrieSet& trie, Board& board, set<string>& moves){
+	string move = "place - " + to_string(y) + " " + to_string(x) + " ";
+	if(x-1 > 0){
+		if(board.getSquare(x-1, y)->isOccupied())
+			x = findStartLocation(x,y, board, true);
+	}
+	TrieNode* root = trie.prefix("");
+	findHorizontalMovesHelper(hand, x, y, trie, board, root, move, moves);
+}
+
+void findHorizontalMovesHelper(set<Tile*>hand, size_t x, size_t y, TrieSet& trie, Board& board, TrieNode* node, string move, set<string>& moves){
+	if(node == nullptr || x > board.getColumns() || y > board.getRows())
 		return;
-	if(node->inSet && connected && x <= board.getColumns() && y <= board.getRows() && word.length() > 1){
-		if(x+1 <= board.getColumns()){
-			Square* temp = board.getSquare(x+1, y);
-			if(!temp->isOccupied()){
-				cout << move << endl;
-				validMoves.insert(move);
+	if(node->inSet && (x <= board.getColumns() || !board.getSquare(x, y)->isOccupied())){
+		int prefixCount = 0;
+		if(x == board.getColumns()){
+			if(board.getSquare(x, y)->isOccupied()){
+				char letter = board.getSquare(x, y)->getLetter();
+				if(node->children[letter - 'a'] != nullptr){
+					if(node->inSet)
+						moves.insert(move);
+				}
+				return;
+			}
+			else {
+				for(set<Tile*>::iterator it = hand.begin(); it != hand.end(); it++){
+					char letter = (*it)->getLetter();
+					if(letter == '?'){
+						for(int i = 0; i < 26; i++){
+							char blankLetter = 'a' + i;
+							TrieNode* temp = node->children[i];
+							(*it)->useAs('a'+i);
+							bool adjacentWord = validAdjacentWord(x, y, *it, board, trie, true);
+							if(temp && adjacentWord){
+								if(temp->inSet)
+									moves.insert(move+letter+blankLetter);
+							}
+						}
+					}
+					else {
+						TrieNode* temp = node->children[letter - 'a'];
+						if(temp){
+							if(temp->inSet)
+								moves.insert(move+letter);
+						}
+					}
+				}
+				return;
 			}
 		}
 		else{
-			if(word.length())
-				validMoves.insert(move);
-			cout << move << endl;
-		}
+			for(set<Tile*>::iterator it = hand.begin(); it != hand.end(); it++){
+				char letter = (*it)->getLetter();
+				if(!node->children[letter - 'a'])
+					prefixCount++;
+			}
+			if(prefixCount == hand.size())
+				moves.insert(move);
+			}
 	}
-	Square* s = board.getSquare(x,y);
-	char letter;
-	int points = 0;
-	if(s->isOccupied()){
-		letter = s->getLetter();
-		node = node->children[letter-'a'];
-		connected = true;
-		getValidHorizontalMoves(hand, x+1, y, board, word+letter, move, validMoves,trie, connected, node);
+	Square* currLocation = board.getSquare(x, y);
+	if(currLocation->isOccupied()){
+		char letter = currLocation->getLetter();
+		int index = letter - 'a';
+		findHorizontalMovesHelper(hand, x+1, y, trie,board, node->children[index], move, moves);
 	}
 	else {
-		if(s->isStart())
-			connected = true;
 		for(set<Tile*>::iterator it = hand.begin(); it != hand.end(); it++){
-			letter = (*it)->getLetter();
-			set<Tile*> temp = hand;
-			temp.erase(*it);
+			char letter = (*it)->getLetter();
+			set<Tile*> tempHand = hand;
 			if(letter == '?'){
 				for(int i = 0; i < 26; i++){
-					TrieNode* child = node->children[i];
-					if(y-1 > 0){
-						if(board.getSquare(x, y-1)->isOccupied()&& !connected)
-							connected = hasValidAdjacentWords(x, y, board, false, letter, trie);
+					char blankLetter = (char)('a' + i);
+					(*it)->useAs(blankLetter);
+					bool adjacentWord = validAdjacentWord(x, y, *it, board, trie, true);
+					if(adjacentWord){
+						tempHand.erase(*it);
+						findHorizontalMovesHelper(tempHand, x+1, y, trie,board, node->children[i], move+letter+blankLetter, moves);
 					}
-					else if (y + 1 <= board.getColumns()){
-						if(board.getSquare(x, y+1)->isOccupied()&& !connected)
-							connected = hasValidAdjacentWords(x, y, board, false, letter, trie);
-					}
-					getValidHorizontalMoves(temp, x+1, y, board, word+(char)('a'+i), move + letter+(char)('a'+i), validMoves, trie, connected, child);
 				}
 			}
-			else {
-				TrieNode* child = node->children[letter-'a'];
-				if(y-1 > 0){
-					if(board.getSquare(x, y-1)->isOccupied() && !connected)
-						connected = hasValidAdjacentWords(x, y, board, true, letter, trie);
+			else{
+				int index = letter - 'a';
+				bool adjacentWord = validAdjacentWord(x, y, *it, board, trie, true);
+				if(adjacentWord){
+					tempHand.erase(*it);
+					findHorizontalMovesHelper(tempHand, x+1, y, trie,board, node->children[index], move+letter, moves);
 				}
-				else if (y + 1 <= board.getRows()){
-					if(board.getSquare(x, y+1)->isOccupied()&& !connected)
-						connected = hasValidAdjacentWords(x, y, board, true, letter, trie);
-				}
-				getValidHorizontalMoves(temp, x+1, y, board, word+letter, move + letter, validMoves, trie, connected, child);
 			}
-
 		}
 	}
 }
 
-void getValidVerticalMoves(set<Tile*> hand, size_t x, size_t y, Board& board, string word, string move, set<string>& validMoves, TrieSet& trie, bool connected, TrieNode* node){
-	// int num = 0;
-	if((node == nullptr || x > board.getColumns() || y > board.getRows())|| x < 0 || y < 0)
+
+void findVerticalMoves(set<Tile*> hand, size_t x, size_t y, TrieSet& trie, Board& board, set<string>& moves){
+	string move = "place | " + to_string(y) + " " + to_string(x) + " ";
+	if(y-1 > 0){
+		if(board.getSquare(x, y-1)->isOccupied())
+			y = findStartLocation(x,y, board, false);
+	}
+	TrieNode* root = trie.prefix("");
+	findVerticalMovesHelper(hand, x, y, trie, board, root, move, moves);
+}
+
+void findVerticalMovesHelper(set<Tile*>hand, size_t x, size_t y, TrieSet& trie, Board& board, TrieNode* node, string move, set<string>& moves){
+	if(node == nullptr || x > board.getColumns() || y > board.getRows())
 		return;
-	if(node->inSet && connected && x <= board.getColumns() && y <= board.getRows() && word.length() > 1){
-		if(y+1 <= board.getRows()){
-			Square* temp = board.getSquare(x, y+1);
-			if(!temp->isOccupied()){
-				cout << move << endl;
-				validMoves.insert(move);
+	if(node->inSet && (y <= board.getRows() || !board.getSquare(x, y)->isOccupied())){
+		int prefixCount = 0;
+		if(y == board.getRows()){
+			if(board.getSquare(x, y)->isOccupied()){
+				char letter = board.getSquare(x, y)->getLetter();
+				if(node->children[letter - 'a'] != nullptr){
+					if(node->inSet)
+						moves.insert(move);
+				}
+				return;
+			}
+			else {
+				for(set<Tile*>::iterator it = hand.begin(); it != hand.end(); it++){
+					char letter = (*it)->getLetter();
+					if(letter == '?'){
+						for(int i = 0; i < 26; i++){
+							char blankLetter = 'a' + i;
+							TrieNode* temp = node->children[i];
+							(*it)->useAs('a'+i);
+							bool adjacentWord = validAdjacentWord(x, y, *it, board, trie, false);
+							if(temp && adjacentWord){
+								if(temp->inSet)
+									moves.insert(move+letter+blankLetter);
+							}
+						}
+					}
+					else {
+						TrieNode* temp = node->children[letter - 'a'];
+						if(temp){
+							if(temp->inSet)
+								moves.insert(move+letter);
+						}
+					}
+				}
+				return;
 			}
 		}
 		else{
-			if(word.length())
-				validMoves.insert(move);
-		}
+			for(set<Tile*>::iterator it = hand.begin(); it != hand.end(); it++){
+				char letter = (*it)->getLetter();
+				if(!node->children[letter - 'a'])
+					prefixCount++;
+			}
+			if(prefixCount == hand.size())
+				moves.insert(move);
+			}
 	}
-	Square* s = board.getSquare(x,y);
-	char letter;
-	int points = 0;
-	if(s->isOccupied()){
-		letter = s->getLetter();
-		node = node->children[letter-'a'];
-		connected = true;
-		getValidVerticalMoves(hand, x, y+1, board, word+letter, move, validMoves,trie, connected, node);
+	Square* currLocation = board.getSquare(x, y);
+	if(currLocation->isOccupied()){
+		char letter = currLocation->getLetter();
+		int index = letter - 'a';
+		findVerticalMovesHelper(hand, x, y+1, trie,board, node->children[index], move, moves);
 	}
 	else {
-		if(s->isStart())
-			connected = true;
 		for(set<Tile*>::iterator it = hand.begin(); it != hand.end(); it++){
-			letter = (*it)->getLetter();
-			set<Tile*> temp = hand;
-			temp.erase(*it);
+			char letter = (*it)->getLetter();
+			set<Tile*> tempHand = hand;
 			if(letter == '?'){
 				for(int i = 0; i < 26; i++){
-					TrieNode* child = node->children[i];
-					if(x-1 > 0){
-						if(board.getSquare(x-1, y)->isOccupied()&& !connected)
-							connected = hasValidAdjacentWords(x, y, board, false, letter, trie);
+					char blankLetter = (char)('a' + i);
+					(*it)->useAs(blankLetter);
+					bool adjacentWord = validAdjacentWord(x, y, *it, board, trie, false);
+					if(adjacentWord){
+						tempHand.erase(*it);
+						findVerticalMovesHelper(tempHand, x+1, y, trie,board, node->children[i], move+letter+blankLetter, moves);
 					}
-					else if (x + 1 <= board.getColumns()){
-						if(board.getSquare(x+1, y)->isOccupied()&& !connected)
-							connected = hasValidAdjacentWords(x, y, board, false, letter, trie);
-					}
-					getValidVerticalMoves(temp, x, y+1, board, word+(char)('a'+i), move + letter+(char)('a'+i), validMoves, trie, connected, child);
 				}
 			}
 			else {
-				TrieNode* child = node->children[letter-'a'];
-				if(x-1 > 0){
-					if(board.getSquare(x-1, y)->isOccupied()&& !connected)
-						connected = hasValidAdjacentWords(x, y, board, false, letter, trie);
+				int index = letter - 'a';
+				bool adjacentWord = validAdjacentWord(x, y, *it, board, trie, false);
+				if(adjacentWord){
+					tempHand.erase(*it);
+					findVerticalMovesHelper(tempHand, x, y+1, trie,board, node->children[index], move+letter, moves);
 				}
-				else if (x + 1 <= board.getColumns()){
-					if(board.getSquare(x+1, y)->isOccupied()&& !connected)
-						connected = hasValidAdjacentWords(x, y, board, false, letter, trie);
-				}
-				getValidVerticalMoves(temp, x, y+1, board, word+letter, move + letter, validMoves, trie, connected, child);
 			}
 		}
 	}
 }
 
-bool hasValidAdjacentWords(size_t x, size_t y, Board& board, bool horizontal, char letter, TrieSet& trie){
-	string word = "";
-	TrieNode* node = trie.prefix(word);
+size_t findStartLocation(size_t x, size_t y, Board& board, bool horizontal){
 	int i = 0;
 	if(horizontal){
-		while(y - i- 1 > 0){
-			if(!board.getSquare(x, y-1 -i)->isOccupied())
+		while(x-i -1 >0){
+			if(!board.getSquare(x - i - 1, y)->isOccupied())
 				break;
 			i++;
 		}
-		y = y-i;
-		size_t letterUsed = 1;
-		while(y<= board.getRows() && (letterUsed != 0 || board.getSquare(x, y)->isOccupied()) && node){
-			Square* s = board.getSquare(x, y);
-			if(s->isOccupied())
-				word+= s->getLetter();
-			else{
-				word+= letter;
-				letterUsed--;
-			}
-			node = node->children[word[word.length()-1]-'a'];
-			if(y >= board.getRows())
-				break;
-			y++;
-		}
-		if(node){
-			if(node->inSet && word.length() > 1)
-				return true;
-		}
+		return x - i;
 	}
-	else{
-		while(x - i -1 > 0){
-			if(!board.getSquare(x-i-1, y)->isOccupied())
+	else {
+		while(y-i -1 >0){
+			if(!board.getSquare(x, y- i - 1)->isOccupied())
 				break;
-			x--;
+			i++;
 		}
-		x = x - i;
-		size_t letterUsed = 1;
-		while(y<= board.getRows() && (letterUsed != 0 || board.getSquare(x, y)->isOccupied()) && node){
-			Square* s = board.getSquare(x, y);
-			if(s->isOccupied())
-				word+= s->getLetter();
-			else{
-				word+= letter;
-				letterUsed--;
-			}
-			node = node->children[word[word.length()-1]-'a'];
-			if(x >= board.getColumns())
-				break;
-			x++;
-		}
-		if(node){
-			if(node->inSet&& word.length() > 1)
-				return true;
-		}
+		return y - i;
 	}
-	return false;
 }
 
-void getStartOfWord(size_t &x, size_t &y, Board& board, bool horizontal){
+bool validAdjacentWord(size_t x, size_t y, Tile* tile, Board& board, TrieSet& trie, bool horizontal){
 	if(horizontal){
-		int i = 0;
-		while(x - i -1 > 0){
-			if(board.getSquare(x - i -1, y)->isOccupied()){
+		size_t newY = findStartLocation(x, y, board, !horizontal);
+		bool hasTilesUnder = false;
+		if(y+1 <= board.getRows()){
+			if(board.getSquare(x, y+1)->isOccupied())
+				hasTilesUnder = true;
+		}
+		if(newY != y || hasTilesUnder){
+			TrieNode* node = trie.prefix("");
+			int i = 0;
+			bool usedTile = false;
+			while(newY + i <= board.getRows() && node != nullptr){
+				if(board.getSquare(x, newY + i)->isOccupied()){
+					char letter = board.getSquare(x, newY + i)->getLetter();
+					node = node->children[letter - 'a'];
+				}
+				else{
+					if(!usedTile){
+						char letter = tile->getUse();
+						node = node->children[letter - 'a'];
+						usedTile = true;
+					}
+					else
+						break;
+				}
 				i++;
 			}
-			else 
-				break;
+			if(node){
+				if(node->inSet)
+					return true;
+			}
+			return false;
 		}
-		x = x - i ;
+		else
+			return true;
 	}
-	else{
-		int i = 0;
-		while(y - i -1 > 0){
-			if(board.getSquare(x, y- i -1)->isOccupied()){
+	else {
+		size_t newX = findStartLocation(x, y, board, !horizontal);
+		bool hasTilesUnder = false;
+		if(x+1 <= board.getRows()){
+			if(board.getSquare(x+1, y)->isOccupied())
+				hasTilesUnder = true;
+		}
+		if(newX != x || hasTilesUnder){
+			TrieNode* node = trie.prefix("");
+			int i = 0;
+			bool usedTile = false;
+			while(newX + i <= board.getColumns() && node != nullptr){
+				if(board.getSquare(newX + i, y)->isOccupied()){
+					char letter = board.getSquare(newX+i, y)->getLetter();
+					node = node->children[letter - 'a'];
+				}
+				else{
+					if(!usedTile){
+						char letter = tile->getUse();
+						node = node->children[letter - 'a'];
+						usedTile = true;
+					}
+					else
+						break;
+				}
 				i++;
 			}
-			else 
-				break;
+			if(node){
+				if(node->inSet)
+					return true;
+			}
+			return false;
 		}
-		y = y - i;
+		else
+			return true;
 	}
 }
 
@@ -590,6 +647,8 @@ string returnMaxPointMove(set<string>& moves, Player& player, Board& board, bool
 		for(int i = 0; i < 6; i++)
 			ss >> buff;
 		size_t tilesPlaced = buff.length() - count(buff.begin(), buff.end(), '?');
+		if(tilesPlaced == 0)
+			continue;
 		temp = Move::parseMove(*it, player);
 		size_t points = 0;
 		bool validMove = board.validPlaceMove(*dynamic_cast<PlaceMove*>(temp), firstmove);
@@ -615,9 +674,11 @@ string returnMaxPointMove(set<string>& moves, Player& player, Board& board, bool
 			returnCPUTiles(player, temp);
 			continue;
 		}
+		returnCPUTiles(player, temp);
 		if(tilesPlaced == player.getHandTiles().size())
 			points+= 50;
-		if(points > maxPoints){
+		cout << *it <<  " " << points << endl;
+		if(points >= maxPoints && validMove && legalWord){
 			maxPoints = points;
 			finalMove = *it;
 		}
@@ -625,6 +686,76 @@ string returnMaxPointMove(set<string>& moves, Player& player, Board& board, bool
 		delete temp;
 	}
 	return finalMove;
+}
+
+size_t returnPoints(string move, Player& player, Board& board, bool firstmove, TrieSet& trie){
+	stringstream ss(move);
+	string buff;
+	for(int i = 0; i < 6; i++)
+		ss >> buff;
+	size_t tilesPlaced = buff.length() - count(buff.begin(), buff.end(), '?');
+	if(tilesPlaced == 0)
+		continue;
+	temp = Move::parseMove(move, player);
+	size_t points = 0;
+	bool validMove = board.validPlaceMove(*dynamic_cast<PlaceMove*>(temp), firstmove);
+	if(!validMove){
+		returnCPUTiles(player, temp);
+		return -1;
+	}
+	vector<pair<string, unsigned int>> words = board.getPlaceMoveResults(*dynamic_cast<PlaceMove*>(temp));
+	if(!words.size()){
+		returnCPUTiles(player, temp);
+		return -1;
+	}
+	bool legalWord = false;
+	for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
+		legalWord = trie.inTrie(it->first);
+		if(legalWord){
+			points += it->second;
+		}
+		else
+			return -1;
+	}
+	if(!legalWord){
+		returnCPUTiles(player, temp);
+		continue;
+	}
+	returnCPUTiles(player, temp);
+	if(tilesPlaced == player.getHandTiles().size())
+		points+= 50;
+	delete temp;
+	return points;
+}
+
+size_t returnLength(string move, Player& player, Board& board, bool firstmove, TrieSet& trie){
+	stringstream ss(*move);
+	string buff;
+	for(int i = 0; i < 6; i++)
+		ss >> buff;
+	size_t tilesPlaced = buff.length() - count(buff.begin(), buff.end(), '?');
+	if(tilesPlaced == 0)
+		return -1;
+	temp = Move::parseMove(*it, player);
+	bool validMove = board.validPlaceMove(*dynamic_cast<PlaceMove*>(temp), firstmove);
+	if(!validMove){
+		returnCPUTiles(player, temp);
+		return -1;
+	}
+	vector<pair<string, unsigned int>> words = board.getPlaceMoveResults(*dynamic_cast<PlaceMove*>(temp));
+	if(!words.size()){
+		returnCPUTiles(player, temp);
+		return -1;
+	}
+	bool legalWord = false;
+	for (vector<pair<string, unsigned int>>::iterator it = words.begin(); it != words.end(); it++){
+		legalWord = trie.inTrie(it->first);
+		if(!legalWord){
+			return -1;
+		}
+	}
+	delete temp;
+	return tilesPlaced;
 }
 
 string returnMaxLengthMove(set<string>& moves, Player& player, Board& board, bool firstmove, TrieSet& trie){
@@ -637,6 +768,8 @@ string returnMaxLengthMove(set<string>& moves, Player& player, Board& board, boo
 		for(int i = 0; i < 6; i++)
 			ss >> buff;
 		size_t tilesPlaced = buff.length() - count(buff.begin(), buff.end(), '?');
+		if(tilesPlaced == 0)
+			continue;
 		temp = Move::parseMove(*it, player);
 		bool validMove = board.validPlaceMove(*dynamic_cast<PlaceMove*>(temp), firstmove);
 		if(!validMove){
@@ -655,7 +788,7 @@ string returnMaxLengthMove(set<string>& moves, Player& player, Board& board, boo
 				break;
 			}
 		}
-		if(tilesPlaced > maxlen && legalWord && validMove){
+		if(tilesPlaced >= maxlen && legalWord && validMove){
 			maxlen = tilesPlaced;
 			finalMove = *it;
 			returnCPUTiles(player, temp);

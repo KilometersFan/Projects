@@ -139,10 +139,10 @@ bool Board::validPlaceMove(const PlaceMove &m, bool firstmove){
 		if(connected || startCoord || firstmove)
 			return true;
 		else 
-			throw MoveException("Error: Word was not placed on the start tile.");
+			throw MoveException("Error: Word was not placed on the start tile or was not connected.");
 	}
 	catch (MoveException &e){
-		// if(m.getPlayer()->getType() == "human")
+		if(m.getPlayer()->getType() == "human")
 			cout << e.getMessage() << endl;
 		return false;
 	}

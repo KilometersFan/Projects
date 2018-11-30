@@ -8,16 +8,21 @@
 #include <ctype.h>
 #include <stdlib.h>
 #include <set>
-#include <bits/stdc++.h> 
 #include <algorithm>
-#include <queue>
+#include <sstream>
 
-void scrabble(std::vector<Player*> &players, Board &board, std::set<std::pair<size_t, size_t>>& occupiedCoords, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove, TrieSet& trie);
+void scrabble(std::vector<Player*> &players, Board &board, Bag &bag, Dictionary &dictionary, ConsolePrinter &console, bool firstmove, TrieSet& trie);
 void validMoveCheck(std::string &str);
-bool initializeBoard(std::string &initFile, Board& board, std::set<std::pair<size_t, size_t>> &occupiedCoords);
-void permute(std::string s,size_t i,size_t n, std::set<std::string>& combos);
-void findSubsets(std::string str, std::string out, size_t count, std::set<std::string>& sets);
-void getVerticalStartCoords(size_t length, Board &board, std::set<std::pair<size_t, size_t>>& occupiedCoords, std::set<std::pair<size_t, size_t>>& startCoords);
-void getHorizontalStartCoords(size_t length, Board &board, std::set<std::pair<size_t, size_t>>& occupiedCoords, std::set<std::pair<size_t, size_t>>& startCoords);
-void getValidHorizontalMoves(std::set<Tile*> hand, size_t x, size_t y, Board& board, std::string word, std::string move, std::set<std::string> &validMoves, TrieSet& trie, bool connected, TrieNode* node);
-void getValidVerticalMoves(std::set<Tile*> hand, size_t x, size_t y, Board& board, std::string word, std::string move, std::set<std::string> &validMoves, TrieSet& trie, bool connected, TrieNode* node);
+bool initializeBoard(std::string &initFile, Board& board);
+void getVerticalStartCoords(size_t length, Board &board, std::set<std::pair<size_t, size_t>>& startCoords);
+void getHorizontalStartCoords(size_t length, Board &board, std::set<std::pair<size_t, size_t>>& startCoords);
+bool validAdjacentWord(size_t x, size_t y, Tile* tile, Board& board, TrieSet& trie, bool horizontal);
+void findHorizontalMovesHelper(std::set<Tile*>hand, size_t x, size_t y, TrieSet& trie, Board& board, TrieNode* node, std::string move, std::set<std::string>& moves);
+void findHorizontalMoves(std::set<Tile*> hand, size_t x, size_t y, TrieSet& trie, Board& board, std::set<std::string>& moves);
+void findVerticalMoves(std::set<Tile*> hand, size_t x, size_t y, TrieSet& trie, Board& board, std::set<std::string>& moves);
+void findVerticalMovesHelper(std::set<Tile*>hand, size_t x, size_t y, TrieSet& trie, Board& board, TrieNode* node, std::string move, std::set<std::string>& moves);
+size_t findStartLocation(size_t x, size_t y, Board& board, bool horizontal);
+std::string returnMaxPointMove(std::set<std::string>& moves, Player& player, Board& board, bool firstmove, TrieSet& trie);
+std::string returnMaxLengthMove(std::set<std::string>& moves, Player& player, Board& board, bool firstmove, TrieSet& trie);
+void returnCPUTiles(Player& player, Move* m);
+

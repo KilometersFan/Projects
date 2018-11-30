@@ -66,7 +66,8 @@ PlaceMove::PlaceMove (size_t x, size_t y, bool horizontal, string tileString, Pl
 	}
 	catch (MoveException &e){
 		setValidMove(false);
-		cout << e.getMessage() << endl;
+		if(_player->getType() == "human")
+			cout << e.getMessage() << endl;
 	}
 }
 

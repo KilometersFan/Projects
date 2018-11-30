@@ -137,9 +137,7 @@ void rotateBST<Key, Value>::transform(rotateBST& t2) const {
 		t2.rightRotate(t2.mRoot);
 		// t2.print();
 	}
-	// t2.print();
 	t2.transformRightHelper(t2.mRoot->getRight());
-	// t2.print();
 	while(t2.mRoot->getKey() != this->mRoot->getKey()){
 		t2.leftRotate(t2.mRoot);
 	}

@@ -451,6 +451,8 @@ string returnMaxLengthMove(set<string>& moves, Player& player, Board& board, boo
 		for(int i = 0; i < 6; i++)
 			ss >> buff;
 		size_t tilesPlaced = buff.length() - count(buff.begin(), buff.end(), '?');
+		if(tilesPlaced < maxlen)
+			continue;
 		//checks move length
 		if(tilesPlaced == 0)
 			continue;

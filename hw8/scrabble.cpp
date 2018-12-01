@@ -1,5 +1,10 @@
 #include "scrabble.h"
+#include <thread>
 using namespace std;
+
+void testHorizontalThread(set<pair<size_t, size_t>> horCoordinateBank, set<Tile*> hand,TrieSet& trie, Board& board, set<string>& moves);
+void testVerticalThread(set<pair<size_t, size_t>> vertCoordinateBank, set<Tile*> hand, TrieSet& trie, Board& board, set<string>& moves);
+
 int main(int argc, char const *argv[])
 {
 	try{
@@ -120,14 +125,12 @@ void scrabble(vector<Player*> &players, Board &board, Bag &bag, Dictionary &dict
 				}
 				//for every coordinate, the bot stores valid moves
 				set<string> moves;
-				for(set<pair<size_t, size_t>>::iterator it = horCoordinateBank.begin(); it != horCoordinateBank.end(); it++){
-					size_t x = it->first; size_t y = it->second;
-					findHorizontalMoves(players[i]->getHandTiles(), x, y, trie, board, moves);
-				}
-				for(set<pair<size_t, size_t>>::iterator it = vertCoordinateBank.begin(); it != vertCoordinateBank.end(); it++){
-					size_t x = it->first; size_t y = it->second;
-					findVerticalMoves(players[i]->getHandTiles(), x, y, trie, board, moves);
-				}
+				//thread 1
+				thread th1(testHorizontalThread, horCoordinateBank, players[i]->getHandTiles(), std::ref(trie), std::ref(board), std::ref(moves));
+				//thread2
+				thread th2(testVerticalThread, vertCoordinateBank, players[i]->getHandTiles(), std::ref(trie), std::ref(board), std::ref(moves));
+				th1.join(); 
+				th2.join();
 				// retrieve final move based on bot type
 				string finalMove = "";
 				if(players[i]->getType() == "cpus")
@@ -269,4 +272,18 @@ void findVerticalMoves(set<Tile*> hand, size_t x, size_t y, TrieSet& trie, Board
 	}
 	TrieNode* root = trie.prefix("");
 	findVerticalMovesHelper(hand, x, y, trie, board, root, move, moves);
+}
+
+void testHorizontalThread(set<pair<size_t, size_t>> horCoordinateBank, set<Tile*> hand,TrieSet& trie, Board& board, set<string>& moves){
+	for(set<pair<size_t, size_t>>::iterator it = horCoordinateBank.begin(); it != horCoordinateBank.end(); it++){
+		size_t x = it->first; size_t y = it->second;
+		findHorizontalMoves(hand, x, y, trie, board, moves);
+	}
+}
+
+void testVerticalThread(set<pair<size_t, size_t>> vertCoordinateBank, set<Tile*> hand, TrieSet& trie, Board& board, set<string>& moves){
+	for(set<pair<size_t, size_t>>::iterator it = vertCoordinateBank.begin(); it != vertCoordinateBank.end(); it++){
+		size_t x = it->first; size_t y = it->second;
+		findVerticalMoves(hand, x, y, trie, board, moves);
+	}
 }

@@ -4,7 +4,7 @@ CPPFLAGS = -g -Wall -std=c++11
 all: scrabble test
 
 scrabble: scrabble.cpp scrabbleHelper.cpp scrabble.h Player.o Move.o Dictionary.o Bag.o Board.o ConsolePrinter.o Trie.o Square.h Tile.h
-	$(CXX) $(CPPFLAGS) $^ -o $@
+	$(CXX) $(CPPFLAGS) $^ -o $@ -lpthread
 	
 Player.o: Player.cpp Player.h Tile.h Exceptions.h
 	$(CXX) $(CPPFLAGS) -c $< -o $@

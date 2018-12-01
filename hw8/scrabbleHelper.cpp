@@ -428,7 +428,7 @@ string returnMaxPointMove(set<string>& moves, Player& player, Board& board, bool
 			continue;
 		}
 		returnCPUTiles(player, temp);
-		if(tilesPlaced == player.getHandTiles().size())
+		if(tilesPlaced == player.getMaxTiles())
 			points+= 50;
 		//checks points vs maxPoints
 		if(points >= maxPoints && validMove && legalWord){

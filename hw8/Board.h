@@ -23,6 +23,7 @@
 #include "Dictionary.h"
 #include <utility>
 #include "Exceptions.h"
+
 class Board
 {
 	

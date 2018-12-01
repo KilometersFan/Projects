@@ -136,7 +136,7 @@ bool Board::validPlaceMove(const PlaceMove &m, bool firstmove){
 			}
 			k++;
 		}
-		if(connected || startCoord || firstmove)
+		if((connected && firstmove) || (startCoord && firstmove) || connected || startCoord)
 			return true;
 		else 
 			throw MoveException("Error: Word was not placed on the start tile or was not connected.");

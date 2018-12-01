@@ -149,7 +149,10 @@ void rotateBST<Key, Value>::transform(rotateBST& t2) const {
 		t2.rightRotate(t2.mRoot);
 	}
 	t2.transformRightHelper(t2.mRoot->getRight());
+<<<<<<< HEAD
+=======
 	//matches all other nodes in t1 with those in t2
+>>>>>>> 2bcefae04779d2bb16deb8b62bdf9ae24837a768
 	while(t2.mRoot->getKey() != this->mRoot->getKey()){
 		t2.leftRotate(t2.mRoot);
 	}
